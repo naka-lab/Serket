@@ -1,7 +1,7 @@
 #!/usr/bin/env python2
 # -*- coding: utf-8 -*-
 import sys
-sys.path.append("../")
+sys.path.append("../../")
 
 import mlda
 import serket as srk
