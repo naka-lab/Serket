@@ -3,7 +3,7 @@
 import sys
 sys.path.append( "../" )
 
-import mlda
+from . import mlda
 import serket as srk
 import numpy as np
 
