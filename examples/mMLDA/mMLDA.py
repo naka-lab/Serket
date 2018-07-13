@@ -1,5 +1,6 @@
 #!/usr/bin/env python2
 # -*- coding: utf-8 -*-
+from __future__ import print_function,unicode_literals, absolute_import
 import sys
 sys.path.append("../../")
 
@@ -26,7 +27,7 @@ def main():
     mlda3.connect( mlda1, mlda2 )
     
     for it in range(5):
-        print it
+        print( it )
         mlda1.update()
         mlda2.update()
         mlda3.update()
