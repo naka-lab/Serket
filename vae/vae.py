@@ -112,8 +112,8 @@ def train( data, latent_dim, weight_stddev, num_itr=5000, save_dir="model", mu_p
         
         zz, xx = sess.run([z, x_hat], feed_dict={x: data})
     
-    # z,lossテキスト保存
-    save_result(zz, loss_save, save_dir) 
+    # z,x_hat,loss保存
+    save_result(zz, xx, loss_save, save_dir) 
     
     return zz, xx
 
