@@ -21,8 +21,7 @@ class VAE(srk.Module):
     def update(self):
         data = self.get_observations()
         mu_prior = self.get_backward_msg() # P(z|d)
-        print(mu_prior)
-
+        
         N = len( data[0] )  # データ数
 
         # backward messageがまだ計算されていないときは一様分布にする
