@@ -21,6 +21,7 @@ class VAE(srk.Module):
     def update(self):
         data = self.get_observations()
         mu_prior = self.get_backward_msg() # P(z|d)
+        print(mu_prior)
 
         N = len( data[0] )  # データ数
 
@@ -36,4 +37,4 @@ class VAE(srk.Module):
 
         # メッセージの送信
         self.set_forward_msg( z )
-        self.send_backward_msgs( x )
+        self.send_backward_msgs( [x] )
