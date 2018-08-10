@@ -28,8 +28,8 @@ class GMM(srk.Module):
         data[0] = np.array( data[0], dtype=np.float32 )
 
         # GMM学習
-        Pdz, Pdw = gmm.train( data[0], self.__K, self.__itr, self.get_name(), bias_dz=Pdz, categories=self.__category )
+        Pdz, mu = gmm.train( data[0], self.__K, self.__itr, self.get_name(), bias_dz=Pdz, categories=self.__category )
 
         # メッセージの送信
         self.set_forward_msg( Pdz )
-        self.send_backward_msgs( Pdw )
+        self.send_backward_msgs( [mu] )
