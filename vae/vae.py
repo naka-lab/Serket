@@ -34,6 +34,7 @@ def train( data, latent_dim, weight_stddev, num_itr=5000, save_dir="model", mu_p
 
     # 入力を入れるplaceholder
     x = tf.placeholder("float", shape=[None, input_dim])
+    mu_pri = tf.placeholder("float", shape=[None, latent_dim])
     
     # encoderの重みとバイアスを定義
     W1 = weight_variable([input_dim,hidden_encoder_dim], weight_stddev)
@@ -66,7 +67,7 @@ def train( data, latent_dim, weight_stddev, num_itr=5000, save_dir="model", mu_p
     x_hat = tf.matmul(hidden_decoder, W4) + b4
     
     # ロス関数を定義
-    KLD = -0.5 * tf.reduce_sum(1 + logvar_encoder - tf.pow(mu_encoder - mu_prior, 2) - tf.exp(logvar_encoder), reduction_indices=1)
+    KLD = -0.5 * tf.reduce_sum(1 + logvar_encoder - tf.pow(mu_encoder - mu_pri, 2) - tf.exp(logvar_encoder), reduction_indices=1)
     BCE = tf.reduce_sum(tf.nn.sigmoid_cross_entropy_with_logits(logits=x_hat, labels=x), reduction_indices=1)
     loss = tf.reduce_mean(BCE + a * KLD)
     
@@ -81,12 +82,15 @@ def train( data, latent_dim, weight_stddev, num_itr=5000, save_dir="model", mu_p
         
         # loss保存用のlist
         loss_save = []
-        
-        for step in range(1, num_itr):
+                
+        for step in range(1, num_itr+1):
             # バッチ学習
             if batch_size==None:
-                feed_dict = {x: data}
+                feed_dict = {x: data, mu_pri: mu_prior}
                 _, cur_loss = sess.run([train_step, loss], feed_dict=feed_dict)
+                # 50ごとにloss保存
+                if step % 50 == 0:
+                    loss_save.append([step,cur_loss])
             
             # ミニバッチ学習
             else:                
@@ -94,13 +98,12 @@ def train( data, latent_dim, weight_stddev, num_itr=5000, save_dir="model", mu_p
                 sff_idx = np.random.permutation(N)
                 for idx in range(0, N, batch_size):
                     batch = data[sff_idx[idx: idx + batch_size if idx + batch_size < N else N]]
-                    feed_dict = {x: batch}
+                    batch_mu = mu_prior[sff_idx[idx: idx + batch_size if idx + batch_size < N else N]]
+                    feed_dict = {x: batch, mu_pri: batch_mu}
                     _, cur_loss = sess.run([train_step, loss], feed_dict=feed_dict)
- 
-            # loss保存
-            if step % 50 == 0:
+                # epochごとにloss保存
                 loss_save.append([step,cur_loss])
-
+               
         saver.save(sess, os.path.join(save_dir,"model.ckpt"))
             
     # サンプリング
