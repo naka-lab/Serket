@@ -5,6 +5,7 @@ import sys
 sys.path.append("../../")
 
 import gmm
+import mm
 import serket as srk
 import numpy as np
 import random
@@ -39,6 +40,7 @@ def gen_data():
 def main():
     # gen_data()
     
+    """
     obs = srk.Observation( np.loadtxt("data.txt") )
     
     correct_classes = np.loadtxt( "correct.txt" )
@@ -46,8 +48,41 @@ def main():
     g = gmm.GMM( 4 )
     g.connect( obs )
     g.update()
+    """
     
+    """
+    trans_prob = [
+            [0.9, 0.1, 0.1],
+            [0.1, 0.9, 0.1],
+            [0.1, 0.1, 0.9]            
+            ]
     
+    data = []
+    for i in range(10):
+        data.append( trans_prob[i%3] )
+    data = np.array(data)
+    obs = srk.Observation( data )
+    
+    m = mm.MarkovModel()
+    m.connect( obs )
+    
+    m.update()
+    """
+    
+    obs = srk.Observation( np.loadtxt("data.txt") )
+    correct_classes = np.loadtxt( "correct.txt" )
+    
+    g = gmm.GMM( 4 )
+    m = mm.MarkovModel()
+
+    g.connect( obs )
+    #m.connect( g )
+    
+    for itr in range(1):
+        print("aaaa")
+        g.update()
+        print("bbbb")
+        #m.update()
 
 if __name__=="__main__":
     main()
