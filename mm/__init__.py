@@ -69,7 +69,7 @@ class MarkovModel(srk.Module):
 
         # メッセージの送信
         self.set_forward_msg( msg )
-        self.send_backward_msgs( msg )
+        self.send_backward_msgs( [msg] )
         
         # データ保存
         if not os.path.exists( self.get_name() ):
