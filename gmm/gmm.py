@@ -85,8 +85,8 @@ def sample_class( d, distributions, i, bias_dz ):
     P[0] = calc_probability( distributions[0], d ) * bias_dz[i][0]
     for k in range(1,K):
         P[k] = P[k-1] + calc_probability( distributions[k], d ) * bias_dz[i][k]
-    
-    
+
+
     # サンプリング
     rnd = P[K-1] * random.random()
     for k in range(K):
@@ -146,7 +146,7 @@ def train( data, K, num_itr=100, save_dir="model", bias_dz=None, categories=None
         for n in range(K):
             Pdz[m][n] = calc_probability(distributions[n], data[m])
             if classes[m] == n:
-                mu[m] = distributions[n]._GaussWishart__m.reshape((1,dim))[0]                
+                mu[m] = distributions[n].get_mean().reshape((1,dim))[0]                
                      
 
     Pdz = (Pdz.T / numpy.sum(Pdz,1)).T
