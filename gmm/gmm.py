@@ -144,7 +144,7 @@ def train( data, K, num_itr=100, save_dir="model", bias_dz=None, categories=None
 
     for m in range(len(data)):
         for n in range(K):
-            Pdz[m][n] = calc_probability(distributions[n], d)
+            Pdz[m][n] = calc_probability(distributions[n], data[m])
             if classes[m] == n:
                 mu[m] = distributions[n]._GaussWishart__m.reshape((1,dim))[0]                
                      
