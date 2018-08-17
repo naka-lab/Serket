@@ -10,7 +10,7 @@ Tomoaki Nakamura, Takayuki Nagai and Tadahiro Taniguchi, "SERKET: An Architectur
 Clone the repository fromt the GitHub: 
 
 ```
-git clone https://github.com/naka-tomo/serket.git
+git clone https://github.com/naka-lab/Serket.git
 ```
 
 Install dependency packages (You can skip if you have already installed these packages. ):
