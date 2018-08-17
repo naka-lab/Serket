@@ -94,16 +94,53 @@ def sample_class( d, distributions, i, bias_dz ):
             return k
 
 
-def save_result(Pdz, mu, classes, save_dir):
+def calc_acc(results, correct):
+    K = numpy.max(results)+1  # カテゴリ数
+    N = len(results)          # データ数
+    max_acc = 0               # 精度の最大値
+    changed = True            # 変化したかどうか
+
+    while changed:
+        changed = False
+        for i in range(K):
+            for j in range(K):
+                tmp_result = numpy.zeros( N )
+
+                # iとjを入れ替える
+                for n in range(N):
+                    if results[n]==i: tmp_result[n]=j
+                    elif results[n]==j: tmp_result[n]=i
+                    else: tmp_result[n] = results[n]
+
+                # 精度を計算
+                acc = (tmp_result==correct).sum()/float(N)
+
+                # 精度が高くなって入れば保存
+                if acc > max_acc:
+                    max_acc = acc
+                    results = tmp_result
+                    changed = True
+
+    return max_acc, results
+
+
+def save_result(Pdz, mu, classes, save_dir, categories):
     try:
         os.mkdir( save_dir )
     except:
         pass
 
-    numpy.savetxt( os.path.join( save_dir, "Pdz.txt"),Pdz )
-    numpy.savetxt( os.path.join( save_dir, "mu.txt"),mu )
-    numpy.savetxt( os.path.join( save_dir, "class.txt"),classes )
+    numpy.savetxt( os.path.join( save_dir, "Pdz.txt"), Pdz )
+    numpy.savetxt( os.path.join( save_dir, "mu.txt"), mu )
 
+    if categories is not None:
+        acc, results = calc_acc( classes, categories )
+        numpy.savetxt( os.path.join( save_dir, "class.txt" ), results )
+        numpy.savetxt( os.path.join( save_dir, "acc.txt" ), [acc] )
+        
+    else:
+        numpy.savetxt( os.path.join( save_dir, "class.txt"), classes )
+        
 
 # gmmメイン
 def train( data, K, num_itr=100, save_dir="model", bias_dz=None, categories=None ):
@@ -152,7 +189,7 @@ def train( data, K, num_itr=100, save_dir="model", bias_dz=None, categories=None
     Pdz = (Pdz.T / numpy.sum(Pdz,1)).T
     mu = (mu.T / numpy.sum(mu,1)).T
 
-    save_result(Pdz, mu, classes, save_dir)
+    save_result(Pdz, mu, classes, save_dir, categories)
 
     return Pdz, mu
 
