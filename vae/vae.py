@@ -30,7 +30,8 @@ def save_result(z, xx, loss_save, save_dir):
 def train( data, latent_dim, weight_stddev, num_itr=5000, save_dir="model", mu_prior=None, hidden_encoder_dim=100, hidden_decoder_dim=100, batch_size=None):
     input_dim = len(data[0])
     
-    a = 1.2
+    #KLダイバージェンスのパラメータ
+    a = 1
 
     # 入力を入れるplaceholder
     x = tf.placeholder("float", shape=[None, input_dim])
