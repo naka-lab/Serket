@@ -187,7 +187,6 @@ def train( data, K, num_itr=100, save_dir="model", bias_dz=None, categories=None
                      
 
     Pdz = (Pdz.T / numpy.sum(Pdz,1)).T
-    mu = (mu.T / numpy.sum(mu,1)).T
 
     save_result(Pdz, mu, classes, save_dir, categories)
 
