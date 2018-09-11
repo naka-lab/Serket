@@ -45,7 +45,7 @@ class MarkovModel(srk.Module):
         
         
         # 遷移確率を計算
-        trans_prob = np.zeros( (K, K) )
+        trans_prob = np.zeros( (K, K) ) + 0.1
         for _ in range(self.__num_samp):
             for n in range(N-1):
                 k =  self.sample_idx( data[0][n] )
