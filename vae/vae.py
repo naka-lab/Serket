@@ -27,11 +27,16 @@ def save_result(z, xx, loss_save, save_dir):
     np.savetxt( os.path.join( save_dir, "loss.txt"),loss_save )
 
 
-def train( data, latent_dim, weight_stddev, num_itr=5000, save_dir="model", mu_prior=None, hidden_encoder_dim=100, hidden_decoder_dim=100, batch_size=None):
+def train( data, latent_dim, weight_stddev, num_itr=5000, save_dir="model", mu_prior=None, hidden_encoder_dim=100, hidden_decoder_dim=100, batch_size=None, KL_param=1):
     input_dim = len(data[0])
+    N = len(data)
     
-    #KLダイバージェンスのパラメータ
-    a = 1
+    if mu_prior is None:
+        mu_prior = np.zeros( (N, latent_dim) )
+        a = 1   #KLダイバージェンスのパラメータ
+        
+    else:
+        a = KL_param
 
     # 入力を入れるplaceholder
     x = tf.placeholder("float", shape=[None, input_dim])
@@ -95,7 +100,6 @@ def train( data, latent_dim, weight_stddev, num_itr=5000, save_dir="model", mu_p
             
             # ミニバッチ学習
             else:                
-                N = len(data)
                 sff_idx = np.random.permutation(N)
                 for idx in range(0, N, batch_size):
                     batch = data[sff_idx[idx: idx + batch_size if idx + batch_size < N else N]]
