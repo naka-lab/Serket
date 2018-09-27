@@ -31,12 +31,8 @@ def train( data, latent_dim, weight_stddev, num_itr=5000, save_dir="model", mu_p
     input_dim = len(data[0])
     N = len(data)
     
-    if mu_prior is None:
-        mu_prior = np.zeros( (N, latent_dim) )
-        a = 1   #KLダイバージェンスのパラメータ
-        
-    else:
-        a = KL_param
+    # KLダイバージェンスの重み
+    a = KL_param
 
     # 入力を入れるplaceholder
     x = tf.placeholder("float", shape=[None, input_dim])
