@@ -23,9 +23,14 @@ class VAE(srk.Module):
         data = self.get_observations()
         mu_prior = self.get_backward_msg() # P(z|d)
 
+        N = len(data[0])  # データ数
+        
+        # backward messageがまだ計算されていないとき
+        if mu_prior is None:
+            mu_prior = np.zeros( (N, self.__latent_dim) )
 
         data[0] = np.array( data[0], dtype=np.float32 )
-
+        
 
         # VAE学習
         z, x = vae.train( data[0], self.__latent_dim, self.__weight_stddev, self.__itr, self.get_name(), mu_prior=mu_prior, hidden_encoder_dim=self.__hidden_encoder_dim, hidden_decoder_dim=self.__hidden_encoder_dim, batch_size=self.__batch_size, KL_param=self.__KL_param )
