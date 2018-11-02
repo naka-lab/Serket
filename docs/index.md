@@ -2,7 +2,6 @@
 layout: default
 ---
 
-# Library for constructing large-scale cognitive model
 Serket is a library to construct large-scale models and estimate its parameters via the connection of modules.
 Currently, you can use following probabilistic models and neural network models. 
 
@@ -14,14 +13,14 @@ Currently, you can use following probabilistic models and neural network models.
 
 Serket makes it possible to construct large scale model by connecting these modules. 
 
-# Authors
+## Authors
 
 - Ryo Kuniyasu
 - Tomoaki Nakamura
 - Takayuki Nagai
 - Tadahiro Taniguchi
 
-# Cite
+## Cite
 The concept of Serket is described in the following paper: 
 
 ```
