@@ -186,3 +186,23 @@ ul li {
     right: -100%;
 }
 /* END Settings for fullwidth */
+
+
+pre {
+  background-color:#ffffff;
+  color: #000000;
+  margin-right: 30%;
+  border-radius: 5px;
+  
+    padding: 1em;
+    margin: 1em;
+    margin-left: 20px;
+    background-color: rgb(245, 245, 245);  
+}
+code {
+    font-family: 'lucida grande', tahoma, verdana, arial, sans-serif;
+    color: #666;
+    padding: 2px;
+    background-color: rgb(245, 245, 245); 
+    border-radius: 3px;
+}
