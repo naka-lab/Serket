@@ -9,12 +9,16 @@ import numpy as np
 
 
 class MLDA(srk.Module):
-    def __init__(self, K, weights=None, itr=100, name="mlda", category=None ):
+    def __init__( self, K, weights=None, itr=100, name="mlda", category=None, mode="learn" ):
         super(MLDA, self).__init__(name, True)
         self.__K = K
         self.__weights = weights
         self.__itr = itr
         self.__category = category
+        self.__mode = mode
+        
+        if mode != "learn" and mode != "recog":
+            raise ValueError("choose mode from \"learn\" or \"recog\"")
         
     def update(self):
         data = self.get_observations()
@@ -41,7 +45,7 @@ class MLDA(srk.Module):
         
         
         # MLDA学習
-        Pdz, Pdw = mlda.train( data, self.__K, self.__itr, self.get_name(), bias_dz=Pdz, categories=self.__category )
+        Pdz, Pdw = mlda.train( data, self.__K, self.__itr, self.get_name(), Pdz, self.__category, self.__mode )
         
         # メッセージの送信
         self.set_forward_msg( Pdz )

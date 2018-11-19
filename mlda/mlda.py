@@ -105,35 +105,43 @@ def calc_acc(results, correct):
 
     return max_acc, results
 
-def save_model( save_dir, n_dz, n_mzw, n_mz, M, dims, categories ):
-    try:
+# モデルの保存
+def save_model( save_dir, n_dz, n_mzw, n_mz, M, dims, categories, mode ):
+    if not os.path.exists( save_dir ):
         os.mkdir( save_dir )
-    except:
-        pass
 
+    # 確率の計算と保存
     Pdz = n_dz + __alpha
     Pdz = (Pdz.T / Pdz.sum(1)).T
-    numpy.savetxt( os.path.join( save_dir, "Pdz.txt" ), Pdz, fmt=str("%f") )
-
+    
+    numpy.savetxt( os.path.join( save_dir, "Pdz_{}.txt".format(mode) ), Pdz, fmt=str("%f") )
+    
     Pmdw = []
     for m in range(M):
         Pwz = (n_mzw[m].T + __beta) / (n_mz[m] + dims[m] *__beta)
         Pdw = Pdz.dot(Pwz.T)
         Pmdw.append( Pdw )
-        numpy.savetxt( os.path.join( save_dir, "Pmdw[%d].txt" % m ) , Pdw )
+        numpy.savetxt( os.path.join( save_dir, "Pmdw[{0:d}]_{1}.txt".format(m, mode) ) , Pdw )
 
-    with open( os.path.join( save_dir, "model.pickle" ), "wb" ) as f:
-        pickle.dump( [n_mzw, n_mz], f )
+    # モデルパラメータの保存
+    if mode == "learn":
+        with open( os.path.join( save_dir, "model.pickle" ), "wb" ) as f:
+            pickle.dump( [n_mzw, n_mz], f )
         
+    # 分類結果・精度の計算と保存
+    results = numpy.argmax( Pdz, -1 )
     if categories is not None:
         results = numpy.argmax( Pdz, -1 )
         acc, results = calc_acc( results, categories )
-        numpy.savetxt( os.path.join( save_dir, "categories.txt" ), results )
-        numpy.savetxt( os.path.join( save_dir, "acc.txt" ), [acc] )
+        numpy.savetxt( os.path.join( save_dir, "categories_{}.txt".format(mode) ), results, fmt=str("%d") )
+        numpy.savetxt( os.path.join( save_dir, "acc_{}.txt".format(mode) ), [acc], fmt=str("%f") )
+        
+    else:
+        numpy.savetxt( os.path.join( save_dir, "categories_{}.txt".format(mode) ), results, fmt=str("%d") )
         
     return Pdz, Pmdw
 
-
+# モデルパラメータの読み込み
 def load_model( load_dir ):
     model_path = os.path.join( load_dir, "model.pickle" )
     with open(model_path, "rb" ) as f:
@@ -142,7 +150,7 @@ def load_model( load_dir ):
     return a,b
 
 # ldaメイン
-def train( data, K, num_itr=100, save_dir="model", load_dir=None, bias_dz=None, categories=None ):
+def train( data, K, num_itr=100, save_dir="model", bias_dz=None, categories=None, mode="learn" ):
     
     # 尤度のリスト
     liks = []
@@ -170,8 +178,8 @@ def train( data, K, num_itr=100, save_dir="model", load_dir=None, bias_dz=None, 
     n_dz, n_mzw, n_mz = calc_lda_param( docs_mdn, topics_mdn, K, dims )
 
     # 認識モードの時は学習したパラメータを読み込み
-    if load_dir:
-        n_mzw, n_mz = load_model( load_dir )
+    if mode == "recog":
+        n_mzw, n_mz = load_model( save_dir )
 
     for it in range(num_itr):
         # メインの処理
@@ -189,7 +197,7 @@ def train( data, K, num_itr=100, save_dir="model", load_dir=None, bias_dz=None, 
                     # データを取り除きパラメータを更新
                     n_dz[d][z] -= 1
 
-                    if not load_dir:
+                    if mode == "learn":
                         n_mzw[m][z][w] -= 1
                         n_mz[m][z] -= 1
 
@@ -200,7 +208,7 @@ def train( data, K, num_itr=100, save_dir="model", load_dir=None, bias_dz=None, 
                     topics_mdn[m][d][n] = z
                     n_dz[d][z] += 1
 
-                    if not load_dir:
+                    if mode == "learn":
                         n_mzw[m][z][w] += 1
                         n_mz[m][z] += 1
 
@@ -210,21 +218,6 @@ def train( data, K, num_itr=100, save_dir="model", load_dir=None, bias_dz=None, 
                 lik += calc_liklihood( data[m], n_dz, n_mzw[m], n_mz[m], K, dims[m] )
         liks.append( lik )
 
-    params = save_model( save_dir, n_dz, n_mzw, n_mz, M, dims, categories )
+    params = save_model( save_dir, n_dz, n_mzw, n_mz, M, dims, categories, mode )
     
     return params
-
-
-def main():
-    data = []
-    data.append( numpy.loadtxt( "histogram_v.txt" , dtype=numpy.int32) )
-    data.append( numpy.loadtxt( "histogram_w.txt" , dtype=numpy.int32)*5 )
-    mlda( data, 3, 100, "learn_result" )
-
-    data[1] = None
-    mlda( data, 3, 10, "recog_result" , "learn_result" )
-
-
-if __name__ == '__main__':
-    main()
-
