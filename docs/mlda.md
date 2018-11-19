@@ -3,7 +3,7 @@ layout: default
 ---
 ## MLDA(Multimoda Latent Dirichlet Allocation)
 
-###mlda.MLDA( K, weights=None, itr=100, name="mlda", category=None, mode="learn" )</dt>
+###mlda.MLDA( K, weights=None, itr=100, name="mlda", category=None, mode="learn" )
 
 ####Parameters
 
