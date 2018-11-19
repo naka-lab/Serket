@@ -6,7 +6,7 @@ layout: default
 ```
 mlda.MLDA( K, weights=None, itr=100, name="mlda", category=None, mode="learn" )
 ```
-**Parameters**
+### Parameters
 
 | Parameter | Type | Description |
 |:----------|:-----|:------------|
