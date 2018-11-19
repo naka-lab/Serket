@@ -27,7 +27,6 @@
                       <li><a href="http://serket.naka-lab.org/hac.html">HAC</a></li>
                   </ul>
               </li>
-              <li><a href="#sidr">close menu</a></li>
           </ul>
       </nav>
     </div>
@@ -43,7 +42,7 @@
 
    <div align="center">
     <a href="http://serket.naka-lab.org/index.html"><img src="http://serket.naka-lab.org/logo.jpg" /></a></div>
-    <a id="simple-menu" class="menu-button fixed" href="#sidr">Toggle menu</a>
+    <a id="simple-menu" class="menu-button fixed" href="#navigation">Toggle menu</a>
 
     <div class="wrapper">
     {{ content }}
@@ -62,7 +61,9 @@
     $(document).ready(function () {
       $('#simple-menu').sidr({
         timing: 'ease-in-out',
-        speed: 500
+        speed: 500,
+        name: 'sidr-main',
+        source: '#navigation'
       });
     });
 
