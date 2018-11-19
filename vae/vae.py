@@ -16,24 +16,28 @@ def bias_variable(shape):
     return tf.Variable(initial)
 
 
-def save_result(z, xx, loss_save, save_dir):
-    try:
+def save_result(z, xx, loss_save, save_dir, mode):
+    if not os.path.exists( save_dir ):
         os.mkdir( save_dir )
-    except:
-        pass
 
-    np.savetxt( os.path.join( save_dir, "z.txt"),z )
-    np.savetxt( os.path.join( save_dir, "x_hat.txt"),xx )
-    np.savetxt( os.path.join( save_dir, "loss.txt"),loss_save )
+    # ｚ,x_hatを保存
+    np.savetxt( os.path.join( save_dir, "z_{}.txt".format(mode) ), z )
+    np.savetxt( os.path.join( save_dir, "x_hat_{}.txt".format(mode) ), xx )
+    
+    # 学習モード時はlossを保存
+    if mode == "learn":
+        np.savetxt( os.path.join( save_dir, "loss.txt" ), loss_save )
 
 
-def train( data, latent_dim, weight_stddev, num_itr=5000, save_dir="model", mu_prior=None, hidden_encoder_dim=100, hidden_decoder_dim=100, batch_size=None, KL_param=1):
+def train( data, latent_dim, weight_stddev, num_itr=5000, save_dir="model", mu_prior=None, hidden_encoder_dim=100, hidden_decoder_dim=100, batch_size=None, KL_param=1, mode="learn" ):
     input_dim = len(data[0])
     N = len(data)
     
     # KLダイバージェンスの重み
     a = KL_param
 
+    tf.reset_default_graph()
+    
     # 入力を入れるplaceholder
     x = tf.placeholder("float", shape=[None, input_dim])
     mu_pri = tf.placeholder("float", shape=[None, latent_dim])
@@ -76,48 +80,48 @@ def train( data, latent_dim, weight_stddev, num_itr=5000, save_dir="model", mu_p
     # lossを最小化する手法を設定
     train_step = tf.train.AdamOptimizer(0.01).minimize(loss)
 
+    # loss保存用のlist
+    loss_save = []
+    
+    saver = tf.train.Saver()
+    
     # 学習
-    saver = tf.train.Saver()
-    
-    with tf.Session() as sess:
-        sess.run(tf.global_variables_initializer())
-        
-        # loss保存用のlist
-        loss_save = []
+    if mode == "learn":
+        with tf.Session() as sess:
+            sess.run(tf.global_variables_initializer())
                 
-        for step in range(1, num_itr+1):
-            # バッチ学習
-            if batch_size==None:
-                feed_dict = {x: data, mu_pri: mu_prior}
-                _, cur_loss = sess.run([train_step, loss], feed_dict=feed_dict)
-                # 50ごとにloss保存
-                if step % 50 == 0:
-                    loss_save.append([step,cur_loss])
-            
-            # ミニバッチ学習
-            else:                
-                sff_idx = np.random.permutation(N)
-                for idx in range(0, N, batch_size):
-                    batch = data[sff_idx[idx: idx + batch_size if idx + batch_size < N else N]]
-                    batch_mu = mu_prior[sff_idx[idx: idx + batch_size if idx + batch_size < N else N]]
-                    feed_dict = {x: batch, mu_pri: batch_mu}
+            for step in range(1, num_itr+1):
+                # バッチ学習
+                if batch_size==None:
+                    feed_dict = {x: data, mu_pri: mu_prior}
                     _, cur_loss = sess.run([train_step, loss], feed_dict=feed_dict)
-                # epochごとにloss保存
-                loss_save.append([step,cur_loss])
-               
-        saver.save(sess, os.path.join(save_dir,"model.ckpt"))
+                    # 50ごとにloss保存
+                    if step % 50 == 0:
+                        loss_save.append([step,cur_loss])
             
-    # サンプリング
-    saver = tf.train.Saver()
-    
+                # ミニバッチ学習
+                else:                
+                    sff_idx = np.random.permutation(N)
+                    for idx in range(0, N, batch_size):
+                        batch = data[sff_idx[idx: idx + batch_size if idx + batch_size < N else N]]
+                        batch_mu = mu_prior[sff_idx[idx: idx + batch_size if idx + batch_size < N else N]]
+                        feed_dict = {x: batch, mu_pri: batch_mu}
+                        _, cur_loss = sess.run([train_step, loss], feed_dict=feed_dict)
+                    # epochごとにloss保存
+                    loss_save.append([step,cur_loss])
+               
+            # モデルの保存
+            saver.save(sess, os.path.join(save_dir, "model.ckpt"))
+            
+    # 認識モード時はモデルの読み込みとサンプリングのみ
     with tf.Session() as sess:
-        # モデル読み込み
-        saver.restore(sess, os.path.join(save_dir,"model.ckpt"))
-        
+        # モデルの読み込み
+        saver.restore(sess, os.path.join(save_dir, "model.ckpt"))
+        # サンプリング
         zz, xx = sess.run([z, x_hat], feed_dict={x: data})
     
-    # z,x_hat,loss保存
-    save_result(zz, xx, loss_save, save_dir) 
+    # 結果を保存
+    save_result(zz, xx, loss_save, save_dir, mode) 
     
     return zz, xx
 
