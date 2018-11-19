@@ -60,10 +60,10 @@ q:before, q:after {
 
 /* Table */
 table, th, td {
+  padding: 3px 20px;
   border-collapse: collapse;
   border: 1px solid #ccc;
   line-height: 1.5;
-  padding: 3px 10px;
 }
 
 table.type06 thead, th {
