@@ -122,6 +122,14 @@ border-bottom: dashed 2px #364e96;
 /*線の種類（点線）2px 線色*/
 }
 
+h3 {
+    font-size: 18px;
+    color: #666;
+    margin-bottom: 10px;
+    line-height: 1.5em;
+    border-bottom: dashed 1px #666;
+}
+	
 p {
     font-size: 16px;
     margin-bottom: 20px;
