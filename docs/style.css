@@ -127,7 +127,9 @@ h3 {
     color: #666;
     margin-bottom: 10px;
     line-height: 1.5em;
-    border-bottom: dashed 1px #666;
+	
+    display: inline-block;
+    border-bottom: dashed 2px #666;
 }
 	
 p {
