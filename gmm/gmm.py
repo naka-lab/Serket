@@ -3,6 +3,7 @@ import numpy
 import random
 import math
 import os
+import pickle
 
 # 確率を計算するためのクラス
 class GaussWishart():
@@ -47,7 +48,7 @@ class GaussWishart():
     def calc_loglik(self, x):
         def _calc_loglik(self):
             p = - self.__N * self.__dim * 0.5 * math.log( math.pi )
-            p+= - self.__dim * 0.5 * math.log( self.__r)
+            p+= - self.__dim * 0.5 * math.log( self.__r )
             p+= - self.__nu * 0.5 * math.log( numpy.linalg.det( self.__S ) );
 
             for d in range(1,self.__dim+1):
@@ -63,7 +64,7 @@ class GaussWishart():
         p2 = _calc_loglik( self )
         self.delete_data(x)
 
-        # log(P(x|X) = log(P(x,X)) - log(P(X))
+        # log(P(x|X)) = log(P(x,X)) - log(P(X))
         return p2 - p1
 
     def get_mean(self):
@@ -71,6 +72,19 @@ class GaussWishart():
 
     def get_num_data(self):
         return self.__N
+
+    def get_param(self):
+        return [self.__X, self.__C, self.__r, self.__nu, self.__N, self.__m0]
+    
+    def load_params(self, params):
+        self.__X = params[0]
+        self.__C = params[1]
+        self.__r = params[2]
+        self.__nu = params[3]
+        self.__N = params[4]
+        self.__m0 = params[5]
+
+        self.__update_param()
 
 
 def calc_probability( dist, d ):
@@ -94,7 +108,7 @@ def sample_class( d, distributions, i, bias_dz ):
             return k
 
 
-def calc_acc(results, correct):
+def calc_acc( results, correct ):
     K = numpy.max(results)+1  # カテゴリ数
     N = len(results)          # データ数
     max_acc = 0               # 精度の最大値
@@ -123,27 +137,45 @@ def calc_acc(results, correct):
 
     return max_acc, results
 
-
-def save_result(Pdz, mu, classes, save_dir, categories):
-    try:
+# モデルの保存
+def save_model( Pdz, mu, classes, save_dir, categories, distributions, mode ):
+    if not os.path.exists( save_dir ):
         os.mkdir( save_dir )
-    except:
-        pass
 
-    numpy.savetxt( os.path.join( save_dir, "Pdz.txt"), Pdz )
-    numpy.savetxt( os.path.join( save_dir, "mu.txt"), mu )
+    # モデルパラメータの保存
+    if mode == "learn":
+        K = len(Pdz[0])
+        params = []
+        for k in range(K):
+            params.append(distributions[k].get_param())
+        with open( os.path.join( save_dir, "model.pickle" ), "wb" ) as f:
+            pickle.dump( params, f )
 
+    # 確率と平均の保存
+    numpy.savetxt( os.path.join( save_dir, "Pdz_{}.txt".format(mode) ), Pdz, fmt=str("%f") )
+    numpy.savetxt( os.path.join( save_dir, "mu_{}.txt".format(mode) ), mu )
+
+    # 分類結果・精度の計算と保存
     if categories is not None:
         acc, results = calc_acc( classes, categories )
-        numpy.savetxt( os.path.join( save_dir, "class.txt" ), results )
-        numpy.savetxt( os.path.join( save_dir, "acc.txt" ), [acc] )
+        numpy.savetxt( os.path.join( save_dir, "class_{}.txt".format(mode) ), results, fmt=str("%d") )
+        numpy.savetxt( os.path.join( save_dir, "acc_{}.txt".format(mode) ), [acc], fmt=str("%f") )
         
     else:
-        numpy.savetxt( os.path.join( save_dir, "class.txt"), classes )
-        
+        numpy.savetxt( os.path.join( save_dir, "class{}.txt".format(mode) ), classes, fmt=str("%d") )
+
+# モデルパラメータの読み込み
+def load_model( load_dir, distributions ):
+    model_path = os.path.join( load_dir, "model.pickle" )
+    with open( model_path, "rb" ) as f:
+        a = pickle.load( f )
+    
+    K = len(distributions)
+    for k in range(K):
+        distributions[k].load_params(a[k])
 
 # gmmメイン
-def train( data, K, num_itr=100, save_dir="model", bias_dz=None, categories=None ):
+def train( data, K, num_itr=100, save_dir="model", bias_dz=None, categories=None, mode="learn" ):
     # データの次元
     dim = len(data[0])
 
@@ -153,13 +185,20 @@ def train( data, K, num_itr=100, save_dir="model", bias_dz=None, categories=None
     # データをランダムに分類
     classes = numpy.random.randint( K , size=len(data) )
 
-    # ガウス-ウィシャート分布のパラメータを計算
+    # ガウス-ウィシャート分布の生成
     mean = numpy.mean( data, axis=0 )
     distributions = [ GaussWishart(dim, mean , 0.1) for _ in range(K) ]
-    for i in range(len(data)):
-        c = classes[i]
-        x = data[i]
-        distributions[c].add_data(x)
+    
+    # 認識モード時は学習したモデルパラメータを読み込む
+    if mode == "recog":
+        load_model(save_dir, distributions)
+    
+    # 学習モード時はガウス-ウィシャート分布のパラメータを計算
+    if mode == "learn":    
+        for i in range(len(data)):
+            c = classes[i]
+            x = data[i]
+            distributions[c].add_data(x)
 
 
     for it in range(num_itr):
@@ -168,16 +207,20 @@ def train( data, K, num_itr=100, save_dir="model", bias_dz=None, categories=None
             d = data[i]
             k_old = classes[i]  # 現在のクラス
 
-            # データをクラスから除きパラメータを更新
-            distributions[k_old].delete_data( d )
-            classes[i] = -1
+            if mode == "learn":
+                # 学習モード時はデータをクラスから除きパラメータを更新
+                distributions[k_old].delete_data( d )
+                classes[i] = -1
 
             # 新たなクラスをサンプリング
             k_new = sample_class( d , distributions, i, bias_dz )
 
-            # サンプリングされたクラスのパラメータを更新
+            # サンプリングされたクラスに更新
             classes[i] = k_new
-            distributions[k_new].add_data( d )
+            
+            if mode == "learn":
+                # 学習モード時はサンプリングされたクラスのパラメータを更新
+                distributions[k_new].add_data( d )
 
     for m in range(len(data)):
         for n in range(K):
@@ -188,7 +231,7 @@ def train( data, K, num_itr=100, save_dir="model", bias_dz=None, categories=None
 
     Pdz = (Pdz.T / numpy.sum(Pdz,1)).T
 
-    save_result(Pdz, mu, classes, save_dir, categories)
+    save_model(Pdz, mu, classes, save_dir, categories, distributions, mode)
 
     return Pdz, mu
 
