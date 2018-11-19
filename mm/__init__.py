@@ -7,13 +7,18 @@ import serket as srk
 import numpy as np
 import os
 import random
+import pickle
 
 class MarkovModel(srk.Module):
-    def __init__(self, num_samp=100, name="mm" ):
+    def __init__( self, num_samp=100, name="mm", mode="learn" ):
         super(MarkovModel, self).__init__(name, True)
         self.__num_samp=num_samp
+        self.__mode = mode
         
-    def sample_idx( self, P):
+        if mode != "learn" and mode != "recog":
+            raise ValueError("choose mode from \"learn\" or \"recog\"")
+        
+    def sample_idx( self, P ):
         K = len(P)
         
         # 累積確率を計算
@@ -46,13 +51,21 @@ class MarkovModel(srk.Module):
         
         # 遷移確率を計算
         trans_prob = np.zeros( (K, K) ) + 0.1
-        for _ in range(self.__num_samp):
-            for n in range(N-1):
-                k =  self.sample_idx( data[0][n] )
-                kk = self.sample_idx( data[0][n+1] )
-                trans_prob[k,kk] += 1
-        #正規化
-        trans_prob = (trans_prob.T / trans_prob.sum(1)).T
+        # 学習モード時
+        if self.__mode == "learn":
+            for _ in range(self.__num_samp):
+                for n in range(N-1):
+                    k =  self.sample_idx( data[0][n] )
+                    kk = self.sample_idx( data[0][n+1] )
+                    trans_prob[k,kk] += 1
+            # 正規化
+            trans_prob = (trans_prob.T / trans_prob.sum(1)).T
+        
+        # 認識モード時は学習したパラメータを読み込み
+        if self.__mode == "recog":
+            model_path = os.path.join( self.get_name(), "model.pickle" )
+            with open( model_path, "rb" ) as f:
+                trans_prob = pickle.load( f )
         
         # 確率（メッセージ）を計算
         msg = np.zeros( (N, K) )
@@ -65,15 +78,19 @@ class MarkovModel(srk.Module):
             # 正規化
             msg[n] = msg[n] / msg[n].sum()
 
-            
 
         # メッセージの送信
         self.set_forward_msg( msg )
         self.send_backward_msgs( [msg] )
         
-        # データ保存
+        # データの保存
         if not os.path.exists( self.get_name() ):
-            os.mkdir( self.get_name())
+            os.mkdir( self.get_name() )
             
-        np.savetxt( os.path.join( self.get_name(), "trans_prob.txt" ), trans_prob )
-        np.savetxt( os.path.join( self.get_name(), "msg.txt" ), msg )
+        np.savetxt( os.path.join( self.get_name(), "msg_{}.txt".format(self.__mode) ), msg, fmt=str("%f") )
+
+        # モデルパラメータの保存
+        if self.__mode == "learn":
+            with open( os.path.join( self.get_name(), "model.pickle" ), "wb" ) as f:
+                pickle.dump( trans_prob, f )
+            np.savetxt( os.path.join( self.get_name(), "trans_prob_{}.txt".format(self.__mode) ), trans_prob, fmt=str("%f") )
