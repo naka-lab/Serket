@@ -12,24 +12,21 @@
   </head>
   <body>
 
-    <div id="navigation">
-      <nav class="nav">
-          <ul>
-              <li><a href="http://serket.naka-lab.org/index.html">Top page</a></li>
-              <li><a href="http://serket.naka-lab.org/getting_started.html">Getting Started</a></li>
-              <li><a href="#" title="Module Dropdown">Module</a>
-                  <ul>
-                      <li><a href="http://serket.naka-lab.org/mlda.html">MLDA</a></li>
-                      <li><a href="http://serket.naka-lab.org/gmm.html">GMM</a></li>
-                      <li><a href="http://serket.naka-lab.org/vae.html">VAE</a></li>
-                      <li><a href="http://serket.naka-lab.org/mm.html">MM</a></li>
-                      <li><a href="http://serket.naka-lab.org/cnn.html">CNN</a></li>
-                      <li><a href="http://serket.naka-lab.org/hac.html">HAC</a></li>
-                  </ul>
-              </li>
-          </ul>
-      </nav>
-    </div>
+    <div id="sidr">
+      <ul>
+          <li><a href="http://serket.naka-lab.org/index.html">Top page</a></li>
+          <li><a href="http://serket.naka-lab.org/getting_started.html">Getting Started</a></li>
+          <li><a href="#" title="Module Dropdown">Module</a>
+              <ul>
+                  <li><a href="http://serket.naka-lab.org/mlda.html">MLDA</a></li>
+                  <li><a href="http://serket.naka-lab.org/gmm.html">GMM</a></li>
+                  <li><a href="http://serket.naka-lab.org/vae.html">VAE</a></li>
+                  <li><a href="http://serket.naka-lab.org/mm.html">MM</a></li>
+                  <li><a href="http://serket.naka-lab.org/cnn.html">CNN</a></li>
+                  <li><a href="http://serket.naka-lab.org/hac.html">HAC</a></li>
+              </ul>
+          </li>
+      </ul>
       
       <!-- google翻訳 -->
       <div id="google_translate_element"></div><script type="text/javascript">
@@ -42,7 +39,7 @@
 
    <div align="center">
     <a href="http://serket.naka-lab.org/index.html"><img src="http://serket.naka-lab.org/logo.jpg" /></a></div>
-    <a id="simple-menu" class="menu-button fixed" href="#navigation">Toggle menu</a>
+    <a id="simple-menu" class="menu-button fixed" href="#sidr">Toggle menu</a>
 
     <div class="wrapper">
     {{ content }}
@@ -61,9 +58,7 @@
     $(document).ready(function () {
       $('#simple-menu').sidr({
         timing: 'ease-in-out',
-        speed: 500,
-        name: 'sidr-main',
-        source: '#navigation'
+        speed: 500
       });
     });
 
