@@ -9,11 +9,15 @@ import numpy as np
 
 
 class GMM(srk.Module):
-    def __init__(self, K, itr=100, name="gmm", category=None ):
+    def __init__( self, K, itr=100, name="gmm", category=None, mode="learn" ):
         super(GMM, self).__init__(name, True)
         self.__K = K
         self.__itr = itr
         self.__category = category
+        self.__mode = mode
+        
+        if mode != "learn" and mode != "recog":
+            raise ValueError("choose mode from \"learn\" or \"recog\"")
 
     def update(self):
         data = self.get_observations()
@@ -28,7 +32,7 @@ class GMM(srk.Module):
         data[0] = np.array( data[0], dtype=np.float32 )
 
         # GMM学習
-        Pdz, mu = gmm.train( data[0], self.__K, self.__itr, self.get_name(), bias_dz=Pdz, categories=self.__category )
+        Pdz, mu = gmm.train( data[0], self.__K, self.__itr, self.get_name(), Pdz, self.__category, self.__mode )
 
         # メッセージの送信
         self.set_forward_msg( Pdz )
