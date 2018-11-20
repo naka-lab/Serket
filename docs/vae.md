@@ -13,9 +13,7 @@ Although the variational lower bound of normal VAE is as follows,
 
 <img src="https://latex.codecogs.com/gif.latex?\mathcal{L}(\theta,&space;\phi;&space;o)&space;=&space;-D_{KL}(q_{\phi}(z_1|o)||\mathcal{N}(0,&space;I))&plus;\mathbb{E}_{q_{\phi}(z_1|o)}[\log&space;p_{\theta}(o|z_1)]" />
 
-In Serket, it is optimized using messages (
-<img src=https://latex.codecogs.com/gif.latex?\mu />
-) received from connected modules by defining as follows.
+In Serket, it is optimized using messages (<img src="https://latex.codecogs.com/gif.latex?\mu" />) received from connected modules by defining as follows.
 
 <img src="https://latex.codecogs.com/gif.latex?\mathcal{L}(\theta,&space;\phi;&space;o)&space;=&space;-D_{KL}(q_{\phi}(z_1|o)||\mathcal{N}(\mu,&space;I))&plus;\mathbb{E}_{q_{\phi}(z_1|o)}[\log&space;p_{\theta}(o|z_1)]" />
 
