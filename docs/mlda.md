@@ -25,10 +25,9 @@ mlda.MLDA( K, weights=None, itr=100, name="mlda", category=None, mode="learn" )
 モデルパラメータを推定し確率などを計算する．  
 "learn"モード時には学習を行い，"recog"モード時では未知データに対する予測を行う．  
 学習に成功すると`module{i}_mlda`ディレクトリが作成される．  
-ディレクトリ内には以下のファイルが保存される．
+ディレクトリ内には以下のファイルが保存される．（{mode}には選択したmode(learn or recog)が入る．）
     - `model.pickle`: モデルパラメータが保存されている．
     - `acc_{mode}.txt`: categoryが与えられたとき計算された精度．
     - `categories_{mode}.txt`: 分類したクラスz．
     - `Pdz_{mode}.txt`: データdがクラスzである確率．
-    - `Pmdw[i]_{mode}.txt`: データdからモダリティiの特徴wが発生する確率．  
-{mode}には選択したmode(learn or recog)が入る．
+    - `Pmdw[i]_{mode}.txt`: データdからモダリティiの特徴wが発生する確率．
