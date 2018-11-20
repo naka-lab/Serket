@@ -23,15 +23,15 @@ vae.VAE( latent_dim, weight_stddev=0.1, itr=5000, name="vae", hidden_encoder_dim
 
 ### Method
 
-- .connect()
+- .connect()  
     観測またはモジュールと接続しモデルを構築する．
-- .update()
-    モデルパラメータを推定し潜在変数などを計算する．　
-    "learn"モード時には学習を行い，"recog"モード時では未知データに対する予測を行う．　
-    学習に成功すると`module{i}_vae`ディレクトリが作成される．　
+- .update()  
+    モデルパラメータを推定し潜在変数などを計算する．　 
+    "learn"モード時には学習を行い，"recog"モード時では未知データに対する予測を行う．　 
+    学習に成功すると`module{i}_vae`ディレクトリが作成される．　 
     ディレクトリ内には以下のファイルが保存される．
     - `model.ckpt`: モデルパラメータが保存されている．
     - `loss.txt`: 学習時のloss．
     - `x_hat_{mode}.txt`: decoderから出力された復元データ．
-    - `z_{mode}.txt`: encoderにより圧縮された潜在変数．
+    - `z_{mode}.txt`: encoderにより圧縮された潜在変数．  
     {mode}には選択したmode(learn or recog)が入る．
