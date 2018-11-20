@@ -9,7 +9,7 @@ gmm.GMM( K, itr=100, name="gmm", category=None, mode="learn" )
 
 GMM is a module for unsupervised classification.
 It calculates the probabilities that each data is classified into each class and the mean of the distribution of the classes, 
-and sends to the connected modules.
+and sends them to the connected modules.
 
   
 ### Parameters

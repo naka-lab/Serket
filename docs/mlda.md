@@ -9,7 +9,7 @@ mlda.MLDA( K, weights=None, itr=100, name="mlda", category=None, mode="learn" )
 
 MLDA is a topic model that extends LDA to multimodal information and a module for unsupervised classification. 
 It calculates the probabilities that each data is classified into each class and each feature of each modality is generated in each data, 
-and sends it to the connected module.
+and sends them to the connected modules.
 
   
 ### Parameters
