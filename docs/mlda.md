@@ -1,39 +1,40 @@
 ---
 layout: default
 ---
-## MLDA(Multimoda Latent Dirichlet Allocation)
+## MLDA (Multimodal Latent Dirichlet Allocation)
 
 ```
 mlda.MLDA( K, weights=None, itr=100, name="mlda", category=None, mode="learn" )
 ```
 
-MLDAはLDAをマルチモーダル情報に拡張したトピックモデルであり，クラスタリングを行うモジュールである．
-各データがそれぞれのクラスに分類される確率と各データからモダリティの特徴が発生する確率を計算し，接続されたモジュールへ送信する．
+MLDA is a topic model that extends LDA to multimodal information and a module for unsupervised classification. 
+It calculates the probabilities that each data is classified into each class and each feature of each modality is generated in each data, 
+and sends it to the connected module.
 
-
+  
 ### Parameters
 
 | Parameter | Type | Description |
 |:----------|:-----|:------------|
-| K         | int | Number of cluster |
+| K         | int | Number of clusters |
 | weghits   | array | Weight for each modality |
 | itr       | int | Number of iteration |
 | name      | string | Name of module |
-| category  | array | Correct class label |
+| category  | array | Correct class labels |
 | mode      | string | Choose the mode from learning mode("learn") or recognition mode("recog") |
 
-
+  
 ### Method
 
 - .connect()  
-観測またはモジュールと接続しモデルを構築する．
+This method connects the module to observations or modules and constructs the model.
 - .update()  
-モデルパラメータを推定し確率などを計算する．  
-"learn"モード時には学習を行い，"recog"モード時では未知データに対する予測を行う．  
-学習に成功すると`module{i}_mlda`ディレクトリが作成される．  
-ディレクトリ内には以下のファイルが保存される．（{mode}には選択したmode(learn or recog)が入る．）
-    - `model.pickle`: モデルパラメータが保存されている．
-    - `acc_{mode}.txt`: categoryが与えられたとき計算された精度．
-    - `categories_{mode}.txt`: 分類したクラスz．
-    - `Pdz_{mode}.txt`: データdがクラスzである確率．
-    - `Pmdw[i]_{mode}.txt`: データdからモダリティiの特徴wが発生する確率．
+This method estimates model parameters and calculates probabilities and others.
+The module estimates model parameters in "learn" mode and predict unknown data in "recog" mode.
+If learning is successful, the `module {n} _mlda` directory is created.
+The following files are saved in the directory.({mode} contains the selected mode (learn or recog))
+    - `model.pickle`: The model parameters are saved.
+    - `acc_{mode}.txt`: The accuracy calculated when category is given is saved.
+    - `categories_{mode}.txt`: The categories in which each data is classified are saved.
+    - `Pdz_{mode}.txt`: The probabilities that each data d is in each class z are saved.
+    - `Pmdw[i]_{mode}.txt`: The probabilities that each feature w of each modality i is generated in each data d are saved.
