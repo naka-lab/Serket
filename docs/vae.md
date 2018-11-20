@@ -33,7 +33,7 @@ In Serket, it is optimized using messages (<img src="https://latex.codecogs.com/
 | mode      | string | Choose the mode from learning mode("learn") or recognition mode("recog") |
 
   
-### Method
+### Methods
 
 - .connect()  
 This method connects the module to observations or modules and constructs the model.

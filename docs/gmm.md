@@ -23,7 +23,7 @@ and sends them to the connected modules.
 | mode      | string | Choose the mode from learning mode("learn") or recognition mode("recog") |
 
   
-### Method
+### Methods
 
 - .connect()  
 This method connects the module to observations or modules and constructs the model.
