@@ -6,6 +6,9 @@ layout: default
 ```
 mm.MM( num_samp=100, name="mm", mode="learn" )
 ```
+
+クラスタリングを行うモジュールと接続することで送信された確率を用いて遷移確率を計算し，
+
 ### Parameters
 
 | Parameter | Type | Description |
@@ -13,6 +16,7 @@ mm.MM( num_samp=100, name="mm", mode="learn" )
 | num_samp  | int | Number of sampling |
 | name      | string | Name of module |
 | mode      | string | Choose the mode from learning mode("learn") or recognition mode("recog") |
+
 
 ### Method
 

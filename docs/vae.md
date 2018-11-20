@@ -5,8 +5,21 @@ layout: default
 
 ```
 vae.VAE( latent_dim, weight_stddev=0.1, itr=5000, name="vae", hidden_encoder_dim=100,
-          hidden_decoder_dim=100, batch_size=None, KL_param=1, mode="learn"  )
+          　　　　hidden_decoder_dim=100, batch_size=None, KL_param=1, mode="learn"  )
 ```
+
+次元圧縮を行うモジュールである．
+通常のVAEの変分下限は以下であるが，
+
+```math
+L(\theta, \phi; o) = -D_{KL}(q_{\phi}(z_1|o)||N(0, I))+E_{q_{\phi}(z_1|o)}[\log p_{\theta}(o|z_1)]
+```
+Serketでは以下のように定義することで接続されたモジュールから受信するメッセージ($\mu$)を用いて最適化される．
+
+```math
+L(\theta, \phi; o) = -D_{KL}(q_{\phi}(z_1|o)||N(\mu, I))+E_{q_{\phi}(z_1|o)}[\log p_{\theta}(o|z_1)]
+```
+
 ### Parameters
 
 | Parameter | Type | Description |
@@ -20,6 +33,7 @@ vae.VAE( latent_dim, weight_stddev=0.1, itr=5000, name="vae", hidden_encoder_dim
 | batch_size | int | Number of batch size |
 | KL_param  | float | Weight for KL divergence |
 | mode      | string | Choose the mode from learning mode("learn") or recognition mode("recog") |
+
 
 ### Method
 

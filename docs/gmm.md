@@ -6,6 +6,11 @@ layout: default
 ```
 gmm.GMM( K, itr=100, name="gmm", category=None, mode="learn" )
 ```
+
+GMMはクラスタリングを行うモジュールである．
+各データがそれぞれのクラスに分類される確率とそのクラスの分布の平均を計算し，接続されたモジュールへ送信する．
+
+
 ### Parameters
 
 | Parameter | Type | Description |
@@ -15,6 +20,7 @@ gmm.GMM( K, itr=100, name="gmm", category=None, mode="learn" )
 | name      | string | Name of module |
 | category  | array | Correct class label |
 | mode      | string | Choose the mode from learning mode("learn") or recognition mode("recog") |
+
 
 ### Method
 

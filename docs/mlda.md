@@ -6,6 +6,11 @@ layout: default
 ```
 mlda.MLDA( K, weights=None, itr=100, name="mlda", category=None, mode="learn" )
 ```
+
+MLDAはLDAをマルチモーダル情報に拡張したトピックモデルであり，クラスタリングを行うモジュールである．
+各データがそれぞれのクラスに分類される確率と各データからモダリティの特徴が発生する確率を計算し，接続されたモジュールへ送信する．
+
+
 ### Parameters
 
 | Parameter | Type | Description |
@@ -16,6 +21,7 @@ mlda.MLDA( K, weights=None, itr=100, name="mlda", category=None, mode="learn" )
 | name      | string | Name of module |
 | category  | array | Correct class label |
 | mode      | string | Choose the mode from learning mode("learn") or recognition mode("recog") |
+
 
 ### Method
 
