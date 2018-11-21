@@ -20,7 +20,7 @@ It converts wav format data to hac features.
 | ks        | array | Number of elements in each code book (triple of int) |
 | lags      | array | List of lags to use for calculation (the corresponding histograms are concatenated) |
 | name      | string | Name of module |
-|mfcc_params| tuple | Parameters for converting to mfcc features (use librosa)  default  "n_mfcc": 13  "n_fft": 2048  "hop_length": 512  "n_mels": 128 |
+|mfcc_params| tuple | Parameters for converting to mfcc features (use librosa)<br>default<br>"n_mfcc": 13<br>"n_fft": 2048<br>"hop_length": 512<br>"n_mels": 128 |
 
   
 ### Example
