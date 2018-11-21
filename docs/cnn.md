@@ -28,8 +28,8 @@ import mlda
 
 # make a list of some paths to image data
 data = ["./data00.png", "./data01.png", "./data02.png", 
-        "./data03.png", "./data04.png", "./data05.png",
-        "./data06.png", "./data07.png", "./data08.png"]
+           "./data03.png", "./data04.png", "./data05.png",
+           "./data06.png", "./data07.png", "./data08.png"]
 
 # define the modules
 obs = CNN.CNNFeatureExtractor( data ) # extract image features

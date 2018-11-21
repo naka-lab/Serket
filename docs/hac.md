@@ -32,8 +32,8 @@ import mlda
 
 # make a list of some paths to wav data
 wavs = ["./data00.wav", "./data01.wav", "./data02.wav", 
-        "./data03.wav", "./data04.wav", "./data05.wav",
-        "./data06.wav", "./data07.wav", "./data08.wav"]
+           "./data03.wav", "./data04.wav", "./data05.wav",
+           "./data06.wav", "./data07.wav", "./data08.wav"]
 
 # define the modules
 obs = hac.HACFeatureExtractor( wavs, [10,10,10], lags=[5] ) # convert wav data to hac features
