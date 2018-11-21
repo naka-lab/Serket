@@ -14,6 +14,10 @@ Install dependency packages (You can skip if you have already installed these pa
 ```
 pip install numpy
 pip install opencv-python
+pip install numba
+pip install scipy
+pip install tensorflow
+pip install librosa==0.5.1
 ```
 
 # Simple Example of Serket
@@ -29,7 +33,7 @@ data = [
     [2, 1, 1]
 ]
 
-data_category = [0, 0, 1, 1, 2, 2 ]
+data_category = [0, 0, 1, 1, 2, 2]
 ```
 
 Then, we define the modules. `srk.Observation` is a module which send the observation to another module, and `mlda.MLDA` (multimodal latent Dirichlet allocation) is a modules for an unsupervised classification. Here, we define MLDA that classifies dataset into three classes. 
