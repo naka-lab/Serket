@@ -48,15 +48,15 @@ import serket as srk
 import mlda
 import numpy as np
 
-data = np.loadtxt( "data.txt" ) # load a data
-data_category = np.loadtxt( "category.txt" ) # load a correct label
+data = np.loadtxt( "data.txt" )  # load a data
+data_category = np.loadtxt( "category.txt" )  # load a correct label
 
 # define the modules
-obs = srk.Observation( data ) # send the observation to mlda
-mlda1 = mlda.MLDA( K, catogory=data_category ) # classify into K classes
+obs = srk.Observation( data ) # send the observation to mlda1
+mlda1 = mlda.MLDA( 10, catogory=data_category )  # classify into ten classes
 
 # construct the model
-mlda1.connect( obs ) # connect obs to mlda1
+mlda1.connect( obs )  # connect obs to mlda1
 
-mlda1.update() # training mlda
+mlda1.update()  # training mlda
 ```

@@ -57,20 +57,20 @@ import vae
 import gmm
 import numpy as np
 
-data = np.loadtxt( "data.txt" ) # load a data
-data_category = np.loadtxt( "category.txt" ) # load a correct label
+data = np.loadtxt( "data.txt" )  # load a data
+data_category = np.loadtxt( "category.txt" )  # load a correct label
 
 # define the modules
-obs = srk.Observation( data ) # send the observation to mlda
-vae1 = vae.VAE( d ) # compress to d dimension
-gmm1 = gmm.GMM( K, catogory=data_category ) # classify into K classes
+obs = srk.Observation( data )  # send the observation to mlda
+vae1 = vae.VAE( 10 )  # compress to ten dimension
+gmm1 = gmm.GMM( 10, catogory=data_category )  # classify into ten classes
 
 # construct the model
-vae1.connect( obs ) # connect obs to vae1
-gmm1.connect( vae1 ) # connect vae1 to gmm1
+vae1.connect( obs )  # connect obs to vae1
+gmm1.connect( vae1 )  # connect vae1 to gmm1
 
 # optimize the model
 for i in range(5):
-    vae1.update() # training vae1
-    gmm1.update() # training gmm1
+    vae1.update()  # training vae1
+    gmm1.update()  # training gmm1
 ```

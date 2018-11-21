@@ -47,15 +47,15 @@ import serket as srk
 import gmm
 import numpy as np
 
-data = np.loadtxt( "data.txt" ) # load a data
-data_category = np.loadtxt( "category.txt" ) # load a correct label
+data = np.loadtxt( "data.txt" )  # load a data
+data_category = np.loadtxt( "category.txt" )  # load a correct label
 
 # define the modules
-obs = srk.Observation( data ) # send the observation to gmm
-gmm1 = gmm.GMM( K, catogory=data_category ) # classify into K classes
+obs = srk.Observation( data )  # send the observation to gmm1
+gmm1 = gmm.GMM( 10, catogory=data_category )  # classify into ten classes
 
 # construct the model
-gmm1.connect( obs ) # connect obs to gmm1
+gmm1.connect( obs )  # connect obs to gmm1
 
-gmm1.update() # training gmm
+gmm1.update()  # training gmm
 ```

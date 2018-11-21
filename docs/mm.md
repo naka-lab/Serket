@@ -44,20 +44,20 @@ import gmm
 import mm
 import numpy as np
 
-data = np.loadtxt( "data.txt" ) # load a data
-data_category = np.loadtxt( "category.txt" ) # load a correct label
+data = np.loadtxt( "data.txt" )  # load a data
+data_category = np.loadtxt( "category.txt" )  # load a correct label
 
 # define the modules
-obs = srk.Observation( data ) # send the observation to mlda
-gmm1 = gmm.GMM( K, catogory=data_category ) # classify into K classes
+obs = srk.Observation( data )  # send the observation to mlda1
+gmm1 = gmm.GMM( 10, catogory=data_category )  # classify into ten classes
 mm1 = mm.MarkovModel()
 
 # construct the model
-gmm1.connect( obs ) # connect obs to gmm1
-mm1.connect( gmm1 ) # connect gmm1 to mm1 (construct HMM)
+gmm1.connect( obs )  # connect obs to gmm1
+mm1.connect( gmm1 )  # connect gmm1 to mm1 (construct HMM)
 
 # optimize the model
 for i in range(5):
-    gmm1.update() # training gmm1
-    mm1.update() # training mm1
+    gmm1.update()  # training gmm1
+    mm1.update()  # training mm1
 ```

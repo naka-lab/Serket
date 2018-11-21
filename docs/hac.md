@@ -32,16 +32,15 @@ import mlda
 
 # make a list of some paths to wav data
 wavs = ["./data00.wav", "./data01.wav", "./data02.wav", 
-           "./data03.wav", "./data04.wav", "./data05.wav",
-           "./data06.wav", "./data07.wav", "./data08.wav"]
+            "./data03.wav", "./data04.wav", "./data05.wav",
+            "./data06.wav", "./data07.wav", "./data08.wav"]
 
 # define the modules
-obs = hac.HACFeatureExtractor( wavs, [10,10,10], lags=[5] ) # convert wav data to hac features
-mlda1 = mlda.MLDA( 3, [200], category=[0,0,0,1,1,1,2,2,2] )
+obs = hac.HACFeatureExtractor( wavs, [10,10,10], lags=[5] )  # convert wav data to hac features
+mlda1 = mlda.MLDA( 3, [100], category=[0,0,0,1,1,1,2,2,2] )  # classify into three classes
     
 # construct the model
-mlda1.connect( obs ) # connect obs to mlda1
+mlda1.connect( obs )  # connect obs to mlda1
 
-mlda1.update() # training mlda1
-
+mlda1.update()  # training mlda1
 ```
