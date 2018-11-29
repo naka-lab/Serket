@@ -6,7 +6,7 @@ Currently the following modules exist.
 
 - [CNN](http://serket.naka-lab.org/modules/cnn.html)
 
-- [GMM](http://serket.naka-lab.org/modules/gnn.html)
+- [GMM](http://serket.naka-lab.org/modules/gmm.html)
 
 - [HAC](http://serket.naka-lab.org/modules/hac.html)
 
