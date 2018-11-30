@@ -13,19 +13,20 @@ MNISTデータセットを使用する．
 VAEで，観測 \\( \boldsymbol{o} \\) がエンコーダーにあたるニューラルネットを通して任意の次元の潜在変数 \\( \boldsymbol{z}_1 \\)に圧縮される．
 VAEは，圧縮された潜在変数 \\( \boldsymbol{z}_1 \\) をGMMへ送信する．
 GMMは，VAEから送られてきた潜在変数 \\( \boldsymbol{z}_1 \\) を分類し，確率などを計算する．
-GMMは，確率 \\( P(\boldsymbol{z}_2|\boldsymbol{z}_1) \\) をMMモジュールへ送信し，分類されたクラスの平均 \\( \boldsymbol{\mu} \\) をVAEへ送信する．
-MMは，送られてきた確率 \\( P(\boldsymbol{z}_2|\boldsymbol{z}_1) \\)を用いて繰り返しサンプリングを行い，次のように遷移回数をカウントする．
+GMMは，確率 \\( P(\boldsymbol{z}_2\mid\boldsymbol{z}_1) \\) をMMモジュールへ送信し，分類されたクラスの平均 \\( \boldsymbol{\mu} \\) をVAEへ送信する．
+MMは，送られてきた確率 \\( P(\boldsymbol{z}_2 \mid \boldsymbol{z}_1) \\)を用いて繰り返しサンプリングを行い，次のように遷移回数をカウントする．
 
 $$
-z'_ 2 \sim P(z_{2,t}|\boldsymbol{z}_{1,t})\\
-z_2 \sim P(z_{2,t+1}|\boldsymbol{z}_{1,t+1})\\
-N_{z'_ 2,z_2}++
+& & z'_ 2 \sim P(z_{2,t} \mid \boldsymbol{z}_{1,t})\\
+& & z_2 \sim P(z_{2,t+1} \mid \boldsymbol{z}_{1,t+1})\\
+& & N_{z'_ 2,z_2}++
 $$
 
-ここで，\\( P(z_{2,t}|\boldsymbol{z}_{1,t}) \\) は \\(　t　\\)　番目のデータがクラス \\( z_{2,t} \\) に分類される確率である．この値から遷移確率 \\( P(z_2|z'_ 2) \\) は次のように計算することができる．
+ここで，\\( P(z_{2,t} \mid \boldsymbol{z}_{1,t}) \\) は \\(　t　\\)　番目のデータがクラス \\( z_{2,t} \\) に分類される確率である．
+この値から遷移確率 \\( P(z_2 \mid z'_ 2) \\) は次のように計算することができる．
 
 $$
-P(z_2|z'_ 2) = \frac{N_{z'_ 2,z_2} + \alpha}{\sum_{\bar{z}_2}{N_{z'_ 2,\bar{z}_2}} + K \alpha}
+P(z_2 \mid z'_ 2) = \frac{N_{z'_ 2,z_2} + \alpha}{\sum_{\bar{z}_2}{N_{z'_ 2,\bar{z}_2}} + K \alpha}
 $$
 
 ただし，\\( K \\) はGMMのクラス数である．
