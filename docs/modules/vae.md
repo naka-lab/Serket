@@ -11,13 +11,17 @@ vae.VAE( latent_dim, weight_stddev=0.1, itr=5000, name="vae", hidden_encoder_dim
 `vae.VAE` is a module for dimensional compression, and sends compressed latent variables to the connected module.
 Although the variational lower bound of normal VAE is as follows,
 
-<img src="https://latex.codecogs.com/gif.latex?\mathcal{L}(\theta,&space;\phi;&space;o)&space;=&space;-D_{KL}(q_{\phi}(z_1|o)||\mathcal{N}(0,&space;I))&plus;\mathbb{E}_{q_{\phi}(z_1|o)}[\log&space;p_{\theta}(o|z_1)]" />
+$$
+\mathcal{L}(\boldsymbol{\theta},\boldsymbol{\phi};\boldsymbol{o})=-D_{KL}(q_{\boldsymbol{\phi}}(\boldsymbol{z}_1|\boldsymbol{o})||\mathcal{N}(0,\boldsymbol{I}))+\mathbb{E}_{q_{\boldsymbol{\phi}}(\boldsymbol{z}_1|\boldsymbol{o})}[\log{p_{\boldsymbol{\theta}}(\boldsymbol{o}|\boldsymbol{z}_1)}]
+$$
 
-In Serket, it is optimized using messages (<img src="https://latex.codecogs.com/gif.latex?\mu" />) received from the connected module by defining as follows.
+In Serket, it is optimized using messages (\\(\mu\\)) received from the connected module by defining as follows.
 
-<img src="https://latex.codecogs.com/gif.latex?\mathcal{L}(\theta,&space;\phi;&space;o)&space;=&space;-D_{KL}(q_{\phi}(z_1|o)||\mathcal{N}(\mu,&space;I))&plus;\mathbb{E}_{q_{\phi}(z_1|o)}[\log&space;p_{\theta}(o|z_1)]" />
+$$
+\mathcal{L}(\boldsymbol{\theta},\boldsymbol{\phi};\boldsymbol{o})=-D_{KL}(q_{\boldsymbol{\phi}}(\boldsymbol{z}_1|\boldsymbol{o})||\mathcal{N}(\boldsymbol{\mu},\boldsymbol{I}))+\mathbb{E}_{q_{\boldsymbol{\phi}}(\boldsymbol{z}_1|\boldsymbol{o})}[\log{p_{\boldsymbol{\theta}}(\boldsymbol{o}|\boldsymbol{z}_1)}]
+$$
 
-  
+
 ### Parameters
 
 | Parameter | Type | Description |
@@ -32,7 +36,7 @@ In Serket, it is optimized using messages (<img src="https://latex.codecogs.com/
 | KL_param  | float | Weight for KL divergence |
 | mode      | string | Choose the mode from learning mode("learn") or recognition mode("recog") |
 
-  
+
 ### Methods
 
 - .connect()  
@@ -47,7 +51,7 @@ The following files are saved in the directory.({mode} contains the selected mod
     - `x_hat_{mode}.txt`: Restoration data output from decoder are saved.
     - `z_{mode}.txt`: Latent variables compressed by encoder are saved.  
 
-  
+
 ### Example
 
 ```
