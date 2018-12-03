@@ -12,10 +12,10 @@ import numpy as np
 
 def main():
     obs = srk.Observation( np.loadtxt("data.txt") )
-    deta_category = np.loadtxt( "category.txt" )
-    
+    data_category = np.loadtxt( "category.txt" )
+
     vae1 = vae.VAE( 18, itr=200, batch_size=500 )
-    gmm1 = gmm.GMM( 10, category=deta_category )
+    gmm1 = gmm.GMM( 10, category=data_category )
 
     vae1.connect( obs )
     gmm1.connect( vae1 )
