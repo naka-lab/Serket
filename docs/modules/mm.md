@@ -8,10 +8,10 @@ mm.MarkovModel( num_samp=100, name="mm", mode="learn" )
 ```
 
 HMM (Hidden Markov Model) can be constructed by connecting with `mm.MarkovModel` and the module for classification.
-It calculates the transition probabilities using the sent probabilities, 
+It calculates the transition probabilities using the sent probabilities,
 and sends the probabilityies in consideration of the transition probabilities to the connected modules.
 
-  
+
 ### Parameters
 
 | Parameter | Type | Description |
@@ -20,7 +20,7 @@ and sends the probabilityies in consideration of the transition probabilities to
 | name      | string | Name of module |
 | mode      | string | Choose the mode from learning mode("learn") or recognition mode("recog") |
 
-  
+
 ### Methods
 
 - .connect()  
@@ -34,7 +34,7 @@ The following files are saved in the directory.({mode} contains the selected mod
     - `msg_{mode}.txt`: The probabilities that each data is in each class are saved.
     - `trans_prob_learn.txt`: The transition probabilities calculated at learning are saved.  
 
-  
+
 ### Example
 
 ```
@@ -48,7 +48,7 @@ data = np.loadtxt( "data.txt" )  # load a data
 data_category = np.loadtxt( "category.txt" )  # load a correct label
 
 # define the modules
-obs = srk.Observation( data )  # send the observation to mlda1
+obs = srk.Observation( data )  # send the observation to the connected module 
 gmm1 = gmm.GMM( 10, catogory=data_category )  # classify into ten classes
 mm1 = mm.MarkovModel()
 
@@ -58,6 +58,6 @@ mm1.connect( gmm1 )  # connect gmm1 to mm1 (construct HMM)
 
 # optimize the model
 for i in range(5):
-    gmm1.update()  # training gmm1
-    mm1.update()  # training mm1
+    gmm1.update()  # train gmm1
+    mm1.update()  # train mm1
 ```

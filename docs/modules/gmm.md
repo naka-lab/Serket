@@ -8,10 +8,10 @@ gmm.GMM( K, itr=100, name="gmm", category=None, mode="learn" )
 ```
 
 `gmm.GMM` is a module for unsupervised classification.
-It calculates the probabilities that each data is classified into each class and the mean of the distribution of the classes, 
+It calculates the probabilities that each data is classified into each class and the mean of the distribution of the classes,
 and sends them to the connected modules.
 
-  
+
 ### Parameters
 
 | Parameter | Type | Description |
@@ -22,7 +22,7 @@ and sends them to the connected modules.
 | category  | array | Correct class labels |
 | mode      | string | Choose the mode from learning mode("learn") or recognition mode("recog") |
 
-  
+
 ### Methods
 
 - .connect()  
@@ -38,7 +38,7 @@ The following files are saved in the directory.({mode} contains the selected mod
     - `mu_{mode}.txt`: The mean of the distribution of each class z in which each data d is classified are saved.
     - `Pdz_{mode}.txt`: The probabilities that each data d is in each class z are saved.  
 
-  
+
 ### Example
 
 ```
@@ -51,11 +51,11 @@ data = np.loadtxt( "data.txt" )  # load a data
 data_category = np.loadtxt( "category.txt" )  # load a correct label
 
 # define the modules
-obs = srk.Observation( data )  # send the observation to gmm1
+obs = srk.Observation( data )  # send the observation to the connected module
 gmm1 = gmm.GMM( 10, catogory=data_category )  # classify into ten classes
 
 # construct the model
 gmm1.connect( obs )  # connect obs to gmm1
 
-gmm1.update()  # training gmm
+gmm1.update()  # train gmm1
 ```

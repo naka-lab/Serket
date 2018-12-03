@@ -7,11 +7,11 @@ layout: default
 mlda.MLDA( K, weights=None, itr=100, name="mlda", category=None, mode="learn" )
 ```
 
-`mlda.MLDA` is a module for unsupervised classification. 
-It calculates the probabilities that each data is classified into each class and each feature of each modality is generated in each data, 
+`mlda.MLDA` is a module for unsupervised classification.
+It calculates the probabilities that each data is classified into each class and each feature of each modality is generated in each data,
 and sends them to the connected modules.
 
-  
+
 ### Parameters
 
 | Parameter | Type | Description |
@@ -23,7 +23,7 @@ and sends them to the connected modules.
 | category  | array | Correct class labels |
 | mode      | string | Choose the mode from learning mode("learn") or recognition mode("recog") |
 
-  
+
 ### Methods
 
 - .connect()  
@@ -39,7 +39,7 @@ The following files are saved in the directory.({mode} contains the selected mod
     - `Pdz_{mode}.txt`: The probabilities that each data d is in each class z are saved.
     - `Pmdw[i]_{mode}.txt`: The probabilities that each feature w of each modality i is generated in each data d are saved.  
 
-  
+
 ### Example
 
 ```
@@ -52,11 +52,11 @@ data = np.loadtxt( "data.txt" )  # load a data
 data_category = np.loadtxt( "category.txt" )  # load a correct label
 
 # define the modules
-obs = srk.Observation( data ) # send the observation to mlda1
+obs = srk.Observation( data ) # send the observation to the connected module
 mlda1 = mlda.MLDA( 10, catogory=data_category )  # classify into ten classes
 
 # construct the model
 mlda1.connect( obs )  # connect obs to mlda1
 
-mlda1.update()  # training mlda
+mlda1.update()  # train mlda
 ```

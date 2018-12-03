@@ -15,12 +15,13 @@ $$
 \mathcal{L}(\boldsymbol{\theta},\boldsymbol{\phi};\boldsymbol{o})=-D_{KL}(q_{\boldsymbol{\phi}}(\boldsymbol{z}|\boldsymbol{o})||\mathcal{N}(0,\boldsymbol{I}))+\mathbb{E}_{q_{\boldsymbol{\phi}}(\boldsymbol{z}|\boldsymbol{o})}[\log{p_{\boldsymbol{\theta}}(\boldsymbol{o}|\boldsymbol{z})}]
 $$
 
-In Serket, it is optimized using messages (\\(\mu\\)) received from the connected module by defining as follows.
+In Serket, it is optimized using messages (\\( \mu\\) ) received from the connected module by defining as follows.
 
 $$
-\mathcal{L}(\boldsymbol{\theta},\boldsymbol{\phi};\boldsymbol{o})=-D_{KL}(q_{\boldsymbol{\phi}}(\boldsymbol{z}|\boldsymbol{o})||\mathcal{N}(\boldsymbol{\mu},\boldsymbol{I}))+\mathbb{E}_{q_{\boldsymbol{\phi}}(\boldsymbol{z}|\boldsymbol{o})}[\log{p_{\boldsymbol{\theta}}(\boldsymbol{o}|\boldsymbol{z})}]
+\mathcal{L}(\boldsymbol{\theta},\boldsymbol{\phi};\boldsymbol{o})=- \alpha D_{KL}(q_{\boldsymbol{\phi}}(\boldsymbol{z}|\boldsymbol{o})||\mathcal{N}(\boldsymbol{\mu},\boldsymbol{I}))+\mathbb{E}_{q_{\boldsymbol{\phi}}(\boldsymbol{z}|\boldsymbol{o})}[\log{p_{\boldsymbol{\theta}}(\boldsymbol{o}|\boldsymbol{z})}]
 $$
 
+Where \\( D_{KL} \\) represents KL divergence and \\( \alpha \\) is the weight of KL divergence.
 
 ### Parameters
 
@@ -33,7 +34,7 @@ $$
 | hidden_encoder_dim | int | Number of nodes in encoder |
 | hidden_decoder_dim | int | Number of nodes in decoder |
 | batch_size | int | Number of batch size |
-| KL_param  | float | Weight for KL divergence |
+| KL_param  | float | Weight of KL divergence |
 | mode      | string | Choose the mode from learning mode("learn") or recognition mode("recog") |  
 
 
@@ -65,7 +66,7 @@ data = np.loadtxt( "data.txt" )  # load a data
 data_category = np.loadtxt( "category.txt" )  # load a correct label
 
 # define the modules
-obs = srk.Observation( data )  # send the observation to mlda
+obs = srk.Observation( data )  # send the observation to the connected module
 vae1 = vae.VAE( 10 )  # compress to ten dimension
 gmm1 = gmm.GMM( 10, catogory=data_category )  # classify into ten classes
 
@@ -75,6 +76,6 @@ gmm1.connect( vae1 )  # connect vae1 to gmm1
 
 # optimize the model
 for i in range(5):
-    vae1.update()  # training vae1
-    gmm1.update()  # training gmm1
+    vae1.update()  # train vae1
+    gmm1.update()  # train gmm1
 ```
