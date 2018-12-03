@@ -13,7 +13,7 @@ MNISTデータセット（データ数：3000）を使用する．
 VAEで，観測 \\( \boldsymbol{o} \\) がエンコーダーにあたるニューラルネットを通して任意の次元の潜在変数 \\( \boldsymbol{z}_1 \\)に圧縮される．
 VAEは，圧縮された潜在変数 \\( \boldsymbol{z}_1 \\) をGMMへ送信する．
 GMMは，VAEから送られてきた潜在変数 \\( \boldsymbol{z}_1 \\) から確率などを計算し，分類を行う．
-GMMは確率 \\( P(z_2　\mid　\boldsymbol{z}_1) \\) をMMへ送信し，分類されたクラスの平均 \\( \boldsymbol{\mu} \\) をVAEへ送信する．
+GMMは確率 \\( P(z_2 \mid \boldsymbol{z}_1) \\) をMMへ送信し，分類されたクラスの平均 \\( \boldsymbol{\mu} \\) をVAEへ送信する．
 MMは，送られてきた確率 \\( P(z_2 \mid \boldsymbol{z}_1) \\) を用いて繰り返しサンプリングを行い，次のように遷移回数をカウントする．
 
 $$
@@ -35,7 +35,7 @@ GMMは，送られた確率も用いて再び分類を行う．
 すなわち，この確率を利用することでデータの遷移を考慮した分類が行われる．
 
 <div align="center">
-<img src="img/vae-gmm-mm/vae-gmm-mm.png" width="400px">
+<img src="img/vae-gmm-mm/vae-gmm-mm.png" width="430px">
 </div>
 
 ### Codes
