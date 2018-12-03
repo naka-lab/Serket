@@ -70,9 +70,9 @@ mm1 = mm.MarkovModel()
 モジュールを接続し，モデルを構築する．
 
 ```
-vae1.connect( obs )   # connect obs to vae1
+vae1.connect( obs )  # connect obs to vae1
 gmm1.connect( vae1 )  # connect vae1 to gmm1
-mm1.connect( gmm1 )   # connect gmm1 to mm1
+mm1.connect( gmm1 )  # connect gmm1 to mm1
 ```
 
 各モジュールのパラメータの更新とメッセージのやり取りを繰り返し行うことでモデル全体の最適化を行う．
@@ -81,7 +81,7 @@ mm1.connect( gmm1 )   # connect gmm1 to mm1
 for i in range(5):
     vae1.update()  # train vae1
     gmm1.update()  # train gmm1
-    mm1.update()   # train mm1
+    mm1.update()  # train mm1
 ```
 
 ### Result

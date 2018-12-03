@@ -61,7 +61,7 @@ gmm1 = gmm.GMM( 10, category=data_category )
 モジュールを接続し，モデルを構築する．
 
 ```
-vae1.connect( obs )   # connect obs to vae1
+vae1.connect( obs )  # connect obs to vae1
 gmm1.connect( vae1 )  # connect vae1 to gmm1
 ```
 

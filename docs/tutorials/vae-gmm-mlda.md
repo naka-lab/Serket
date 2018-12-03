@@ -18,7 +18,7 @@ GMMは確率 \\( P(z_2 \mid \boldsymbol{z}_1) \\) をMMへ送信し，分類さ�
 MLDAは，GMMから送られてきた確率を用いて\\( \hat{z}_2 \\) を観測変数として扱うことができる．
 
 $$
-\hat{z}_2 \sim  P(z_2　\mid　\boldsymbol{z}_1)
+\hat{z}_2 \sim  P(z_2 \mid \boldsymbol{z}_1)
 $$
 
 したがって，確率を計算し分類することができる．
@@ -63,8 +63,8 @@ mlda1 = mlda.MLDA( 10, [200,200], category=data_category )
 モジュールを接続し，モデルを構築する．
 
 ```
-vae1.connect( obs1 )         # connect obs1 to vae1
-gmm1.connect( vae1 )         # connect vae1 to gmm1
+vae1.connect( obs1 )  # connect obs1 to vae1
+gmm1.connect( vae1 )  # connect vae1 to gmm1
 mlda1.connect( obs2, gmm1 )  # connect obs2 and gmm1 to mlda1
 ```
 
@@ -72,8 +72,8 @@ mlda1.connect( obs2, gmm1 )  # connect obs2 and gmm1 to mlda1
 
 ```
 for i in range(5):
-    vae1.update()   # train vae1
-    gmm1.update()   # train gmm1
+    vae1.update()  # train vae1
+    gmm1.update()  # train gmm1
     mlda1.update()  # train mlda1
 ```
 
