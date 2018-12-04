@@ -28,7 +28,7 @@ $$
 これにより，GMMによって同じクラスに分類されたデータの潜在変数 \\( \boldsymbol{z}_1 \\) は似た値を持つこととなり，分類に適した潜在空間が学習される．
 
 <div align="center">
-<img src="img/vae-gmm/vae-gmm.png" width="530px">
+<img src="img/vae-gmm/vae-gmm.png" width="580px">
 </div>
 
 ### Codes
