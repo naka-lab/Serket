@@ -11,11 +11,11 @@ Spoken Arabic Digit Data Set は UCI Machine Learning Repository にて公開さ
 HAC特徴量の詳しい説明は[こちら](https://www.isca-speech.org/archive/interspeech_2008/i08_2554.html)．
 
 ### Model
-VAEは，観測 \\( \boldsymbol{o}_1 \\) をエンコーダーにあたるニューラルネットを通して任意の次元の潜在変数 \\( \boldsymbol{z}_1 \\)に圧縮し，GMMへ送信する．
-GMMは，VAEから送られてきた潜在変数 \\( \boldsymbol{z}_1 \\) を分類し，\\( t \\) 番目のデータがクラス \\( z_ {2,t} \\) に分類される確率 \\( P(z_ {2,t} \mid \boldsymbol{z}_ {1,t}) \\) をMLDAへ送信，分類されたクラスの平均 \\( \boldsymbol{\mu} \\) をVAEへ送信する．
-VAEは，\\( \boldsymbol{\mu} \\) を用いることでGMMの分類に適した潜在空間が学習される．
-MLDAは，GMMから送られてきた確率を用いることで潜在変数 \\( z_2 \\) を観測として扱い，\\( z_2 \\) と \\( \boldsymbol{o}_2 \\) を分類し，GMMへ確率 \\( P(z_ {2,t} \mid z_{3,t}, \boldsymbol{o}_{2,t}) \\)を送信する．
-GMMは，送られてきた確率も用いて再度分類を行うことで，MLDAの影響を受け \\( z_3, \boldsymbol{o}_2 \\) を考慮した分類が行われる．
+VAEは，観測 \\(\boldsymbol{o}_1\\) をエンコーダーにあたるニューラルネットを通して任意の次元の潜在変数 \\(\boldsymbol{z}_1\\) に圧縮し，GMMへ送信する．
+GMMは，VAEから送られてきた潜在変数 \\(\boldsymbol{z}_1\\) を分類し，\\(t\\) 番目のデータがクラス \\(z_{2,t}\\) に分類される確率 \\(P(z_ {2,t} \mid \boldsymbol{z}_{1,t})\\) をMLDAへ送信，分類されたクラスの平均 \\(\boldsymbol{\mu}\\) をVAEへ送信する．
+VAEは，\\(\boldsymbol{\mu}\\) を用いることでGMMの分類に適した潜在空間が学習される．
+MLDAは，GMMから送られてきた確率を用いることで潜在変数 \\(z_2\\) を観測として扱い，\\(z_2\\) と \\(\boldsymbol{o}_2\\) を分類し，GMMへ確率 \\(P(z_ {2,t} \mid z_ {3,t}, \boldsymbol{o}_ {2,t})\\)を送信する．
+GMMは，送られてきた確率も用いて再度分類を行うことで，MLDAの影響を受け \\(z_3, \boldsymbol{o}_2\\) を考慮した分類が行われる．
 
 <div align="center">
 <img src="img/vae-gmm-mlda/vae-gmm-mlda.png" width="450px">
