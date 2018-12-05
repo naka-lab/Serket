@@ -75,7 +75,7 @@ for i in range(5):
 ```
 
 ### Result
-If training the model is successful, `module001_vae` and ` module002_gmm` directories are created.
+If training the model is successful, `module001_vae` and `module002_gmm` directories are created.
 The parameters of each module, probabilities, accuracy, and so on are stored in each directory.
 The compressed latent variables are stored in `z_learn.txt` in `module001_vae`.
 An example of a graph plotting the latent variables \\( z_1 \\) compressed into two dimensions by principal component analysis is shown below.

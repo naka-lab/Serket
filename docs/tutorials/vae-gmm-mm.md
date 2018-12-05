@@ -85,7 +85,7 @@ for i in range(5):
 ```
 
 ### Result
-If training the model is successful, `module001_vae`, ` module002_gmm`, and `module003_mm` directories are created.
+If training the model is successful, `module001_vae`, `module002_gmm`, and `module003_mm` directories are created.
 The parameters of each module, probabilities, accuracy, and so on are stored in each directory.
 The result and the accuracy of the classification are stored in `module002_gmm`.
 The indexes of classes in which each data is classified are saved in `class_learn.txt`, and the classification accuracy is saved in `acc_learn.txt`.
