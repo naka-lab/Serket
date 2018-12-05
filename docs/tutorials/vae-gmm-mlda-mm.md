@@ -2,15 +2,17 @@
 layout: default
 ---
 ## VAE + GMM + MLDA + MM
-MLDAとMMを組み合わせることでHMM (Hidden Markov Model)を構築することができる．
-VAE, GMM, MLDA, MMを統合することで遷移も考慮したマルチモーダル情報を用いた数字の分類を行う．
+HMM (Hidden Markov Model) can be constructed by combining MLDA and MM.
+We construct a model integrating VAE, GMM, MLDA, and MM and do unsupervised classification considering transition using multimodal information.
 
 ### Data
-MNISTデータセットおよび Spoken Arabic Digit Data Set（データ数：3000）を使用する．
-Spoken Arabic Digit Data Set は UCI Machine Learning Repository にて公開されている数字発話をMFCC特徴量に変換したデータである．
-このMFCC特徴量をHAC特徴量に変換したものを使用する．
-HAC特徴量の詳しい説明は[こちら](https://www.isca-speech.org/archive/interspeech_2008/i08_2554.html)．
-推移を学習するため0,1,2,3,4,5,6,7,8,9,0,\\( \cdots \\) のように並び替えたものを使用する．
+We use [MNIST](http://yann.lecun.com/exdb/mnist/) dataset and [Spoken Arabic Digit Data Set](https://archive.ics.uci.edu/ml/datasets/Spoken+Arabic+Digit).
+The number of data is 3000.
+MNIST dataset is handwritten digit image data.
+Spoken Arabic Digit Data Set is data obtained by converting spoken Arabic digits into MFCC features and published in UCI Machine Learning Repository.
+In this example, we use MFCC features converted to HAC features.
+A detailed explanation of HAC features is [here](https://www.isca-speech.org/archive/interspeech_2008/i08_2554.html)．
+In order to learn the transition, use sorted like 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0, \\( \cdots \\).
 
 ### Model
 VAEは，観測 \\( \boldsymbol{o}_ 1 \\) をエンコーダーにあたるニューラルネットを通して任意の次元の潜在変数 \\( \boldsymbol{z}_ 1 \\)に圧縮し，GMMへ送信する．
@@ -41,7 +43,7 @@ MLDAは，送られた確率も用いて再度分類を行うことでデータ�
 </div>
 
 ### Codes
-必要なモジュールをimportする．
+Firstly, we import the necessary modules.
 
 ```
 import serket as srk
@@ -52,8 +54,8 @@ import mm
 import numpy as np
 ```
 
-データと正解ラベルを読み込む．
-`srk.Observation`により読み込んだデータを接続されたモジュールに観測として送信する．
+Secondly, we load data and correct labels.
+The data are sent as observations to the connected module by `srk.Observation`.
 
 ```
 obs1 = srk.Observation( np.loadtxt( "data1.txt" ) )  # image data
@@ -61,10 +63,11 @@ obs2 = srk.Observation( np.loadtxt( "data2.txt" ) )  # audio data
 data_category = np.loadrxt( "category.txt" )
 ```
 
-各モジュールを定義する．
-VAEは圧縮後の次元を18次元，エポック数を200，バッチサイズを500として定義する．
-GMMはクラス数を10，正解ラベルとしてdata_categoryを与えて定義する．
-MLDAはクラス数を10，各モダリティの重みをそれぞれ200，正解ラベルとしてdata_categoryを与えて定義する．
+Thirdly, we define each module.
+We define VAE that compresses to 18 dimensions, whose epoch number is 200 and batch size is 500.
+We define GMM that classifies the data into ten classes and give `data_category` as correct labels.
+We define MLDA that classifies the data into ten classes and give `[200,200]` as the weight of each modality and  `data_category` as correct labels.
+We define MM without giving arguments.
 
 ```
 vae1 = vae.VAE( 18, itr=200, batch_size=500 )
@@ -73,7 +76,7 @@ mlda1 = mlda.MLDA( 10, [200,200], category=data_category )
 mm1 = mm.MarkovModel()
 ```
 
-モジュールを接続し，モデルを構築する．
+Fourthly, we connect modules and construct the model.
 
 ```
 vae1.connect( obs1 )  # connect obs1 to vae1
@@ -82,7 +85,7 @@ mlda1.connect( obs2, gmm1 )  # connect obs2 and gmm1 to mlda1
 mm1.connect( mlda1 ) # connect mlda1 to mm1
 ```
 
-各モジュールのパラメータの更新とメッセージのやり取りを繰り返し行うことでモデル全体の最適化を行う．
+Finallly, we optimize the whole model by repeatedly updating the parameters of each module and exchanging messages．
 
 ```
 for i in range(5):
@@ -93,6 +96,7 @@ for i in range(5):
 ```
 
 ### Result
-モデルの学習が成功すると`module002_vae`，`module003_gmm`，`module004_mlda`，`module005_mm`ディレクトリが作成される．
-それぞれのディレクトリには，モデルのパラメータや確率，精度などが保存されている．
-分類の結果や精度は`module004_mlda`内に保存されており，`categories_learn.txt`に各データが分類されたクラスのインデックス，`acc_learn.txt`に分類の精度が保存されている．
+If training the model is successful, `module002_vae`, ` module003_gmm`, `module004_mlda`, and `module005_mm` directories are created.
+The parameters of each module, probabilities, accuracy, and so on are stored in each directory.
+The result and the accuracy of the classification are stored in `module004_mlda`.
+The indexes of classes in which each data is classified are saved in `class_learn.txt`, and the classification accuracy is saved in `acc_learn.txt`.

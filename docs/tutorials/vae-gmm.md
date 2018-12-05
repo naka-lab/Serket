@@ -2,10 +2,12 @@
 layout: default
 ---
 ## VAE + GMM
-VAEによる次元圧縮とGMMによる教師なし分類の相互学習を行う．
+We construct a model integrating VAE and GMM, and do mutual learning of dimension compression by VAE and unsupervised classification by GMM.
 
 ### Data
-MNISTデータセット（データ数：3000）を使用する．
+We use [MNIST](http://yann.lecun.com/exdb/mnist/) dataset.
+The number of data is 3000.
+MNIST dataset is handwritten digit image data.
 
 ### Model
 VAEでは，観測 \\( \boldsymbol{o} \\) がエンコーダーにあたるニューラルネットを通して任意の次元の潜在変数 \\( \boldsymbol{z}_1 \\) に圧縮される．
@@ -32,7 +34,7 @@ $$
 </div>
 
 ### Codes
-必要なモジュールをimportする．
+Firstly, we import the necessary modules.
 
 ```
 import serket as srk
@@ -41,31 +43,30 @@ import gmm
 import numpy as np
 ```
 
-データと正解ラベルの読み込む．
-`srk.Observation`により読み込んだデータを接続されたモジュールに観測として送信する．
+Secondly, we load data and correct labels.
+The data are sent as observations to the connected module by `srk.Observation`.
 
 ```
 obs = srk.Observation( np.loadtxt( "data.txt" ) )
 data_category = np.loadtxt( "category.txt" )
 ```
-
-各モジュールを定義する．
-VAEは圧縮後の次元を18次元，エポック数を200，バッチサイズを500として定義する．
-GMMはクラス数を10，正解ラベルとしてdata_categoryを与えて定義する．
+Thirdly, we define each module.
+We define VAE that compresses to 18 dimensions, whose epoch number is 200 and batch size is 500.
+We define GMM that classifies the data into ten classes and give `data_category` as correct labels.
 
 ```
 vae1 = vae.VAE( 18, itr=200, batch_size=500 )
 gmm1 = gmm.GMM( 10, category=data_category )
 ```
 
-モジュールを接続し，モデルを構築する．
+Fourthly, we connect modules and construct the model.
 
 ```
 vae1.connect( obs )  # connect obs to vae1
 gmm1.connect( vae1 )  # connect vae1 to gmm1
 ```
 
-各モジュールのパラメータの更新とメッセージのやり取りを繰り返し行うことでモデル全体の最適化を行う．
+Finallly, we optimize the whole model by repeatedly updating the parameters of each module and exchanging messages.
 
 ```
 for i in range(5):
@@ -74,15 +75,16 @@ for i in range(5):
 ```
 
 ### Result
-モデルの学習が成功すると`module001_vae`と`module002_gmm`ディレクトリが作成される．
-それぞれのディレクトリには，モデルのパラメータや確率，精度などが保存されている．
-圧縮された潜在変数 \\( z_1 \\) は`module001_vae`内の`z_learn.txt`に保存されている．
-潜在変数 \\( z_1 \\) を主成分分析により2次元に圧縮しプロットしたグラフを以下に示す．
+If training the model is successful, `module001_vae` and ` module002_gmm` directories are created.
+The parameters of each module, probabilities, accuracy, and so on are stored in each directory.
+The compressed latent variables are stored in `z_learn.txt` in `module001_vae`.
+An example of a graph plotting the latent variables \\( z_1 \\) compressed into two dimensions by principal component analysis is shown below.
 
 <div align="center">
 <img src="img/vae-gmm/pca.png" width="550px">
 </div>
 
-最適化前では同じクラスであるデータ点が空間上に広く分散しているのに対して，最適化後ではクラスごとに似た値を持ってまとまっている．
-メッセージのやり取りによって分類に適した潜在空間が学習されていることが確認できる．
-分類の結果や精度は`module002_gmm`内に保存されており，`class_learn.txt`に各データが分類されたクラスのインデックス，`acc_learn.txt`に分類の精度が保存されている．
+Data points that are the same class are widely dispersed in the space before optimization, whereas they have similar values for each class after optimization.
+It is confirmed that latent space suitable for the classification is learned by exchanging messages.
+The result and the accuracy of the classification are stored in `module002_gmm`.
+The indexes of classes in which each data is classified are saved in `class_learn.txt`, and the classification accuracy is saved in `acc_learn.txt`.

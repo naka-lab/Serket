@@ -2,12 +2,14 @@
 layout: default
 ---
 ## VAE + GMM + MM
-GMMとMMを組み合わせることでHMM (Hidden Markov Model)を構築することができる．
-VAEによる次元圧縮とHMMによる推移を考慮した教師なし分類の相互学習を行う．
+HMM (Hidden Markov Model) can be constructed by combining GMM and MM.
+We construct a model integrating VAE, GMM, and MM, and do mutual learning of dimension compression by VAE and unsupervised classification considering transition by HMM.
 
 ### Data
-MNISTデータセット（データ数：3000）を使用する．
-推移を学習するため0,1,2,3,4,5,6,7,8,9,0,\\( \cdots \\) のように並び替えたものを使用する．
+We use [MNIST](http://yann.lecun.com/exdb/mnist/) dataset.
+The number of data is 3000.
+MNIST dataset is handwritten digit image data.
+In order to learn the transition, use sorted like 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0, \\( \cdots \\).
 
 ### Model
 VAEは，観測 \\( \boldsymbol{o} \\) をエンコーダーにあたるニューラルネットを通して任意の次元の潜在変数 \\( \boldsymbol{z}_ 1 \\) に圧縮し，GMMへ送信する．
@@ -36,7 +38,7 @@ GMMは，送られた確率も用いて再度分類を行うことでデータ�
 </div>
 
 ### Codes
-必要なモジュールをimportする．
+Firstly, we import the necessary modules.
 
 ```
 import serket as srk
@@ -46,17 +48,18 @@ import mm
 import numpy as np
 ```
 
-データと正解ラベルを読み込む．
-`srk.Observation`により読み込んだデータを接続されたモジュールに観測として送信する．
+Secondly, we load data and correct labels.
+The data are sent as observations to the connected module by `srk.Observation`.
 
 ```
 obs = srk.Observation( np.loadtxt( "data.txt" ) )
 data_category = np.loadrxt( "category.txt" )
 ```
 
-各モジュールを定義する．
-VAEは圧縮後の次元を18次元，エポック数を200，バッチサイズを500として定義する．
-GMMはクラス数を10，正解ラベルとしてdata_categoryを与えて定義する．
+Thirdly, we define each module.
+We define VAE that compresses to 18 dimensions, whose epoch number is 200 and batch size is 500.
+We define GMM that classifies the data into ten classes and give `data_category` as correct labels.
+We define MM without giving arguments.
 
 ```
 vae1 = vae.VAE( 18, itr=200, batch_size=500 )
@@ -64,7 +67,7 @@ gmm1 = gmm.GMM( 10, category=data_category )
 mm1 = mm.MarkovModel()
 ```
 
-モジュールを接続し，モデルを構築する．
+Fourthly, we connect modules and construct the model.
 
 ```
 vae1.connect( obs )  # connect obs to vae1
@@ -72,7 +75,7 @@ gmm1.connect( vae1 )  # connect vae1 to gmm1
 mm1.connect( gmm1 )  # connect gmm1 to mm1
 ```
 
-各モジュールのパラメータの更新とメッセージのやり取りを繰り返し行うことでモデル全体の最適化を行う．
+Finallly, we optimize the whole model by repeatedly updating the parameters of each module and exchanging messages.
 
 ```
 for i in range(5):
@@ -82,6 +85,7 @@ for i in range(5):
 ```
 
 ### Result
-モデルの学習が成功すると`module001_vae`，`module002_gmm`，`module003_mm`ディレクトリが作成される．
-それぞれのディレクトリには，モデルのパラメータや確率，精度などが保存されている．
-分類の結果や精度は`module002_gmm`内に保存されており，`class_learn.txt`に各データが分類されたクラスのインデックス，`acc_learn.txt`に分類の精度が保存されている．
+If training the model is successful, `module001_vae`, ` module002_gmm`, and `module003_mm` directories are created.
+The parameters of each module, probabilities, accuracy, and so on are stored in each directory.
+The result and the accuracy of the classification are stored in `module002_gmm`.
+The indexes of classes in which each data is classified are saved in `class_learn.txt`, and the classification accuracy is saved in `acc_learn.txt`.
