@@ -39,7 +39,7 @@ $$
 MLDAは，送られた確率も用いて再度分類を行うことでデータの遷移を考慮した分類が行われる．
 
 <div align="center">
-<img src="img/vae-gmm-mlda-mm/vae-gmm-mlda-mm.png" width="730px">
+<img src="img/vae-gmm-mlda-mm/vae-gmm-mlda-mm.png" width="760px">
 </div>
 
 ### Codes

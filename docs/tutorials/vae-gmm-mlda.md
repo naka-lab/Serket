@@ -20,7 +20,7 @@ MLDAは，GMMから送られてきた確率を用いることで潜在変数 \\(
 GMMは，送られてきた確率も用いて再度分類を行うことで，MLDAの影響を受け \\( z_ 3, \boldsymbol{o}_ 2 \\) を考慮した分類が行われる．
 
 <div align="center">
-<img src="img/vae-gmm-mlda/vae-gmm-mlda.png" width="620px">
+<img src="img/vae-gmm-mlda/vae-gmm-mlda.png" width="650px">
 </div>
 
 ### Codes

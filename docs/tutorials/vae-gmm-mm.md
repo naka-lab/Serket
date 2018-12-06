@@ -40,12 +40,12 @@ $$
 この確率を用いて遷移を考慮したそれぞれのクラスに分類される確率を計算し，GMMへ送信する．
 GMMは，送られた確率も用いて再度分類を行うことでデータの遷移を考慮した分類が行われる．
 
-Where K is the number of classes.
+Where \\( K \\) is the number of classes.
 MM calculates the probabilities of being classified into each class considering the transition, and sends it to GMM.
 GMM classifies again using the received probabilities, so that the classification is performed in consideration of data transition.
 
 <div align="center">
-<img src="img/vae-gmm-mm/vae-gmm-mm.png" width="600px">
+<img src="img/vae-gmm-mm/vae-gmm-mm.png" width="650px">
 </div>
 
 ### Codes
