@@ -17,7 +17,7 @@ In order to learn the transition, use sorted like 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 
 ### Model
 VAEは，観測 \\( \boldsymbol{o}_ 1 \\) をエンコーダーにあたるニューラルネットを通して任意の次元の潜在変数 \\( \boldsymbol{z}_ 1 \\)に圧縮し，GMMへ送信する．
 GMMは，VAEから送られてきた潜在変数 \\( \boldsymbol{z}_ 1 \\) を分類し，\\( t \\) 番目のデータがクラス \\( z_ {2,t} \\) に分類される確率 \\( P(z_ {2,t} \mid \boldsymbol{z}_ {1,t}) \\) をMLDAへ送信，分類されたクラスの平均 \\( \boldsymbol{\mu} \\) をVAEへ送信する．
-VAEは，\\( \boldsymbol{\mu} \\) を用いることでGMMの分類に適した潜在空間が学習される．
+VAEは，\\( \boldsymbol{\mu} \\) を用いることでGMMの分類に適した潜在空間が学習する．
 MLDAは，GMMから送られてきた確率を用いて潜在変数 \\( z_ 2 \\) を観測として扱い， \\( z_ 2 \\) と観測 \\( \boldsymbol{o}_ 2 \\) を分類し，確率 \\( P(z_ {3,t} \mid z_ {2,t}, \boldsymbol{o}_ {2,t}) \\) をMMへ送信，確率 \\( P(z_ {2,t} \mid z_ {3,t}, \boldsymbol{o}_ {2,t}) \\) をGMMへ送信する．
 GMMは，送られてきた確率も用いて再度分類を行うことで，MLDAの影響を受け \\( z_ 3, \boldsymbol{o}_ 2 \\) を考慮した分類が行われる．
 MMは，送られてきた確率 \\( P(z_ {3,t} \mid z_ {2,t}, \boldsymbol{o}_ {2,t}) \\) を用いて繰り返しサンプリングを行い，次のように遷移回数をカウントする．
@@ -39,7 +39,7 @@ $$
 MLDAは，送られた確率も用いて再度分類を行うことでデータの遷移を考慮した分類が行われる．
 
 <div align="center">
-<img src="img/vae-gmm-mlda-mm/vae-gmm-mlda-mm.png" width="680px">
+<img src="img/vae-gmm-mlda-mm/vae-gmm-mlda-mm.png" width="710px">
 </div>
 
 ### Codes
@@ -64,7 +64,7 @@ data_category = np.loadrxt( "category.txt" )
 ```
 
 Thirdly, we define each module.
-We define VAE that compresses to 18 dimensions, whose epoch number is 200 and batch size is 500.
+We define VAE that compresses the data into 18 dimensions, whose epoch number is 200 and batch size is 500.
 We define GMM that classifies the data into ten classes and give `data_category` as correct labels.
 We define MLDA that classifies the data into ten classes and give `[200,200]` as the weight of each modality and  `data_category` as correct labels.
 We define MM without giving arguments.
@@ -76,7 +76,7 @@ mlda1 = mlda.MLDA( 10, [200,200], category=data_category )
 mm1 = mm.MarkovModel()
 ```
 
-Fourthly, we connect modules and construct the model.
+Fourthly, we connect the modules and construct the model.
 
 ```
 vae1.connect( obs1 )  # connect obs1 to vae1
