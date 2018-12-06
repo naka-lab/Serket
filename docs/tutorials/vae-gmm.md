@@ -11,23 +11,15 @@ MNIST dataset is handwritten digit image data.
 
 ### Model
 VAEでは，観測 \\( \boldsymbol{o} \\) がエンコーダーにあたるニューラルネットを通して任意の次元の潜在変数 \\( \boldsymbol{z}_1 \\) に圧縮される．
-
-In VAE, the observations \\( \boldsymbol{o} \\) are compressed into the latent variables \\( \boldsymbol{z}_1 \\) of an arbitrary number of dimensions through the neural net equivalent of the encoder.
-
 そして，潜在変数 \\( \boldsymbol{z}_1 \\) がデコーダーにあたるニューラルネットを通して元の次元に復元され，その値と観測 \\( \boldsymbol{o} \\) 同じになるように学習される．
-
-Then, the latent variables are restored to the original number of dimensions through the neural net equivalent of the decoder, and learned so that the values and observations are the same.
-
 VAEは，このようにして圧縮された潜在変数 \\( \boldsymbol{z}_1 \\) をGMMへ送信する．
-
-VAE sends the latent variables \\( \boldsymbol{z}_1 \\) thus compressed to GMM.
-
 GMMは，VAEから送られてきた潜在変数 \\( \boldsymbol{z}_1 \\) を分類し，分類されたクラスの平均 \\( \boldsymbol{\mu} \\) をVAEへ送信する．
-
-GMM classifies the latent variables \\( \boldsymbol{z}_1 \\) received from VAE and sends the means \\( \boldsymbol{\mu} \\) of the distributions of classes in which each data is classified to VAE.
-
 通常VAEの変分下限は次式で表される．
 
+In VAE, the observations \\( \boldsymbol{o} \\) are compressed into the latent variables \\( \boldsymbol{z}_1 \\) of an arbitrary number of dimensions through the neural net equivalent of the encoder.
+Then, the latent variables are restored to the original number of dimensions through the neural net equivalent of the decoder, and learned so that the values and observations are the same.
+VAE sends the latent variables \\( \boldsymbol{z}_1 \\) thus compressed to GMM.
+GMM classifies the latent variables \\( \boldsymbol{z}_1 \\) received from VAE and sends the means \\( \boldsymbol{\mu} \\) of the distributions of classes in which each data is classified to VAE.
 The variational lower bound of normal VAE is as follows.
 
 $$
@@ -43,12 +35,10 @@ $$
 $$
 
 ただし， \\( D_{KL} \\) はKLダイバージェンスを表しており，\\( \alpha \\) はKLダイバージェンスの重みである.
+これにより，GMMによって同じクラスに分類されたデータの潜在変数 \\( \boldsymbol{z}_1 \\) は似た値を持つこととなり，分類に適した潜在空間が学習される．
 
 Where \\( D_{KL} \\) represents KL divergence and \\( \alpha \\) is the weight of KL divergence .
 This time we use \\( \alpha = 1 \\).
-
-これにより，GMMによって同じクラスに分類されたデータの潜在変数 \\( \boldsymbol{z}_1 \\) は似た値を持つこととなり，分類に適した潜在空間が学習される．
-
 As a result, the latent variables \\( \boldsymbol{z}_1 \\) of data classified into the same class by GMM have similar values, and the latent space suitable for the classification is learned.
 
 <div align="center">
