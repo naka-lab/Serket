@@ -42,7 +42,7 @@ This time we use \\( \alpha = 1 \\).
 As a result, the latent variables \\( \boldsymbol{z}_1 \\) of data classified into the same class by GMM have similar values, and the latent space suitable for the classification is learned.
 
 <div align="center">
-<img src="img/vae-gmm/vae-gmm.png" width="650px">
+<img src="img/vae-gmm/vae-gmm.png" width="700px">
 </div>
 
 ### Codes

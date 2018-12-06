@@ -45,7 +45,7 @@ MM calculates the probabilities of being classified into each class considering 
 GMM classifies again using the received probabilities, so that the classification is performed in consideration of data transition.
 
 <div align="center">
-<img src="img/vae-gmm-mm/vae-gmm-mm.png" width="650px">
+<img src="img/vae-gmm-mm/vae-gmm-mm.png" width="700px">
 </div>
 
 ### Codes
