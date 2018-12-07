@@ -18,17 +18,30 @@ In order to learn the transition, use sorted like 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 
 VAEは，観測 \\( \boldsymbol{o}_ 1 \\) をエンコーダーにあたるニューラルネットを通して任意の次元の潜在変数 \\( \boldsymbol{z}_ 1 \\)に圧縮し，GMMへ送信する．
 GMMは，VAEから送られてきた潜在変数 \\( \boldsymbol{z}_ 1 \\) を分類し，\\( t \\) 番目のデータがクラス \\( z_ {2,t} \\) に分類される確率 \\( P(z_ {2,t} \mid \boldsymbol{z}_ {1,t}) \\) をMLDAへ送信，分類されたクラスの平均 \\( \boldsymbol{\mu} \\) をVAEへ送信する．
 VAEは，\\( \boldsymbol{\mu} \\) を用いることでGMMの分類に適した潜在空間が学習する．
-MLDAは，GMMから送られてきた確率を用いて潜在変数 \\( z_ 2 \\) を観測として扱い， \\( z_ 2 \\) と観測 \\( \boldsymbol{o}_ 2 \\) を分類し，確率 \\( P(z_ {3,t} \mid z_ {2,t}, \boldsymbol{o}_ {2,t}) \\) をMMへ送信，確率 \\( P(z_ {2,t} \mid z_ {3,t}, \boldsymbol{o}_ {2,t}) \\) をGMMへ送信する．
-GMMは，送られてきた確率も用いて再度分類を行うことで，MLDAの影響を受け \\( z_ 3, \boldsymbol{o}_ 2 \\) を考慮した分類が行われる．
+MLDAは，GMMから送られてきた確率 \\( P(z_ {2,t} \mid \boldsymbol{z}_ {1,t}) \\) を用いて潜在変数 \\( z_ 2 \\) を観測として扱い， \\( z_ 2 \\) と観測 \\( \boldsymbol{o}_ 2 \\) を分類し，確率 \\( P(z_ {3,t} \mid z_ {2,t}, \boldsymbol{o}_ {2,t}) \\) をMMへ送信，確率 \\( P(z_ {2,t} \mid z_ {3,t}, \boldsymbol{o}_ {2,t}) \\) をGMMへ送信する．
+GMMは，送られてきた確率 \\( P(z_ {2,t} \mid z_ {3,t}, \boldsymbol{o}_ {2,t}) \\) も用いて再度分類を行うことで，MLDAの影響を受け \\( z_ 3, \boldsymbol{o}_ 2 \\) を考慮した分類が行われる．
 MMは，送られてきた確率 \\( P(z_ {3,t} \mid z_ {2,t}, \boldsymbol{o}_ {2,t}) \\) を用いて繰り返しサンプリングを行い，次のように遷移回数をカウントする．
 
+VAE compresses the observations \\( \boldsymbol{o}_ 1 \\) into the latent variables \\( \boldsymbol{z}_ 1 \\) of arbitrary number of dimensions through the neural net equivalent of the encoder and sends it to GMM.
+GMM classifies the latent variables \\( \boldsymbol{z}_ 1 \\) received from VAE, and then sends the probabilities \\( P(z_ {2,t} \mid \boldsymbol{z}_ {1,t}) \\) that the t-th data is classified into the class \\( z_ {2,t} \\) to MLDA and the means \\( \boldsymbol{\mu} \\) of the distributions of classes in which each data is classified to VAE.
+VAE learns the latent space suitable for the classification of GMM by using \\( \mu \\).
+MLDA handles the latent variables \\( z_ 2 \\) as observations by using the probabilities \\( P(z_ {2,t} \mid \boldsymbol{z}_ {1,t}) \\) received from GMM and classifies the latent variables \\( z_ 2 \\) and the observations \\( \boldsymbol{o}_ 2 \\).
+Then, MLDA sends the probabilities \\( P(z_ {3,t} \mid z_ {2,t}, \boldsymbol{o}_ {2,t}) \\) to MM and the probabilities \\( P(z_ {2,t} \mid z_ {3,t}, \boldsymbol{o}_ {2,t}) \\) to GMM.
+GMM classifies again using the received probabilities \\( P(z_ {2,t} \mid z_ {3,t}, \boldsymbol{o}_ {2,t}) \\), so that the classification is performed considering \\( z_ 3\\) and \\( o_ 2 \\) under the influence of MLDA.
+MM repeatedly samples using the received probabilities \\( P(z_ {3,t} \mid z_ {2,t}, \boldsymbol{o}_ {2,t}) \\) and counts the number of transitions as follows.
+
 $$
-z'_ 3 \sim P(z_{3,t} \mid z_ {2,t}, \boldsymbol{o}_{2,t})\\
-z_3 \sim P(z_{3,t+1} \mid z_ {2,t+1}, \boldsymbol{o}_{2,t+1})\\
-N_{z'_ 3,z_3}++
+\begin{align}
+&z'_ 3 \sim P(z_{3,t} \mid z_ {2,t}, \boldsymbol{o}_{2,t})\\
+&z_3 \sim P(z_{3,t+1} \mid z_ {2,t+1}, \boldsymbol{o}_{2,t+1})\\
+&N_{z'_ 3,z_3}++
+\end{align}
 $$
 
 この値から遷移確率 \\( P(z_ 3 \mid z'_ 3) \\) は次のように計算することができる．
+
+The transition probabilities \\( P(z_ 3 \mid z'_ 3) \\) can be calculated from this values as follows.
+
 
 $$
 P(z_3 \mid z'_ 3) = \frac{N_{z'_ 3,z_3} + \alpha}{\sum_{\bar{z}_3}{N_{z'_ 3,\bar{z}_3}} + K \alpha}
@@ -38,8 +51,13 @@ $$
 この確率を用いて遷移を考慮したそれぞれのクラスに分類される確率を計算し，MLDAへ送信する．
 MLDAは，送られた確率も用いて再度分類を行うことでデータの遷移を考慮した分類が行われる．
 
+Where \\( K \\) is the number of classes.
+MM calculates the probabilities of being classified into each class considering the transition, and sends it to MLDA.
+MLDA classifies again using the received probabilities, so that the classification is performed in consideration of the data transition.
+
+
 <div align="center">
-<img src="img/vae-gmm-mlda-mm/vae-gmm-mlda-mm.png" width="800px">
+<img src="img/vae-gmm-mlda-mm/vae-gmm-mlda-mm.png" width="780px">
 </div>
 
 ### Codes

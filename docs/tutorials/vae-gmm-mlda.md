@@ -16,11 +16,17 @@ A detailed explanation of HAC features is [here](https://www.isca-speech.org/arc
 VAEは，観測 \\( \boldsymbol{o}_ 1 \\) をエンコーダーにあたるニューラルネットを通して任意の次元の潜在変数 \\( \boldsymbol{z}_ 1 \\) に圧縮し，GMMへ送信する．
 GMMは，VAEから送られてきた潜在変数 \\( \boldsymbol{z}_ 1 \\) を分類し，\\( t \\) 番目のデータがクラス \\( z_ {2,t} \\) に分類される確率 \\( P(z_ {2,t} \mid \boldsymbol{z}_ {1,t}) \\) をMLDAへ送信，分類されたクラスの平均 \\( \boldsymbol{\mu} \\) をVAEへ送信する．
 VAEは，\\( \boldsymbol{\mu} \\) を用いることでGMMの分類に適した潜在空間が学習する．
-MLDAは，GMMから送られてきた確率を用いることで潜在変数 \\( z_ 2 \\) を観測として扱い，\\( z_ 2 \\) と観測 \\( \boldsymbol{o}_ 2 \\) を分類し，GMMへ確率 \\( P(z_ {2,t} \mid z_ {3,t}, \boldsymbol{o}_ {2,t}) \\)を送信する．
-GMMは，送られてきた確率も用いて再度分類を行うことで，MLDAの影響を受け \\( z_ 3, \boldsymbol{o}_ 2 \\) を考慮した分類が行われる．
+MLDAは，GMMから送られてきた確率 \\( P(z_ {2,t} \mid \boldsymbol{z}_ {1,t}) \\) を用いることで潜在変数 \\( z_ 2 \\) を観測として扱い，\\( z_ 2 \\) と観測 \\( \boldsymbol{o}_ 2 \\) を分類し，GMMへ確率 \\( P(z_ {2,t} \mid z_ {3,t}, \boldsymbol{o}_ {2,t}) \\) を送信する．
+GMMは，送られてきた確率 \\( P(z_ {2,t} \mid z_ {3,t}, \boldsymbol{o}_ {2,t}) \\) も用いて再度分類を行うことで，MLDAの影響を受け \\( z_ 3, \boldsymbol{o}_ 2 \\) を考慮した分類が行われる．
+
+VAE compresses the observations \\( \boldsymbol{o}_ 1 \\) into the latent variables \\( \boldsymbol{z}_ 1 \\) of arbitrary number of dimensions through the neural net equivalent of the encoder and sends it to GMM.
+GMM classifies the latent variables \\( \boldsymbol{z}_ 1 \\) received from VAE, and then sends the probabilities \\( P(z_ {2,t} \mid \boldsymbol{z}_ {1,t}) \\) that the t-th data is classified into the class \\( z_ {2,t} \\) to MLDA and the means \\( \boldsymbol{\mu} \\) of the distributions of classes in which each data is classified to VAE.
+VAE learns the latent space suitable for the classification of GMM by using \\( \mu \\).
+MLDA handles the latent variables \\( z_ 2 \\) as observations by using the probabilities \\( P(z_ {2,t} \mid \boldsymbol{z}_ {1,t}) \\) received from GMM, and then classifies the latent variables \\( z_ 2 \\) and the observations \\( \boldsymbol{o}_ 2 \\) and sends the probabilities \\( P(z_ {2,t} \mid z_ {3,t}, \boldsymbol{o}_ {2,t}) \\) to GMM.
+GMM classifies again using the received probabilities \\( P(z_ {2,t} \mid z_ {3,t}, \boldsymbol{o}_ {2,t}) \\), so that the classification is performed considering \\( z_ 3\\) and \\( o_ 2 \\) under the influence of MLDA.
 
 <div align="center">
-<img src="img/vae-gmm-mlda/vae-gmm-mlda.png" width="700px">
+<img src="img/vae-gmm-mlda/vae-gmm-mlda.png" width="750px">
 </div>
 
 ### Codes

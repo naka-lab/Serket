@@ -18,14 +18,16 @@ VAEは，\\( \boldsymbol{\mu} \\) を用いることでGMMの分類に適した�
 MMは，送られてきた確率 \\( P(z_ {2,t} \mid \boldsymbol{z}_ {1,t}) \\) を用いて繰り返しサンプリングを行い，次のように遷移回数をカウントする．
 
 VAE compresses the observations \\( \boldsymbol{o} \\) into the latent variables \\( \boldsymbol{z}_ 1 \\) of arbitrary number of dimensions through the neural net equivalent of the encoder and sends it to GMM.
-GMM classifies the latent variables received from VAE, sends the probabilities that the t-th data is classified into classes to MM, and sends the means \\( \boldsymbol{\mu} \\) of the distributions of classes in which each data is classified to VAE.
+GMM classifies the latent variables \\( \boldsymbol{z}_ 1 \\) received from VAE, and then sends the probabilities \\( P(z_ {2,t} \mid \boldsymbol{z}_ {1,t}) \\) that the t-th data is classified into the class \\( z_ {2,t} \\) to MM and the means \\( \boldsymbol{\mu} \\) of the distributions of classes in which each data is classified to VAE.
 VAE learns the latent space suitable for the classification of GMM by using \\( \mu \\).
 MM repeatedly samples using the received probabilities \\( P(z_ {2,t} \mid \boldsymbol{z}_ {1,t}) \\) and counts the number of transitions as follows.
 
 $$
-z'_ 2 \sim P(z_{2,t} \mid \boldsymbol{z}_{1,t})\\
-z_2 \sim P(z_{2,t+1} \mid \boldsymbol{z}_{1,t+1})\\
-N_{z'_ 2,z_2}++
+\begin{align}
+&z'_ 2 \sim P(z_{2,t} \mid \boldsymbol{z}_{1,t})\\
+&z_2 \sim P(z_{2,t+1} \mid \boldsymbol{z}_{1,t+1})\\
+&N_{z'_ 2,z_2}++
+\end{align}
 $$
 
 この値から遷移確率 \\( P(z_ 2 \mid z'_ 2) \\) は次のように計算することができる．
@@ -42,10 +44,10 @@ GMMは，送られた確率も用いて再度分類を行うことでデータ�
 
 Where \\( K \\) is the number of classes.
 MM calculates the probabilities of being classified into each class considering the transition, and sends it to GMM.
-GMM classifies again using the received probabilities, so that the classification is performed in consideration of data transition.
+GMM classifies again using the received probabilities, so that the classification is performed in consideration of the data transition.
 
 <div align="center">
-<img src="img/vae-gmm-mm/vae-gmm-mm.png" width="700px">
+<img src="img/vae-gmm-mm/vae-gmm-mm.png" width="750px">
 </div>
 
 ### Codes
