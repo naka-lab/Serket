@@ -3,7 +3,7 @@ layout: default
 ---
 ## VAE + GMM + MM
 HMM (Hidden Markov Model) can be constructed by combining GMM and MM.
-We construct a model integrating VAE, GMM, and MM, and do mutual learning of dimension compression by VAE and unsupervised classification considering transition by HMM.
+We construct a model that learns mutually dimensional compression and unsupervised classification considering transition by integrating VAE, GMM, and MM.
 
 ### Data
 We use [MNIST](http://yann.lecun.com/exdb/mnist/) dataset.
@@ -17,8 +17,8 @@ GMMは，VAEから送られてきた潜在変数 \\( \boldsymbol{z}_ 1 \\) を�
 VAEは，\\( \boldsymbol{\mu} \\) を用いることでGMMの分類に適した潜在空間が学習する．
 MMは，送られてきた確率 \\( P(z_ {2,t} \mid \boldsymbol{z}_ {1,t}) \\) を用いて繰り返しサンプリングを行い，次のように遷移回数をカウントする．
 
-VAE compresses the observations \\( \boldsymbol{o} \\) into the latent variables \\( \boldsymbol{z}_ 1 \\) of arbitrary number of dimensions through the neural net equivalent of the encoder and sends it to GMM.
-GMM classifies the latent variables \\( \boldsymbol{z}_ 1 \\) received from VAE, and then sends the probabilities \\( P(z_ {2,t} \mid \boldsymbol{z}_ {1,t}) \\) that the t-th data is classified into the class \\( z_ {2,t} \\) to MM and the means \\( \boldsymbol{\mu} \\) of the distributions of classes in which each data is classified to VAE.
+VAE compresses the observations \\( \boldsymbol{o} \\) into the latent variables \\( \boldsymbol{z}_ 1 \\) of an arbitrary number of dimensions through the neural network equivalent of the encoder and sends it to GMM.
+GMM classifies the latent variables \\( \boldsymbol{z}_ 1 \\) received from VAE, and then sends the probabilities \\( P(z_ {2,t} \mid \boldsymbol{z}_ {1,t}) \\) that the t-th data is classified into the class \\( z_ {2,t} \\) to MM and the means \\( \boldsymbol{\mu} \\) of the distributions of the classes in which each data is classified to VAE.
 VAE learns the latent space suitable for the classification of GMM by using \\( \mu \\).
 MM repeatedly samples using the received probabilities \\( P(z_ {2,t} \mid \boldsymbol{z}_ {1,t}) \\) and counts the number of transitions as follows.
 
@@ -101,4 +101,4 @@ for i in range(5):
 If training the model is successful, `module001_vae`, `module002_gmm`, and `module003_mm` directories are created.
 The parameters of each module, probabilities, accuracy, and so on are stored in each directory.
 The result and the accuracy of the classification are stored in `module002_gmm`.
-The indexes of classes in which each data is classified are saved in `class_learn.txt`, and the classification accuracy is saved in `acc_learn.txt`.
+The indexes of the classes in which each data is classified are saved in `class_learn.txt`, and the classification accuracy is saved in `acc_learn.txt`.

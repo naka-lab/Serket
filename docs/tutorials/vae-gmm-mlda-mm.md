@@ -3,7 +3,7 @@ layout: default
 ---
 ## VAE + GMM + MLDA + MM
 HMM (Hidden Markov Model) can be constructed by combining MLDA and MM.
-We construct a model integrating VAE, GMM, MLDA, and MM and do unsupervised classification considering transition using multimodal information.
+We construct a model that classifies multimodal information considering transition in an unsupervised manner by integrating VAE, GMM, MLDA, and MM.
 
 ### Data
 We use [MNIST](http://yann.lecun.com/exdb/mnist/) dataset and [Spoken Arabic Digit Data Set](https://archive.ics.uci.edu/ml/datasets/Spoken+Arabic+Digit).
@@ -22,7 +22,7 @@ MLDAは，GMMから送られてきた確率 \\( P(z_ {2,t} \mid \boldsymbol{z}_ 
 GMMは，送られてきた確率 \\( P(z_ {2,t} \mid z_ {3,t}, \boldsymbol{o}_ {2,t}) \\) も用いて再度分類を行うことで，MLDAの影響を受け \\( z_ 3, \boldsymbol{o}_ 2 \\) を考慮した分類が行われる．
 MMは，送られてきた確率 \\( P(z_ {3,t} \mid z_ {2,t}, \boldsymbol{o}_ {2,t}) \\) を用いて繰り返しサンプリングを行い，次のように遷移回数をカウントする．
 
-VAE compresses the observations \\( \boldsymbol{o}_ 1 \\) into the latent variables \\( \boldsymbol{z}_ 1 \\) of arbitrary number of dimensions through the neural net equivalent of the encoder and sends it to GMM.
+VAE compresses the observations \\( \boldsymbol{o}_ 1 \\) into the latent variables \\( \boldsymbol{z}_ 1 \\) of an arbitrary number of dimensions through the neural network equivalent of the encoder and sends it to GMM.
 GMM classifies the latent variables \\( \boldsymbol{z}_ 1 \\) received from VAE, and then sends the probabilities \\( P(z_ {2,t} \mid \boldsymbol{z}_ {1,t}) \\) that the t-th data is classified into the class \\( z_ {2,t} \\) to MLDA and the means \\( \boldsymbol{\mu} \\) of the distributions of classes in which each data is classified to VAE.
 VAE learns the latent space suitable for the classification of GMM by using \\( \mu \\).
 MLDA handles the latent variables \\( z_ 2 \\) as observations by using the probabilities \\( P(z_ {2,t} \mid \boldsymbol{z}_ {1,t}) \\) received from GMM and classifies the latent variables \\( z_ 2 \\) and the observations \\( \boldsymbol{o}_ 2 \\).
@@ -117,4 +117,4 @@ for i in range(5):
 If training the model is successful, `module002_vae`, `module003_gmm`, `module004_mlda`, and `module005_mm` directories are created.
 The parameters of each module, probabilities, accuracy, and so on are stored in each directory.
 The result and the accuracy of the classification are stored in `module004_mlda`.
-The indexes of classes in which each data is classified are saved in `class_learn.txt`, and the classification accuracy is saved in `acc_learn.txt`.
+The indexes of the classes in which each data is classified are saved in `class_learn.txt`, and the classification accuracy is saved in `acc_learn.txt`.
