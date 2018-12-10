@@ -7,9 +7,9 @@ layout: default
 mlda.MLDA( K, weights=None, itr=100, name="mlda", category=None, mode="learn" )
 ```
 
-`mlda.MLDA` is a module for unsupervised classification.
-It calculates the probabilities that each data is classified into each class and each feature of each modality is generated in each data,
-and sends them to the connected modules.
+`mlda.MLDA` is a module for unsupervised classification based on multimodal latent Dirichlet allocation.
+It calculates the probabilities that each data is classified into each class, and modal features of the data are generated based on the classification. 
+The probabilities and generated features are sent to the connected modules.
 
 
 ### Parameters
@@ -27,17 +27,17 @@ and sends them to the connected modules.
 ### Methods
 
 - .connect()  
-This method connects the module to observations or modules and constructs the model.
+This method connects this module to observations or modules and constructs the model.
 - .update()  
-This method estimates model parameters and calculates probabilities and others.
-The module estimates model parameters in "learn" mode and predict unknown data in "recog" mode.
+This method estimates model parameters and calculates probabilities.
+The module estimates model parameters in "learn" mode and predicts classes of novel data in "recog" mode.
 If training is successful, the `module {n} _mlda` directory is created.
 The following files are saved in the directory.({mode} contains the selected mode (learn or recog))
-    - `model.pickle`: The model parameters are saved.
-    - `acc_{mode}.txt`: The accuracy calculated when category is given is saved.
-    - `categories_{mode}.txt`: The categories in which each data is classified are saved.
-    - `Pdz_{mode}.txt`: The probabilities that each data d is in each class z are saved.
-    - `Pmdw[i]_{mode}.txt`: The probabilities that each feature w of each modality i is generated in each data d are saved.  
+    - `model.pickle`: TThe model parameters.
+    - `acc_{mode}.txt`: The accuracy calculated if the optional argument `category`.
+    - `categories_{mode}.txt`: The classes into which each data is classified.
+    - `Pdz_{mode}.txt`: The means of the distributions of each class z.
+    - `Pmdw[i]_{mode}.txt`: The probabilities that each data d is classified into z.   
 
 
 ### Example

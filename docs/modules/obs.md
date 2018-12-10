@@ -7,8 +7,7 @@ layout: default
 serket.Observation( data )
 ```
 
-`serket.Observation` is a module that send the observation to the connected module.
-
+`serket.Observation` is a module that sends the observation to the connected module.
 
 ### Parameters
 

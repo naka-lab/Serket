@@ -3,7 +3,7 @@ layout: default
 ---
 # Instration
 
-Clone the repository fromt the GitHub: 
+Clone the repository from the GitHub: 
 
 ```
 git clone https://github.com/naka-tomo/serket.git
@@ -22,7 +22,7 @@ pip install librosa==0.5.1
 
 # Simple Example of Serket
 
-First, the toy dataset of six observations are generated. Here, these are assumed to be generated from three categories, which are latent variables.
+First, the toy dataset of six observations is generated. Here, these are assumed to be generated from three categories, which are latent variables.
 ```
 data = [
     [10, 2, 1], 
@@ -36,8 +36,8 @@ data = [
 data_category = [0, 0, 1, 1, 2, 2]
 ```
 
-Then, we define the modules. `srk.Observation` is a module which send the observation to another module, and `mlda.MLDA` (multimodal latent Dirichlet allocation) is a modules for an unsupervised classification. Here, we define MLDA that classifies dataset into three classes. 
-By using the optional argment `category`, the classification accuracy can be computed automatically. 
+Then, we define the modules. `srk.Observation` is a module which sends the observation to another module, and `mlda.MLDA` (multimodal latent Dirichlet allocation) is a module for an unsupervised classification. Here, we define MLDA that classifies dataset into three classes. 
+By using the optional argument `category`, the classification accuracy can be computed automatically. 
 
 ```
 obs = srk.Observation( data )
@@ -51,6 +51,6 @@ mlda1.connect( obs )
 mlda1.update()
 ```
 
-If you success the training the model, you can find `module000_mlda` directory in your working directory, which contains the results of the training. 
+If you succeed at the training the model, you can find `module000_mlda` directory in your working directory, which contains the results of the training. 
 Classification accuracy that is computed automatically is included in `module000_mlda/000/acc.txt`. It might be 1.00, which represents the all observation can be classified correctly. 
 

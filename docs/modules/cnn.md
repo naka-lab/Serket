@@ -15,7 +15,7 @@ It extracts image features by CNN using caffemodel.
 
 | Parameter | Type | Description |
 |:----------|:-----|:------------|
-| filenames | array | Paths to data |
+| filenames | array | Paths to image files |
 | name      | string | Name of module |
 
 

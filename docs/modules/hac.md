@@ -7,20 +7,20 @@ layout: default
 hac.HACFeatureExtractor( filenames, ks, lags=[5,2], name="HACFeatureExtracter", **mfcc_params )
 ```
 
-`hac.HACFeatureExtractor` is a module for feature extractor.
-It converts wav format data to hac features.
-[Click here](https://www.isca-speech.org/archive/interspeech_2008/i08_2554.html) for details about hac.
+`hac.HACFeatureExtractor` is a module for acoustic feature extractor based on the histogram of acoustic co-occurrence (HAC).
+It extracts HAC features from wave format files.
+See [here](https://www.isca-speech.org/archive/interspeech_2008/i08_2554.html) for details about HAC.
 
 
 ### Parameters
 
 | Parameter | Type | Description |
 |:----------|:-----|:------------|
-| filenames | array | Paths to wav data |
-| ks        | array | Number of elements in each code book (triple of int) |
-| lags      | array | List of lags to use for calculation (the corresponding histograms are concatenated) |
+| filenames | array | Paths to wave files |
+| ks        | array | Number of elements in each code book (triplet of int) |
+| lags      | array | List of lags to compute co-occurence of acoustic events (the corresponding histograms are concatenated) |
 | name      | string | Name of module |
-|mfcc_params| tuple | Parameters for converting to mfcc features (use librosa)<br>default<br>"n_mfcc": 13<br>"n_fft": 2048<br>"hop_length": 512<br>"n_mels": 128 |
+|mfcc_params| tuple | Parameters for computing mfcc features (used librosa)<br>default<br>"n_mfcc": 13<br>"n_fft": 2048<br>"hop_length": 512<br>"n_mels": 128 |
 
 
 ### Example

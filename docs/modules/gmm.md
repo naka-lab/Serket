@@ -7,9 +7,8 @@ layout: default
 gmm.GMM( K, itr=100, name="gmm", category=None, mode="learn" )
 ```
 
-`gmm.GMM` is a module for unsupervised classification.
-It calculates the probabilities that each data is classified into each class and the mean of the distribution of the classes,
-and sends them to the connected modules.
+`gmm.GMM` is a module for unsupervised classification based on a Gaussian mixture model.
+It calculates the probabilities that each data is classified into each class and the means of the distribution, and sends them to the connected modules.
 
 
 ### Parameters
@@ -26,17 +25,17 @@ and sends them to the connected modules.
 ### Methods
 
 - .connect()  
-This method connects the module to observations or modules and constructs the model.
+This method connects this module to an observation or module and constructs the model.
 - .update()  
-This method estimates model parameters and calculates probabilities and others.
-The module estimates model parameters in "learn" mode and predict unknown data in "recog" mode.
+This method estimates model parameters and calculates probabilities.
+The module estimates model parameters in "learn" mode and predicts classes of novel data in "recog" mode.
 If training is successful, the `module {n} _gmm` directory is created.
 The following files are saved in the directory.({mode} contains the selected mode (learn or recog))
-    - `model.pickle`: The model parameters are saved.
-    - `acc_{mode}.txt`: The accuracy calculated when category is given is saved.
-    - `class_{mode}.txt`: The classes in which each data is classified are saved.
-    - `mu_{mode}.txt`: The mean of the distribution of each class z in which each data d is classified are saved.
-    - `Pdz_{mode}.txt`: The probabilities that each data d is in each class z are saved.  
+    - `model.pickle`: The model parameters.
+    - `acc_{mode}.txt`: The accuracy calculated if the optional argument `category`.
+    - `class_{mode}.txt`: The classes into which each data is classified.
+    - `mu_{mode}.txt`: The means of the distributions of each class z.
+    - `Pdz_{mode}.txt`: The probabilities that each data d is classified into z.  
 
 
 ### Example

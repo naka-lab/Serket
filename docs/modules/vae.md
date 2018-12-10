@@ -9,19 +9,19 @@ vae.VAE( latent_dim, weight_stddev=0.1, itr=5000, name="vae", hidden_encoder_dim
 ```
 
 `vae.VAE` is a module for dimensional compression, and sends compressed latent variables to the connected module.
-Although the variational lower bound of normal VAE is as follows,
+The variational lower bound of normal VAE is as follows: 
 
 $$
-\mathcal{L}(\boldsymbol{\theta},\boldsymbol{\phi};\boldsymbol{o})=-D_{KL}(q_{\boldsymbol{\phi}}(\boldsymbol{z}|\boldsymbol{o})||\mathcal{N}(0,\boldsymbol{I}))+\mathbb{E}_{q_{\boldsymbol{\phi}}(\boldsymbol{z}|\boldsymbol{o})}[\log{p_{\boldsymbol{\theta}}(\boldsymbol{o}|\boldsymbol{z})}]
+\mathcal{L}(\boldsymbol{\theta},\boldsymbol{\phi};\boldsymbol{o})=-D_{KL}(q_{\boldsymbol{\phi}}(\boldsymbol{z}|\boldsymbol{o})||\mathcal{N}(0,\boldsymbol{I}))+\mathbb{E}_{q_{\boldsymbol{\phi}}(\boldsymbol{z}|\boldsymbol{o})}[\log{p_{\boldsymbol{\theta}}(\boldsymbol{o}|\boldsymbol{z})}]. 
 $$
 
-in Serket, it is optimized using messages (\\( \mu\\) ) received from the connected module by defining as follows.
+On the other hand, in Serket, it is optimized using messages (\\( \mu\\) ) received from the connected module as follows: 
 
 $$
-\mathcal{L}(\boldsymbol{\theta},\boldsymbol{\phi};\boldsymbol{o})=- \alpha D_{KL}(q_{\boldsymbol{\phi}}(\boldsymbol{z}|\boldsymbol{o})||\mathcal{N}(\boldsymbol{\mu},\boldsymbol{I}))+\mathbb{E}_{q_{\boldsymbol{\phi}}(\boldsymbol{z}|\boldsymbol{o})}[\log{p_{\boldsymbol{\theta}}(\boldsymbol{o}|\boldsymbol{z})}]
+\mathcal{L}(\boldsymbol{\theta},\boldsymbol{\phi};\boldsymbol{o})=- \alpha D_{KL}(q_{\boldsymbol{\phi}}(\boldsymbol{z}|\boldsymbol{o})||\mathcal{N}(\boldsymbol{\mu},\boldsymbol{I}))+\mathbb{E}_{q_{\boldsymbol{\phi}}(\boldsymbol{z}|\boldsymbol{o})}[\log{p_{\boldsymbol{\theta}}(\boldsymbol{o}|\boldsymbol{z})}], 
 $$
 
-Where \\( D_{KL} \\) represents KL divergence and \\( \alpha \\) is the weight of KL divergence.
+where \\( D_{KL} \\) represents KL divergence and \\( \alpha \\) is the weight of KL divergence.
 
 ### Parameters
 
@@ -43,14 +43,14 @@ Where \\( D_{KL} \\) represents KL divergence and \\( \alpha \\) is the weight o
 - .connect()  
 This method connects the module to observations or modules and constructs the model.
 - .update()  
-This method estimates model parameters and calculates latent variables and others.
-The module estimates model parameters in "learn" mode and predict unknown data in "recog" mode.
+This method estimates model parameters and calculates probabilities.
+The module estimates model parameters in "learn" mode and predicts classes of novel data in "recog" mode.
 If training is successful, the `module {n} _vae` directory is created.
 The following files are saved in the directory.({mode} contains the selected mode (learn or recog))
-    - `model.ckpt`: The model parameters are saved.
-    - `loss.txt`: The losses calculated at learning are saved
-    - `x_hat_{mode}.txt`: Restoration data output from decoder are saved.
-    - `z_{mode}.txt`: Latent variables compressed by encoder are saved.  
+    - `model.ckpt`: The model parameters.
+    - `loss.txt`: The losses calculated in the training phase. 
+    - `x_hat_{mode}.txt`: Reconstructed data by the decoder of VAE.
+    - `z_{mode}.txt`: Latent variables computed by encoder are saved.  
 
 
 ### Example
