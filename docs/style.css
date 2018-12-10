@@ -209,6 +209,8 @@ pre {
     margin: 1em;
     margin-left: 20px;
     background-color: rgb(245, 245, 245);  
+
+    white-space: pre-wrap ;
 }
 code {
     font-family: 'lucida grande', tahoma, verdana, arial, sans-serif;
