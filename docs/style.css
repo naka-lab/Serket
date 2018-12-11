@@ -220,3 +220,10 @@ code {
     background-color: rgb(245, 245, 245); 
     border-radius: 3px;
 }
+
+/* 画像を中央に配置 */
+img {
+	display:block;
+	margin-left:auto;
+	margin-right:auto;
+}
