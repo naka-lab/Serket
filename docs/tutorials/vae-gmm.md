@@ -22,7 +22,7 @@ Then, the latent variables \\( \boldsymbol{z}_1 \\) are reconstructed to the ori
 
 In this integrated model, VAE sends the latent variables \\( \boldsymbol{z}_1 \\) to GMM.
 GMM classifies the latent variables \\( \boldsymbol{z}_1 \\) received from VAE and compute the means \\( \boldsymbol{\mu} \\) of the distributions of the classes into which each data is classified. 
-These means are sent to VAE and VAE update its parameters using these means.
+These means are sent to VAE and VAE updates its parameters using these means.
 The variational lower bound of normal VAE is as follows: 
 
 $$
@@ -53,7 +53,7 @@ As a result, the latent variables \\( \boldsymbol{z}_1 \\) of the data classifie
 </div>
 
 ### Codes
-First, import the necessary modules are imported.
+First, the necessary modules are imported.
 
 ```
 import serket as srk
