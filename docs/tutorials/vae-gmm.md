@@ -5,7 +5,7 @@ layout: default
 In this tutorial, we construct a model of unsupervised classification using dimensional compression by integrating VAE and GMM.
 
 ### Data
-We use handwritten digit image data [MNIST](http://yann.lecun.com/exdb/mnist/) dataset.
+We use handwritten digit image dataset [MNIST](http://yann.lecun.com/exdb/mnist/).
 The number of data is 3000.
 
 ### Model
