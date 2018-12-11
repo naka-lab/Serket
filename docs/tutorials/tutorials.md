@@ -4,13 +4,13 @@ layout: default
 # Tutorials
 
 - [VAE + GMM](http://serket.naka-lab.org/tutorials/vae-gmm.html)  
-Mutual learning of dimensional compression and unsupervised classification.
+Unsupervised classification using dimensional compression based on VAE. 
 
 - [VAE + GMM + MM](http://serket.naka-lab.org/tutorials/vae-gmm-mm.html)  
-Unsupervised classification learning transition.
+Unsupervised image classification using transitional information.
 
 - [VAE + GMM + MLDA](http://serket.naka-lab.org/tutorials/vae-gmm-mlda.html)  
-Unsupervised classification using modality information.
+Multimodal unsupervised classification. 
 
 - [VAE + GMM + MLDA + MM](http://serket.naka-lab.org/tutorials/vae-gmm-mlda-mm.html)  
-Unsupervised classification using transitional modality information.
+Multimodal unsupervised classification using transitional information.
