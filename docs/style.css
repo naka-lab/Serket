@@ -126,6 +126,7 @@ border-bottom: dashed 2px #364e96;
 h3 {
     font-size: 18px;
     color: #666;
+    margin-top: 20px;
     margin-bottom: 10px;
     line-height: 1.5em;
 	
@@ -135,7 +136,6 @@ h3 {
 	
 p {
     font-size: 16px;
-    margin-bottom: 20px;
 }
 
 ul li {
