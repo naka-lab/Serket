@@ -14,14 +14,14 @@ Currently, you can use following probabilistic models and neural network models.
 Serket makes it possible to construct large-scale models by connecting these modules. 
 
 
-## Contributor
+## Contributors
 
 - Ryo Kuniyasu
 - Tomoaki Nakamura
 - Takayuki Nagai
 - Tadahiro Taniguchi
 
-## Cite
+## Citation
 The concept of Serket is described in the following paper: 
 
 ```
