@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Serket</title>
+    <!-- Include Sidr bundled CSS theme -->
+    <link rel="stylesheet" href="http://serket.naka-lab.org/dist/stylesheets/jquery.sidr.dark.css">
+    <!-- Your CSS -->
+    <link rel="stylesheet" href="style.css">
+    <script type="text/javascript" async src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+  </head>
+  <body>
+
+    <div id="sidr">
+      <ul>
+          <li><a href="http://serket.naka-lab.org/index.html">Top page</a></li>
+          <li><a href="http://serket.naka-lab.org/getting_started.html">Getting Started</a></li>
+          <li><a href="http://serket.naka-lab.org/modules/modules.html">Modules</a></li>
+          <li><a href="http://serket.naka-lab.org/tutorials/tutorials.html">Tutorials</a></li>
+      </ul>
+
+      <!-- google翻訳 -->
+      <div id="google_translate_element"></div><script type="text/javascript">
+      function googleTranslateElementInit() {
+          new google.translate.TranslateElement({pageLanguage: 'en', includedLanguages: 'de,ja,fr,zh-CN'}, 'google_translate_element');
+      }
+      </script><script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+
+    </div>
+
+   <div align="center">
+    <a href="http://serket.naka-lab.org/index.html"><img src="http://serket.naka-lab.org/logo.jpg" /></a></div>
+    <a id="simple-menu" class="menu-button fixed" href="#sidr">Toggle menu</a>
+
+    <div class="wrapper">
+    <h2 id="vae--gmm">VAE + GMM</h2>
+<p>We construct a model that learns mutually dimensional compression and unsupervised classification by integrating VAE and GMM.</p>
+
+<h3 id="data">Data</h3>
+<p>We use <a href="http://yann.lecun.com/exdb/mnist/">MNIST</a> dataset.
+The number of data is 3000.
+MNIST dataset is handwritten digit image data.</p>
+
+<h3 id="model">Model</h3>
+<p>VAEでは，観測 \( \boldsymbol{o} \) がエンコーダーにあたるニューラルネットを通して任意の次元の潜在変数 \( \boldsymbol{z}_1 \) に圧縮される．
+そして，潜在変数 \( \boldsymbol{z}_1 \) がデコーダーにあたるニューラルネットを通して元の次元に復元され，その値と観測 \( \boldsymbol{o} \) 同じになるように学習される．
+VAEは，このようにして圧縮された潜在変数 \( \boldsymbol{z}_1 \) をGMMへ送信する．
+GMMは，VAEから送られてきた潜在変数 \( \boldsymbol{z}_1 \) を分類し，分類されたクラスの平均 \( \boldsymbol{\mu} \) をVAEへ送信する．
+通常VAEの変分下限は次式で表される．</p>
+
+<p>In VAE, the observations \( \boldsymbol{o} \) are compressed into the latent variables \( \boldsymbol{z}_1 \) of an arbitrary number of dimensions through the neural network equivalent of the encoder.
+Then, the latent variables \( \boldsymbol{z}_1 \) are restored to the original number of dimensions through the neural network equivalent of the decoder, and learned so that the values and the observations \( \boldsymbol{o} \) are the same.
+VAE sends the latent variables \( \boldsymbol{z}_1 \) thus compressed to GMM.
+GMM classifies the latent variables \( \boldsymbol{z}_1 \) received from VAE and sends the means \( \boldsymbol{\mu} \) of the distributions of the classes in which each data is classified to VAE.
+The variational lower bound of normal VAE is as follows.</p>
+
+<script type="math/tex; mode=display">\mathcal{L}( \boldsymbol{\theta}, \boldsymbol{\phi}; \boldsymbol{o} ) = -D_{KL} ( q_{ \boldsymbol{\phi} }( \boldsymbol{z}_1 \mid \boldsymbol{o} ) \| \mathcal{N} ( 0, \boldsymbol{I} ) ) + \mathbb{E}_{ q_{ \boldsymbol{\phi} }( \boldsymbol{z}_1 \mid  \boldsymbol{o} ) } [ \log{ p_{ \boldsymbol{\theta} } ( \boldsymbol{o} \mid \boldsymbol{z}_1 ) } ]</script>
+
+<p>Serketでは，GMMでの分類の影響を受けるため，データが分類されたクラスの平均 \( \mu \) を用いて変分下限を以下のように定義する．</p>
+
+<p>In Serket, in order to be affected by the classification in GMM, we define the variational lower bound as follows using the means \( \boldsymbol{\mu} \) of the distributions of the classes in which each data is classified.</p>
+
+<script type="math/tex; mode=display">\mathcal{L}( \boldsymbol{\theta}, \boldsymbol{\phi}; \boldsymbol{o} ) = - \alpha D_{KL} ( q_{ \boldsymbol{\phi} } ( \boldsymbol{z}_1 \mid \boldsymbol{o} ) \| \mathcal{N} ( \boldsymbol{\mu}, \boldsymbol{I} ) ) + \mathbb{E}_{ q_{ \boldsymbol{\phi} } ( \boldsymbol{z}_1 \mid \boldsymbol{o} ) } [ \log{ p_{ \boldsymbol{\theta} } ( \boldsymbol{o} \mid \boldsymbol{z}_1 ) } ]</script>
+
+<p>ただし， \( D_{KL} \) はKLダイバージェンスを表しており，\( \alpha \) はKLダイバージェンスの重みである.
+これにより，GMMによって同じクラスに分類されたデータの潜在変数 \( \boldsymbol{z}_1 \) は似た値を持つこととなり，分類に適した潜在空間が学習される．</p>
+
+<p>Where \( D_{KL} \) represents KL divergence and \( \alpha \) is the weight of KL divergence .
+This time we use \( \alpha = 1 \).
+As a result, the latent variables \( \boldsymbol{z}_1 \) of the data classified into the same class by GMM have similar values, and the latent space suitable for the classification is learned.</p>
+
+<div align="center">
+<img src="img/vae-gmm/vae-gmm.png" width="750px" />
+</div>
+
+<h3 id="codes">Codes</h3>
+<p>Firstly, we import the necessary modules.</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>import serket as srk
+import vae
+import gmm
+import numpy as np
+</code></pre></div></div>
+
+<p>Secondly, we load data and correct labels.
+The data are sent as observations to the connected module by <code class="highlighter-rouge">srk.Observation</code>.</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>obs = srk.Observation( np.loadtxt( "data.txt" ) )
+data_category = np.loadtxt( "category.txt" )
+</code></pre></div></div>
+<p>Thirdly, we define each module.
+We define VAE that compresses the data into 18 dimensions, whose epoch number is 200 and batch size is 500.
+We define GMM that classifies the data into ten classes and give <code class="highlighter-rouge">data_category</code> as correct labels.</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>vae1 = vae.VAE( 18, itr=200, batch_size=500 )
+gmm1 = gmm.GMM( 10, category=data_category )
+</code></pre></div></div>
+
+<p>Fourthly, we connect the modules and construct the model.</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>vae1.connect( obs )  # connect obs to vae1
+gmm1.connect( vae1 )  # connect vae1 to gmm1
+</code></pre></div></div>
+
+<p>Finallly, we optimize the whole model by repeatedly updating the parameters of each module and exchanging messages.</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>for i in range(5):
+    vae1.update()  # train vae1
+    gmm1.update()  # train gmm1
+</code></pre></div></div>
+
+<h3 id="result">Result</h3>
+<p>If training the model is successful, <code class="highlighter-rouge">module001_vae</code> and <code class="highlighter-rouge">module002_gmm</code> directories are created.
+The parameters of each module, probabilities, accuracy, and so on are stored in each directory.
+The compressed latent variables are stored in <code class="highlighter-rouge">z_learn.txt</code> in <code class="highlighter-rouge">module001_vae</code>.
+An example of a graph plotting the latent variables \( \boldsymbol{z}_1 \) compressed into two dimensions by principal component analysis is shown below.</p>
+
+<div align="center">
+<img src="img/vae-gmm/pca.png" width="600px" />
+</div>
+
+<p>Data points that are the same class are widely dispersed in the space before optimization, whereas they have similar values for each class after optimization.
+It is confirmed that the latent space suitable for the classification is learned by exchanging messages.
+The result and the accuracy of the classification are stored in <code class="highlighter-rouge">module002_gmm</code>.
+The indexes of the classes in which each data is classified are saved in <code class="highlighter-rouge">class_learn.txt</code>, and the classification accuracy is saved in <code class="highlighter-rouge">acc_learn.txt</code>.</p>
+
+    </div>
+
+    <!-- Include jQuery -->
+    <!-- <script src="../bower_components/jquery/dist/jquery.js"></script> -->
+    <!-- Try it also with jQuery 1.x or other version from the CDN -->
+    <script src="https://code.jquery.com/jquery-1.12.0.min.js"></script>
+    <!-- Include the Sidr JS -->
+    <script src="http://serket.naka-lab.org/dist/jquery.sidr.js"></script>
+
+    <!-- Your code -->
+    <script>
+
+    $(document).ready(function () {
+      $('#simple-menu').sidr({
+        timing: 'ease-in-out',
+        speed: 500
+      });
+    });
+
+    $( window ).resize(function () {
+      $.sidr('close', 'sidr');
+    });
+
+    </script>
+
+  </body>
+</html>
