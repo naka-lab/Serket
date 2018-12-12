@@ -6,7 +6,7 @@ HMM (hidden Markov model) can be constructed by combining GMM (Gaussian mixture 
 Here, we extend the GMM+VAE, which enables unsupervised classification using dimensional compression, and construct a model of unsupervised classification that can learn transition rules by integrating VAE, GMM, and MM. 
 
 ### Data
-We use handwritten digit image data [MNIST](http://yann.lecun.com/exdb/mnist/) dataset.
+We use handwritten digit image dataset [MNIST](http://yann.lecun.com/exdb/mnist/).
 The number of data is 3000.
 In order to learn the transition rule, we sort them in ascending order like 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0, \\( \cdots \\).
 
@@ -24,7 +24,7 @@ GMM classifies the latent variables \\( \boldsymbol{z}_ 1 \\) recieved from VAE,
 At the same time, GMM sends the means \\( \boldsymbol{\mu} \\) of the distributions of the classes, into which each data is classified, to VAE.
 VAE learns the latent space suitable for the classification of GMM by using \\( \mu \\).
 Moreover, transition rules are learned in the MM. 
-The latent variables \\(z_2)\\ are  repeatedly sampled using the received probabilities \\( P(z_ {2,t} \mid \boldsymbol{z}_ {1,t}) \\) and the number of transitions is counted as follows: 
+The latent variables \\(z_2\\) are  repeatedly sampled using the received probabilities \\( P(z_ {2,t} \mid \boldsymbol{z}_ {1,t}) \\) and the number of transitions is counted as follows: 
 
 $$
 \begin{align}
@@ -51,7 +51,7 @@ GMMは，送られた確率も用いて再度分類を行うことでデータ�
 -->
 
 where \\( K \\) is the number of classes.
-MM computes the probabilities that \\(z_2)\\ are classified into each class based on the transition probabilities, and sends them to GMM.
+MM computes the probabilities that \\(z_2\\) are classified into each class based on the transition probabilities, and sends them to GMM.
 GMM classifies again using the received probabilities so that the classification is performed in consideration of the data transition.
 
 
@@ -60,7 +60,7 @@ GMM classifies again using the received probabilities so that the classification
 </div>
 
 ### Codes
-Firstly, we import the necessary modules.
+First, the necessary modules are imported. 
 
 ```
 import serket as srk
