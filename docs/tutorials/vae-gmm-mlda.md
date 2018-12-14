@@ -23,12 +23,12 @@ GMMは，送られてきた確率 \\( P(z_ {2,t} \mid z_ {3,t}, \boldsymbol{o}_ 
 -->
 
 VAE compresses the observations \\( \boldsymbol{o}_ 1 \\) into the arbitrary dimensional latent variables \\( \boldsymbol{z}_ 1 \\) through the neural network called encoder and sends them to GMM.
-GMM classifies the latent variables \\( \boldsymbol{z}_ 1 \\) received from VAE. and sendsthe probabilities \\( P(z_ {2,t} \mid \boldsymbol{z}_ {1,t}) \\) that the t-th data is classified into the class \\( z_ {2,t} \\) to MLDA.
+GMM classifies the latent variables \\( \boldsymbol{z}_ 1 \\) received from VAE and sends the probabilities \\( P(z_ {2,t} \mid \boldsymbol{z}_ {1,t}) \\) that the t-th data is classified into the class \\( z_ {2,t} \\) to MLDA.
 At the same time,  it sends the means \\( \boldsymbol{\mu} \\) of the distributions of the classes into which each data is classified to VAE.
 VAE learns the latent space suitable for the classification of GMM by using \\( \mu \\).
 MLDA handles \\( z_ 2 \\) as observations by sampling from the probabilities \\( P(z_ {2,t} \mid \boldsymbol{z}_ {1,t}) \\) received from GMM, and classifies  \\( z_ 2 \\) and the \\( \boldsymbol{o}_ 2 \\). 
 After that, it sends the probabilities \\( P(z_ {2,t} \mid z_ {3,t}, \boldsymbol{o}_ {2,t}) \\) to GMM. 
-GMM classifies again using the received probabilities \\( P(z_ {2,t} \mid z_ {3,t}, \boldsymbol{o}_ {2,t}) \\) so that the classification is influenced \\( z_ 3\\) and \\( o_ 2 \\) through MLDA.
+GMM classifies again using the received probabilities \\( P(z_ {2,t} \mid z_ {3,t}, \boldsymbol{o}_ {2,t}) \\) so that the classification is influenced by \\( z_ 3\\) and \\( o_ 2 \\) through MLDA.
 
 <div align="center">
 <img src="img/vae-gmm-mlda/vae-gmm-mlda.png" width="750px">
