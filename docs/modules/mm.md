@@ -7,9 +7,9 @@ layout: default
 mm.MarkovModel( num_samp=100, name="mm", mode="learn" )
 ```
 
-HMM (Hidden Markov Model) can be constructed by connecting with `mm.MarkovModel` and the module for classification.
-It calculates the transition probabilities using the received probabilities,
-and sends the probabilities modified based on the transition probabilities to the connected modules.
+HMM (hidden Markov model) can be constructed by connecting with `mm.MarkovModel` and the module for classification.
+It computes the transition probabilities using the received probabilities,
+and sends the probabilities modified based on the transition probabilities to the connected module.
 
 
 ### Parameters
@@ -24,15 +24,15 @@ and sends the probabilities modified based on the transition probabilities to th
 ### Methods
 
 - .connect()  
-This method connects the module to observations or modules and constructs the model.
+This method connects this module to a module and constructs the model.
 - .update()  
-This method estimates model parameters and calculates probabilities.
+This method estimates model parameters and computes probabilities.
 The module estimates model parameters in "learn" mode and predicts classes of novel data in "recog" mode.
-If training is successful, the `module {n} _mm` directory is created.
+If training is succeeded, the `module {n} _mm` directory is created.
 The following files are saved in the directory.({mode} contains the selected mode (learn or recog))
     - `model.pickle`: The model parameters.
     - `msg_{mode}.txt`: The probabilities that each data is classified into each class.
-    - `trans_prob_learn.txt`: The transition probabilities calculated in the learning phase.  
+    - `trans_prob_learn.txt`: The transition probabilities computed in the learning phase.  
 
 
 ### Example
@@ -44,11 +44,11 @@ import gmm
 import mm
 import numpy as np
 
-data = np.loadtxt( "data.txt" )  # load a data
-data_category = np.loadtxt( "category.txt" )  # load a correct label
+data = np.loadtxt( "data.txt" )  # load data
+data_category = np.loadtxt( "category.txt" )  # load correct labels
 
 # define the modules
-obs = srk.Observation( data )  # send the observation to the connected module 
+obs = srk.Observation( data )  # send the observation to the connected module
 gmm1 = gmm.GMM( 10, catogory=data_category )  # classify into ten classes
 mm1 = mm.MarkovModel()
 

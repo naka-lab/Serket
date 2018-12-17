@@ -8,7 +8,7 @@ gmm.GMM( K, itr=100, name="gmm", category=None, mode="learn" )
 ```
 
 `gmm.GMM` is a module for unsupervised classification based on a Gaussian mixture model.
-It calculates the probabilities that each data is classified into each class and the means of the distribution, and sends them to the connected modules.
+It computes the probabilities that each data is classified into each class and the means of the distribution, and sends them to the connected modules.
 
 
 ### Parameters
@@ -25,17 +25,17 @@ It calculates the probabilities that each data is classified into each class and
 ### Methods
 
 - .connect()  
-This method connects this module to an observation or module and constructs the model.
+This method connects this module to an observation or a module and constructs the model.
 - .update()  
-This method estimates model parameters and calculates probabilities.
+This method estimates model parameters and computes probabilities.
 The module estimates model parameters in "learn" mode and predicts classes of novel data in "recog" mode.
-If training is successful, the `module {n} _gmm` directory is created.
+If training is succeeded, the `module {n} _gmm` directory is created.
 The following files are saved in the directory.({mode} contains the selected mode (learn or recog))
     - `model.pickle`: The model parameters.
-    - `acc_{mode}.txt`: The accuracy calculated if the optional argument `category`.
+    - `acc_{mode}.txt`: The accuracy computed if the optional argument `category`.
     - `class_{mode}.txt`: The classes into which each data is classified.
-    - `mu_{mode}.txt`: The means of the distributions of each class z.
-    - `Pdz_{mode}.txt`: The probabilities that each data d is classified into z.  
+    - `mu_{mode}.txt`: The means of the distributions of each class.
+    - `Pdz_{mode}.txt`: The probabilities that each data is classified into class.  
 
 
 ### Example
@@ -46,8 +46,8 @@ import serket as srk
 import gmm
 import numpy as np
 
-data = np.loadtxt( "data.txt" )  # load a data
-data_category = np.loadtxt( "category.txt" )  # load a correct label
+data = np.loadtxt( "data.txt" )  # load data
+data_category = np.loadtxt( "category.txt" )  # load correct labels
 
 # define the modules
 obs = srk.Observation( data )  # send the observation to the connected module

@@ -8,7 +8,7 @@ mlda.MLDA( K, weights=None, itr=100, name="mlda", category=None, mode="learn" )
 ```
 
 `mlda.MLDA` is a module for unsupervised classification based on multimodal latent Dirichlet allocation.
-It calculates the probabilities that each data is classified into each class, and modal features of the data are generated based on the classification. 
+It computes the probabilities that each data is classified into each class, and modal features of the data are generated based on the classification.
 The probabilities and generated features are sent to the connected modules.
 
 
@@ -29,15 +29,15 @@ The probabilities and generated features are sent to the connected modules.
 - .connect()  
 This method connects this module to observations or modules and constructs the model.
 - .update()  
-This method estimates model parameters and calculates probabilities.
+This method estimates model parameters and computes probabilities.
 The module estimates model parameters in "learn" mode and predicts classes of novel data in "recog" mode.
-If training is successful, the `module {n} _mlda` directory is created.
+If training is succeeded, the `module {n} _mlda` directory is created.
 The following files are saved in the directory.({mode} contains the selected mode (learn or recog))
-    - `model.pickle`: TThe model parameters.
+    - `model.pickle`: The model parameters.
     - `acc_{mode}.txt`: The accuracy calculated if the optional argument `category`.
     - `categories_{mode}.txt`: The classes into which each data is classified.
-    - `Pdz_{mode}.txt`: The means of the distributions of each class z.
-    - `Pmdw[i]_{mode}.txt`: The probabilities that each data d is classified into z.   
+    - `Pdz_{mode}.txt`: The probabilities that each data is classified into class.
+    - `Pmdw[i]_{mode}.txt`: The modal features of the data are generated based on the classification.  
 
 
 ### Example
@@ -48,8 +48,8 @@ import serket as srk
 import mlda
 import numpy as np
 
-data = np.loadtxt( "data.txt" )  # load a data
-data_category = np.loadtxt( "category.txt" )  # load a correct label
+data = np.loadtxt( "data.txt" )  # load data
+data_category = np.loadtxt( "category.txt" )  # load correct labels
 
 # define the modules
 obs = srk.Observation( data ) # send the observation to the connected module

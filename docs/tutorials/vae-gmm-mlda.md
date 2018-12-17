@@ -1,15 +1,15 @@
 ---
 layout: default
 ---
-## VAE + GMM + MLDA
+## VAE+GMM+MLDA
 In this tutorial, we construct a model that classifies multimodal information in an unsupervised manner by integrating VAE, GMM, and MLDA.
 
 ### Data
 We use handwritten digit image dataset [MNIST](http://yann.lecun.com/exdb/mnist/) and [Spoken Arabic Digit Data Set](https://archive.ics.uci.edu/ml/datasets/Spoken+Arabic+Digit).
-Spoken Arabic Digit DataSet is MFCC features obtained by converting spoken Arabic digits and published in UCI Machine Learning Repository. 
-To realize multimodal learning, we constructed pairwise data of the images and speech. 
-The number of pairs used in this tutorial is 3000. 
-We use HAC features converted from the MFCC features. 
+Spoken Arabic Digit DataSet consists of MFCC features obtained by converting spoken Arabic digits and published in UCI Machine Learning Repository.
+To realize multimodal learning, we constructed pairwise data of the images and the speeches.
+The number of pairs used in this tutorial is 3000.
+We use HAC features converted from the MFCC features.
 See [here](https://www.isca-speech.org/archive/interspeech_2008/i08_2554.html) the detail of HAC features．
 
 
@@ -22,13 +22,14 @@ MLDAは，GMMから送られてきた確率 \\( P(z_ {2,t} \mid \boldsymbol{z}_ 
 GMMは，送られてきた確率 \\( P(z_ {2,t} \mid z_ {3,t}, \boldsymbol{o}_ {2,t}) \\) も用いて再度分類を行うことで，MLDAの影響を受け \\( z_ 3, \boldsymbol{o}_ 2 \\) を考慮した分類が行われる．
 -->
 
-VAE compresses the observations \\( \boldsymbol{o}_ 1 \\) into the arbitrary dimensional latent variables \\( \boldsymbol{z}_ 1 \\) through the neural network called encoder and sends them to GMM.
-GMM classifies the latent variables \\( \boldsymbol{z}_ 1 \\) received from VAE and sends the probabilities \\( P(z_ {2,t} \mid \boldsymbol{z}_ {1,t}) \\) that the t-th data is classified into the class \\( z_ {2,t} \\) to MLDA.
+VAE compresses the observations \\( \boldsymbol{o}_ 1 \\) into the arbitrary dimensional latent variables \\( \boldsymbol{z}_ 1 \\) through the neural network called encoder, and sends them to GMM.
+GMM classifies the latent variables \\( \boldsymbol{z}_ 1 \\) received from VAE, and sends the probabilities \\( P(z_ {2,t} \mid \boldsymbol{z}_ {1,t}) \\) that the t-th data is classified into the class \\( z_ {2,t} \\) to MLDA.
 At the same time,  it sends the means \\( \boldsymbol{\mu} \\) of the distributions of the classes into which each data is classified to VAE.
-VAE learns the latent space suitable for the classification of GMM by using \\( \mu \\).
-MLDA handles \\( z_ 2 \\) as observations by sampling from the probabilities \\( P(z_ {2,t} \mid \boldsymbol{z}_ {1,t}) \\) received from GMM, and classifies  \\( z_ 2 \\) and the \\( \boldsymbol{o}_ 2 \\). 
-After that, it sends the probabilities \\( P(z_ {2,t} \mid z_ {3,t}, \boldsymbol{o}_ {2,t}) \\) to GMM. 
-GMM classifies again using the received probabilities \\( P(z_ {2,t} \mid z_ {3,t}, \boldsymbol{o}_ {2,t}) \\) so that the classification is influenced by \\( z_ 3\\) and \\( o_ 2 \\) through MLDA.
+Therefore, VAE learns the latent space suitable for the classification of GMM by using \\( boldsymbol{\mu} \\).
+MLDA handles \\( z_ 2 \\) as observations by sampling from the probabilities \\( P(z_ {2,t} \mid \boldsymbol{z}_ {1,t}) \\) received from GMM, and classifies \\( z_ 2 \\) and the observations \\( \boldsymbol{o}_ 2 \\).
+After that, it sends the probabilities \\( P(z_ {2,t} \mid z_ {3,t}, \boldsymbol{o}_ {2,t}) \\) to GMM.
+GMM classifies again using the received probabilities \\( P(z_ {2,t} \mid z_ {3,t}, \boldsymbol{o}_ {2,t}) \\), so that the classification is performed considering \\( z_ 3\\) and \\( \boldsymbol{o}_ 2 \\) under the influence of MLDA.
+
 
 <div align="center">
 <img src="img/vae-gmm-mlda/vae-gmm-mlda.png" width="750px">
@@ -50,14 +51,14 @@ The data is sent as observations to the connected modules by using `srk.Observat
 
 ```
 obs1 = srk.Observation( np.loadtxt( "data1.txt" ) )  # image data
-obs2 = srk.Observation( np.loadtxt( "data2.txt" ) )  # audio data
+obs2 = srk.Observation( np.loadtxt( "data2.txt" ) )  # speech data
 data_category = np.loadrxt( "category.txt" )
 ```
 
 The modules VAE, GMM, and MLDA used in the integrated model are defined.
-In the VAE, the dimensions of the latent variables are 18, the number of epochs is 200 and batch size is 500.
-In the GMM, the data is classified into 10 classes, and optional argument `data_category` is correct labels and used to compute classification accuracy. 
-In the MLDA, the data is classified into 10 classes using the weights `[200,200]` for the modalities, and optional argument `data_category` is correct labels and used to compute classification accuracy. 
+In the VAE, the number of dimensions of the latent variables is 18, the number of epochs is 200 and batch size is 500.
+In the GMM, the data is classified into 10 classes, and optional argument `data_category` is a set of correct labels and used to compute classification accuracy.
+In the MLDA, the data is classified into 10 classes using the weights `[200,200]` for the modalities, and optional argument `data_category` is a set of correct labels and used to compute classification accuracy. 
 
 
 ```

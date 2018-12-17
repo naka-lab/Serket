@@ -1,7 +1,7 @@
 ---
 layout: default
 ---
-## VAE + GMM
+## VAE+GMM
 In this tutorial, we construct a model of unsupervised classification using dimensional compression by integrating VAE and GMM.
 
 ### Data
@@ -18,25 +18,26 @@ GMMは，VAEから送られてきた潜在変数 \\( \boldsymbol{z}_1 \\) を分
 -->
 
 In VAE, the observations \\( \boldsymbol{o} \\) are compressed into the arbitrary dimensional latent variables \\( \boldsymbol{z}_1 \\) through the neural network called encoder.
-Then, the latent variables \\( \boldsymbol{z}_1 \\) are reconstructed to the original dimensional observation through the neural network called decoder.  The parameters are learned so that the reconstructed values become the same as the observations \\( \boldsymbol{o} \\). 
+Then, the latent variables \\( \boldsymbol{z}_1 \\) are reconstructed to the original dimensional observations through the neural network called decoder.
+The parameters are learned so that the reconstructed values become the same as the observations \\( \boldsymbol{o} \\).
 
 In this integrated model, VAE sends the latent variables \\( \boldsymbol{z}_1 \\) to GMM.
-GMM classifies the latent variables \\( \boldsymbol{z}_1 \\) received from VAE and compute the means \\( \boldsymbol{\mu} \\) of the distributions of the classes into which each data is classified. 
+GMM classifies the latent variables \\( \boldsymbol{z}_1 \\) received from VAE and compute the means \\( \boldsymbol{\mu} \\) of the distributions of the classes into which each data is classified.
 These means are sent to VAE and VAE updates its parameters using these means.
-The variational lower bound of normal VAE is as follows: 
+The variational lower bound of normal VAE is as follows:
 
 $$
-\mathcal{L}( \boldsymbol{\theta}, \boldsymbol{\phi}; \boldsymbol{o} ) = -D_{KL} ( q_{ \boldsymbol{\phi} }( \boldsymbol{z}_1 \mid \boldsymbol{o} ) \| \mathcal{N} ( 0, \boldsymbol{I} ) ) + \mathbb{E}_{ q_{ \boldsymbol{\phi} }( \boldsymbol{z}_1 \mid  \boldsymbol{o} ) } [ \log{ p_{ \boldsymbol{\theta} } ( \boldsymbol{o} \mid \boldsymbol{z}_1 ) } ]. 
+\mathcal{L}( \boldsymbol{\theta}, \boldsymbol{\phi}; \boldsymbol{o} ) = -D_{KL} ( q_{ \boldsymbol{\phi} }( \boldsymbol{z}_1 \mid \boldsymbol{o} ) \| \mathcal{N} ( 0, \boldsymbol{I} ) ) + \mathbb{E}_{ q_{ \boldsymbol{\phi} }( \boldsymbol{z}_1 \mid  \boldsymbol{o} ) } [ \log{ p_{ \boldsymbol{\theta} } ( \boldsymbol{o} \mid \boldsymbol{z}_1 ) } ].
 $$
 
 <!--
 Serketでは，GMMでの分類の影響を受けるため，データが分類されたクラスの平均 \\( \mu \\) を用いて変分下限を以下のように定義する．
 -->
 
-In Serket, so that VAE and GMM are affected each other, we define the variational lower bound as follows using the means \\( \boldsymbol{\mu} \\) of the distributions of the classes into which each data is classified: 
+In Serket, so that VAE and GMM are affected each other, we define the variational lower bound as follows using the means \\( \boldsymbol{\mu} \\) of the distributions of the classes into which each data is classified:
 
 $$
-\mathcal{L}( \boldsymbol{\theta}, \boldsymbol{\phi}; \boldsymbol{o} ) = - \alpha D_{KL} ( q_{ \boldsymbol{\phi} } ( \boldsymbol{z}_1 \mid \boldsymbol{o} ) \| \mathcal{N} ( \boldsymbol{\mu}, \boldsymbol{I} ) ) + \mathbb{E}_{ q_{ \boldsymbol{\phi} } ( \boldsymbol{z}_1 \mid \boldsymbol{o} ) } [ \log{ p_{ \boldsymbol{\theta} } ( \boldsymbol{o} \mid \boldsymbol{z}_1 ) } ], 
+\mathcal{L}( \boldsymbol{\theta}, \boldsymbol{\phi}; \boldsymbol{o} ) = - \alpha D_{KL} ( q_{ \boldsymbol{\phi} } ( \boldsymbol{z}_1 \mid \boldsymbol{o} ) \| \mathcal{N} ( \boldsymbol{\mu}, \boldsymbol{I} ) ) + \mathbb{E}_{ q_{ \boldsymbol{\phi} } ( \boldsymbol{z}_1 \mid \boldsymbol{o} ) } [ \log{ p_{ \boldsymbol{\theta} } ( \boldsymbol{o} \mid \boldsymbol{z}_1 ) } ],
 $$
 
 <!--
@@ -47,6 +48,7 @@ $$
 where \\( D_{KL} \\) represents KL divergence and \\( \alpha \\) is the weight of KL divergence .
 In this tutorial, we use \\( \alpha = 1 \\).
 As a result, the latent variables \\( \boldsymbol{z}_1 \\) of the data classified into the same class by GMM have similar values, and the latent space suitable for the classification is learned.
+
 
 <div align="center">
 <img src="img/vae-gmm/vae-gmm.png" width="750px">
@@ -62,24 +64,24 @@ import gmm
 import numpy as np
 ```
 
-The data and correct labels are loaded.
-The data are sent as observations to the connected module by `srk.Observation`.
+Then, data and correct labels are loaded.
+The data is sent as observations to the connected modules by using `srk.Observation`.
 
 ```
 obs = srk.Observation( np.loadtxt( "data.txt" ) )
 data_category = np.loadtxt( "category.txt" )
 ```
 
-Then, VAE and GMM modules used in the integrated model are defined. 
-The dimension of the latent variables of VAE is 18, the number of an epoch is 200 and a batch size is 500. 
-The number of classes of the GMM is 10, and an optional argument `data_category` is the correct labels which are used for computing the accuracy of the classification. 
+The modules VAE and GMM used in the integrated model are defined.
+In the VAE, the number of dimensions of the latent variables is 18, the number of epochs is 200 and batch size is 500.
+In the GMM, the data is classified into 10 classes, and optional argument `data_category` is a set of correct labels and used to compute classification accuracy.
 
 ```
 vae1 = vae.VAE( 18, itr=200, batch_size=500 )
 gmm1 = gmm.GMM( 10, category=data_category )
 ```
 
-To construct the integrated model, defined modules are connected.
+The modules are connected and the integrated model is constructed.
 
 ```
 vae1.connect( obs )  # connect obs to vae1
