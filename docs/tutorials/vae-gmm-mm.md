@@ -22,7 +22,7 @@ MMは，送られてきた確率 \\( P(z_ {2,t} \mid \boldsymbol{z}_ {1,t}) \\) 
 VAE compresses the observations \\( \boldsymbol{o} \\) into arbitrary dimensional latent variables \\( \boldsymbol{z}_ 1 \\)  through the neural network called encoder, and sends them to GMM.
 GMM classifies the latent variables \\( \boldsymbol{z}_ 1 \\) recieved from VAE, and sends the probabilities \\( P(z_ {2,t} \mid \boldsymbol{z}_ {1,t}) \\) that the t-th data is classified into the class \\( z_ {2,t} \\) to MM.
 At the same time, it sends the means \\( \boldsymbol{\mu} \\) of the distributions of the classes into which each data is classified to VAE.
-Therefore, VAE learns the latent space suitable for the classification of GMM by using \\( boldsymbol{\mu} \\).
+Therefore, VAE learns the latent space suitable for the classification of GMM by using \\( \boldsymbol{\mu} \\).
 Moreover, transition rules are learned in the MM.
 The latent variables \\( z_ 2 \\) are repeatedly sampled using the received probabilities \\( P(z_ {2,t} \mid \boldsymbol{z}_ {1,t}) \\) and the number of transitions is counted as follows:
 

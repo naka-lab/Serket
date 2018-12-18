@@ -25,7 +25,7 @@ GMMは，送られてきた確率 \\( P(z_ {2,t} \mid z_ {3,t}, \boldsymbol{o}_ 
 VAE compresses the observations \\( \boldsymbol{o}_ 1 \\) into the arbitrary dimensional latent variables \\( \boldsymbol{z}_ 1 \\) through the neural network called encoder, and sends them to GMM.
 GMM classifies the latent variables \\( \boldsymbol{z}_ 1 \\) received from VAE, and sends the probabilities \\( P(z_ {2,t} \mid \boldsymbol{z}_ {1,t}) \\) that the t-th data is classified into the class \\( z_ {2,t} \\) to MLDA.
 At the same time,  it sends the means \\( \boldsymbol{\mu} \\) of the distributions of the classes into which each data is classified to VAE.
-Therefore, VAE learns the latent space suitable for the classification of GMM by using \\( boldsymbol{\mu} \\).
+Therefore, VAE learns the latent space suitable for the classification of GMM by using \\( \boldsymbol{\mu} \\).
 MLDA handles \\( z_ 2 \\) as observations by sampling from the probabilities \\( P(z_ {2,t} \mid \boldsymbol{z}_ {1,t}) \\) received from GMM, and classifies \\( z_ 2 \\) and the observations \\( \boldsymbol{o}_ 2 \\).
 After that, it sends the probabilities \\( P(z_ {2,t} \mid z_ {3,t}, \boldsymbol{o}_ {2,t}) \\) to GMM.
 GMM classifies again using the received probabilities \\( P(z_ {2,t} \mid z_ {3,t}, \boldsymbol{o}_ {2,t}) \\), so that the classification is performed considering \\( z_ 3\\) and \\( \boldsymbol{o}_ 2 \\) under the influence of MLDA.
@@ -58,7 +58,7 @@ data_category = np.loadrxt( "category.txt" )
 The modules VAE, GMM, and MLDA used in the integrated model are defined.
 In the VAE, the number of dimensions of the latent variables is 18, the number of epochs is 200 and batch size is 500.
 In the GMM, the data is classified into 10 classes, and optional argument `data_category` is a set of correct labels and used to compute classification accuracy.
-In the MLDA, the data is classified into 10 classes using the weights `[200,200]` for the modalities, and optional argument `data_category` is a set of correct labels and used to compute classification accuracy. 
+In the MLDA, the data is classified into 10 classes using the weights `[200,200]` for the modalities, and optional argument `data_category` is a set of correct labels and used to compute classification accuracy.
 
 
 ```
