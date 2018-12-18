@@ -2,6 +2,7 @@
 layout: default
 ---
 # Tutorials
+Here we show how to construct integrated models using some implementation examples.
 
 - [VAE+GMM](http://serket.naka-lab.org/tutorials/vae-gmm.html)  
 Unsupervised classification using dimensional compression based on VAE.

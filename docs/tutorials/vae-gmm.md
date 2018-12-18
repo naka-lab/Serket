@@ -65,7 +65,7 @@ import numpy as np
 ```
 
 Then, data and correct labels are loaded.
-The data is sent as observations to the connected modules by using `srk.Observation`.
+The data is sent as observations to the connected module by using `srk.Observation`.
 
 ```
 obs = srk.Observation( np.loadtxt( "data.txt" ) )

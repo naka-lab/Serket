@@ -71,7 +71,7 @@ import numpy as np
 ```
 
 Then, data and correct labels are loaded.
-The data is sent as observations to the connected modules by using `srk.Observation`.
+The data is sent as observations to the connected module by using `srk.Observation`.
 
 ```
 obs = srk.Observation( np.loadtxt( "data.txt" ) )
@@ -80,7 +80,7 @@ data_category = np.loadrxt( "category.txt" )
 
 The modules VAE, GMM, and MM used in the integrated model are defined.
 In the VAE, the number of dimensions of the latent variables is 18, the number of epochs is 200 and batch size is 500.
-In the GMM, the data is classified into 10 classes, and optional argument `data_category` is a set of correct labels and used to compute classification accuracy. 
+In the GMM, the data is classified into 10 classes, and optional argument `data_category` is a set of correct labels and used to compute classification accuracy.
 
 ```
 vae1 = vae.VAE( 18, itr=200, batch_size=500 )

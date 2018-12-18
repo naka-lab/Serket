@@ -37,7 +37,7 @@ The following files are saved in the directory.({mode} contains the selected mod
     - `acc_{mode}.txt`: The accuracy calculated if the optional argument `category`.
     - `categories_{mode}.txt`: The classes into which each data is classified.
     - `Pdz_{mode}.txt`: The probabilities that each data is classified into class.
-    - `Pmdw[i]_{mode}.txt`: The modal features of the data are generated based on the classification.  
+    - `Pmdw[i]_{mode}.txt`: The probabilities that modal features of the data are generated based on the classification.  
 
 
 ### Example
