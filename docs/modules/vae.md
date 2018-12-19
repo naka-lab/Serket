@@ -15,7 +15,7 @@ $$
 \mathcal{L}(\boldsymbol{\theta},\boldsymbol{\phi};\boldsymbol{o})=-D_{KL}(q_{\boldsymbol{\phi}}(\boldsymbol{z}|\boldsymbol{o})||\mathcal{N}(0,\boldsymbol{I}))+\mathbb{E}_{q_{\boldsymbol{\phi}}(\boldsymbol{z}|\boldsymbol{o})}[\log{p_{\boldsymbol{\theta}}(\boldsymbol{o}|\boldsymbol{z})}].
 $$
 
-On the other hand, in Serket, it is optimized using messages (\\( boldsymbol{\mu} \\)) received from the connected module as follows:
+On the other hand, in Serket, it is optimized using messages (\\( \boldsymbol{\mu} \\)) received from the connected module as follows:
 
 $$
 \mathcal{L}(\boldsymbol{\theta},\boldsymbol{\phi};\boldsymbol{o})=- \alpha D_{KL}(q_{\boldsymbol{\phi}}(\boldsymbol{z}|\boldsymbol{o})||\mathcal{N}(\boldsymbol{\mu},\boldsymbol{I}))+\mathbb{E}_{q_{\boldsymbol{\phi}}(\boldsymbol{z}|\boldsymbol{o})}[\log{p_{\boldsymbol{\theta}}(\boldsymbol{o}|\boldsymbol{z})}],
@@ -35,7 +35,7 @@ where \\( D_{KL} \\) represents KL divergence and \\( \alpha \\) is the weight o
 | hidden_decoder_dim | int | Number of nodes in decoder |
 | batch_size | int | Number of batch size |
 | KL_param  | float | Weight of KL divergence |
-| mode      | string | Choose the mode from learning mode("learn") or recognition mode("recog") |  
+| mode      | string | Choose the mode from learning mode("learn") or recognition mode("recog") |
 
 
 ### Methods
