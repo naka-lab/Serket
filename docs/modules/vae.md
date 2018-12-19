@@ -44,7 +44,7 @@ where \\( D_{KL} \\) represents KL divergence and \\( \alpha \\) is the weight o
 This method connects this module to an observation or a module and constructs the model.
 - .update()  
 This method estimates model parameters and computes the latent variables.
-The module estimates model parameters in "learn" mode and computes the latent variables of novel data in "recog" mode.
+The module estimates model parameters in "learn" mode and computes the latent variables of novel data using the parameters in "recog" mode.
 If training is succeeded, the `module {n} _vae` directory is created.
 The following files are saved in the directory.({mode} contains the selected mode (learn or recog))
     - `model.ckpt`: The model parameters.
