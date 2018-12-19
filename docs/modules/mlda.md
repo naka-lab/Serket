@@ -17,7 +17,7 @@ The probabilities and generated features are sent to the connected modules.
 | Parameter | Type | Description |
 |:----------|:-----|:------------|
 | K         | int | Number of clusters |
-| weghits   | array | Weight for each modality |
+| weights  | array | Weight for each modality |
 | itr       | int | Number of iteration |
 | name      | string | Name of module |
 | category  | array | Correct class labels |
