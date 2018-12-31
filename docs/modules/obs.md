@@ -23,7 +23,7 @@ serket.Observation( data )
 import serket as srk
 import mlda
 
-# generate a data
+# generate a data element
 data = [[10, 2, 1],
             [8, 1, 1],
             [2, 7, 0],

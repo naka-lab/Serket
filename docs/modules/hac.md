@@ -1,14 +1,14 @@
 ---
 layout: default
 ---
-## HAC (Histogram of Acoustic Co-occurrences)
+## Histogram of Acoustic Co-Occurrences (HAC)
 
 ```
 hac.HACFeatureExtractor( filenames, ks, lags=[5,2], name="HACFeatureExtracter", **mfcc_params )
 ```
 
-`hac.HACFeatureExtractor` is a module for acoustic feature extractor based on the histogram of acoustic co-occurrence (HAC).
-It extracts HAC features from wave format files.
+`hac.HACFeatureExtractor` is a module for acoustic feature extraction based on the histogram of acoustic co-occurrences (HAC).
+It extracts HAC features from wave-format files.
 See [here](https://www.isca-speech.org/archive/interspeech_2008/i08_2554.html) for details about HAC.
 
 
@@ -18,8 +18,8 @@ See [here](https://www.isca-speech.org/archive/interspeech_2008/i08_2554.html) f
 |:----------|:-----|:------------|
 | filenames | array | Paths to wave files |
 | ks        | array | Number of elements in each code book (triplet of int) |
-| lags      | array | List of lags to compute co-occurence of acoustic events (the corresponding histograms are concatenated) |
-| name      | string | Name of module |
+| lags      | array | List of lags to compute co-occurrence of acoustic events (the corresponding histograms are concatenated) |
+| name      | string | Module name |
 |mfcc_params| tuple | Parameters for computing mfcc features (used librosa)<br>default<br>"n_mfcc": 13<br>"n_fft": 2048<br>"hop_length": 512<br>"n_mels": 128 |
 
 
@@ -30,13 +30,13 @@ See [here](https://www.isca-speech.org/archive/interspeech_2008/i08_2554.html) f
 import hac
 import mlda
 
-# make a list of some paths to wav data
+# make a list of paths to wav data
 wavs = ["./data00.wav", "./data01.wav", "./data02.wav",
             "./data03.wav", "./data04.wav", "./data05.wav",
             "./data06.wav", "./data07.wav", "./data08.wav"]
 
 # define the modules
-obs = hac.HACFeatureExtractor( wavs, [10,10,10], lags=[5] )  # convert wav data to hac features
+obs = hac.HACFeatureExtractor( wavs, [10,10,10], lags=[5] )  # convert wav data into hac features
 mlda1 = mlda.MLDA( 3, [100], category=[0,0,0,1,1,1,2,2,2] )  # classify into three classes
 
 # construct the model

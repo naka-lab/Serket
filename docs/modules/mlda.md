@@ -1,14 +1,15 @@
 ---
 layout: default
 ---
-## MLDA (Multimodal Latent Dirichlet Allocation)
+## Multimodal Latent Dirichlet Allocation (MLDA)
 
 ```
 mlda.MLDA( K, weights=None, itr=100, name="mlda", category=None, mode="learn" )
 ```
 
 `mlda.MLDA` is a module for unsupervised classification based on multimodal latent Dirichlet allocation.
-It computes the probabilities that each data is classified into each class, and modal features of the data are generated based on the classification.
+It computes the probabilities that each data element is classified into each class.
+Modal features of the data are generated based on the classification.
 The probabilities and generated features are sent to the connected modules.
 
 
@@ -18,10 +19,10 @@ The probabilities and generated features are sent to the connected modules.
 |:----------|:-----|:------------|
 | K         | int | Number of clusters |
 | weights  | array | Weight for each modality |
-| itr       | int | Number of iteration |
-| name      | string | Name of module |
+| itr       | int | Number of iterations |
+| name      | string | Module name |
 | category  | array | Correct class labels |
-| mode      | string | Choose the mode from learning mode("learn") or recognition mode("recog") |
+| mode      | string | Choose from learning mode ("learn") or recognition mode ("recog") |
 
 
 ### Methods
@@ -31,12 +32,12 @@ This method connects this module to observations or modules and constructs the m
 - .update()  
 This method estimates model parameters and computes probabilities.
 The module estimates model parameters in "learn" mode and predicts classes of novel data in "recog" mode.
-If training is succeeded, the `module {n} _mlda` directory is created.
-The following files are saved in the directory.({mode} contains the selected mode (learn or recog))
+If training is successful, then the `module{n}_mlda` directory is created.
+The following files are saved in the directory ({mode} contains the selected mode (learn or recog)):
     - `model.pickle`: The model parameters.
-    - `acc_{mode}.txt`: The accuracy calculated if the optional argument `category`.
-    - `categories_{mode}.txt`: The classes into which each data is classified.
-    - `Pdz_{mode}.txt`: The probabilities that each data is classified into class.
+    - `acc_{mode}.txt`: The accuracy calculated if the optional argument `category` is set.
+    - `categories_{mode}.txt`: The classes into which each data element is classified.
+    - `Pdz_{mode}.txt`: The probabilities that each data element is classified into a class.
     - `Pmdw[i]_{mode}.txt`: The probabilities that modal features of the data are generated based on the classification.  
 
 

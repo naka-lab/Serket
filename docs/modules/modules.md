@@ -2,7 +2,7 @@
 layout: default
 ---
 # Modules
-Currently, the following modules exist.
+Currently, the following modules exist:
 
 - [CNN](http://serket.naka-lab.org/modules/cnn.html)
 

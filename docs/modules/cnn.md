@@ -1,14 +1,14 @@
 ---
 layout: default
 ---
-## CNN (Convolutional Neural Network)
+## Convolutional Neural Network (CNN)
 
 ```
 CNN.CNNFeatureExtractor( filenames, name="CNNFeatureExtracter" )
 ```
 
-`CNN.CNNFeatureExtractor` is a module for feature extractor.
-It extracts image features by CNN using caffemodel.
+`CNN.CNNFeatureExtractor` is a module for feature extraction.
+It extracts image features using a CNN with caffemodel.
 
 
 ### Parameters

@@ -2,16 +2,16 @@
 layout: default
 ---
 
-Serket is a library to construct large-scale models and estimate its parameters via the connection of modules.
-Currently, you can use following probabilistic models and neural network models. 
+Serket is a library for constructing large-scale models and estimating their parameters via the connection of the modules.
+You can use the following probabilistic models and neural network models:
 
-- Multimodal Latent Dirichlet Allocation
-- Gaussian Mixture Model
+- Multimodal latent Dirichlet allocation
+- Gaussian mixture model
 - AutoEncoder
-- Hidden Markov Model
+- Hidden Markov model
 - Speech recognition with language model learning
 
-Serket makes it possible to construct large-scale models by connecting these modules. 
+Serket makes it possible to construct large-scale models by connecting these modules.
 
 
 ## Contributors
@@ -22,7 +22,7 @@ Serket makes it possible to construct large-scale models by connecting these mod
 - Tadahiro Taniguchi
 
 ## Citation
-The concept of Serket is described in the following paper: 
+The concept of Serket is described in the following paper:
 
 ```
 @article{nakamura2017serket,
@@ -33,7 +33,7 @@ volume={12},
 year={2017}}
 ```
 
-We have also published the Japanese paper describing some modules. 
+We have also published a Japanese paper describing some of the modules:
 
 ```
 國安瞭，中村友昭，青木達哉，谷口彰，尾崎僚，伊志嶺朝良，横山裕樹，小椋忠志，長井隆行，谷口忠大，”確率モデルの統合による大規模なモデルの実現 ～VAE, GMM, HMM, MLDAの統合モデルの実装と評価～”，情報論的学習理論ワークショップ，T-34，Nov. 2018

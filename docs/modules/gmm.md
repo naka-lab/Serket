@@ -1,14 +1,14 @@
 ---
 layout: default
 ---
-## GMM (Gaussian Mixture Model)
+## Gaussian Mixture Model (GMM)
 
 ```
 gmm.GMM( K, itr=100, name="gmm", category=None, mode="learn" )
 ```
 
 `gmm.GMM` is a module for unsupervised classification based on a Gaussian mixture model.
-It computes the probabilities that each data is classified into each class and the means of the distribution, and sends them to the connected modules.
+It computes the probabilities that each data element is classified into each class and the means of the distributions and sends them to the connected modules.
 
 
 ### Parameters
@@ -16,10 +16,10 @@ It computes the probabilities that each data is classified into each class and t
 | Parameter | Type | Description |
 |:----------|:-----|:------------|
 | K         | int | Number of clusters |
-| itr       | int | Number of iteration |
-| name      | string | Name of module |
+| itr       | int | Number of iterations |
+| name      | string | Module name |
 | category  | array | Correct class labels |
-| mode      | string | Choose the mode from learning mode("learn") or recognition mode("recog") |
+| mode      | string | Choose from learning mode ("learn") or recognition mode ("recog") |
 
 
 ### Methods
@@ -29,13 +29,13 @@ This method connects this module to an observation or a module and constructs th
 - .update()  
 This method estimates model parameters and computes probabilities.
 The module estimates model parameters in "learn" mode and predicts classes of novel data in "recog" mode.
-If training is succeeded, the `module {n} _gmm` directory is created.
-The following files are saved in the directory.({mode} contains the selected mode (learn or recog))
+If training is successful, then the `module{n}_gmm` directory is created.
+The following files are saved in the directory ({mode} contains the selected mode (learn or recog)):
     - `model.pickle`: The model parameters.
-    - `acc_{mode}.txt`: The accuracy computed if the optional argument `category`.
-    - `class_{mode}.txt`: The classes into which each data is classified.
+    - `acc_{mode}.txt`: The accuracy computed if the optional argument `category` is set.
+    - `class_{mode}.txt`: The classes into which each data element is classified.
     - `mu_{mode}.txt`: The means of the distributions of each class.
-    - `Pdz_{mode}.txt`: The probabilities that each data is classified into class.  
+    - `Pdz_{mode}.txt`: The probabilities that each data element is classified into a class.  
 
 
 ### Example

@@ -1,37 +1,36 @@
 ---
 layout: default
 ---
-## MM (Markov Model)
+## Markov Model (MM)
 
 ```
 mm.MarkovModel( num_samp=100, name="mm", mode="learn" )
 ```
 
-HMM (hidden Markov model) can be constructed by connecting with `mm.MarkovModel` and the module for classification.
-It computes the transition probabilities using the received probabilities,
-and sends the probabilities modified based on the transition probabilities to the connected module.
+The hidden Markov model (HMM) can be constructed by connecting `mm.MarkovModel` with the module for classification.
+It computes the transition probabilities using the received probabilities and sends the probabilities modified based on the transition probabilities to the connected module.
 
 
 ### Parameters
 
 | Parameter | Type | Description |
 |:----------|:-----|:------------|
-| num_samp  | int | Number of iteration of sampling |
-| name      | string | Name of module |
-| mode      | string | Choose the mode from learning mode("learn") or recognition mode("recog") |
+| num_samp  | int | Number of sampling iterations |
+| name      | string | Module name |
+| mode      | string | Choose from learning mode ("learn") or recognition mode ("recog") |
 
 
 ### Methods
 
 - .connect()  
-This method connects this module to a module and constructs the model.
+This method connects this module to another module and constructs the model.
 - .update()  
 This method estimates model parameters and computes probabilities.
 The module estimates model parameters in "learn" mode and predicts classes of novel data in "recog" mode.
-If training is succeeded, the `module {n} _mm` directory is created.
-The following files are saved in the directory.({mode} contains the selected mode (learn or recog))
+If training is successful, then the `module{n}_mm` directory is created.
+The following files are saved in the directory ({mode} contains the selected mode (learn or recog)):
     - `model.pickle`: The model parameters.
-    - `msg_{mode}.txt`: The probabilities that each data is classified into each class.
+    - `msg_{mode}.txt`: The probabilities that each data element is classified into a class.
     - `trans_prob_learn.txt`: The transition probabilities computed in the learning phase.  
 
 
