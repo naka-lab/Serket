@@ -15,7 +15,7 @@ See [here](https://www.isca-speech.org/archive/interspeech_2008/i08_2554.html) f
 
 ### Model
 
-The VAE compresses the observations \\( \boldsymbol{o}_ 1 \\) into the arbitrary dimensional latent variables \\( \boldsymbol{z}_ 1 \\) through a neural network called the encoder and sends them to the GMM.
+The VAE compresses the observations \\( \boldsymbol{o}_ 1 \\) into arbitrary dimensional latent variables \\( \boldsymbol{z}_ 1 \\) through a neural network called the encoder and sends them to the GMM.
 The GMM classifies the latent variables \\( \boldsymbol{z}_ 1 \\) received from the VAE and sends the probabilities \\( P(z_ {2,t} \mid \boldsymbol{z}_ {1,t}) \\) that the t-th data element is classified into the class \\( z_ {2,t} \\) to the MLDA.
 At the same time, the GMM sends the means \\( \boldsymbol{\mu} \\) of the distributions of classes into which each data element is classified to VAE.
 Therefore, the VAE learns the latent space suitable for the classification of the GMM by using \\( \boldsymbol{\mu} \\).
