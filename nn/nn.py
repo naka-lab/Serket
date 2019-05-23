@@ -1,0 +1,88 @@
+# encoding: utf8
+#from __future__ import unicode_literals
+import os
+import numpy as np
+import tensorflow as tf
+
+def save_result(message, loss_save, loss_save_, save_dir, mode):
+    if not os.path.exists( save_dir ):
+        os.mkdir( save_dir )
+
+    # messageを保存
+    np.savetxt( os.path.join( save_dir, "message_{}.txt".format(mode) ), message, fmt="%f" )
+    
+    # lossを保存，学習モード時は元のモデルのlossも保存
+    if mode == "learn":
+        np.savetxt( os.path.join( save_dir, "loss.txt" ), loss_save )
+    np.savetxt( os.path.join( save_dir, "loss_message.txt" ), loss_save_ )
+
+def train( data, x, y, m_, graph, loss, train_step, index, num_itr1=5000, num_itr2=5000, save_dir="model", batch_size1=None, batch_size2=None, mode="learn" ):
+    N = len(data[0])
+    
+    # loss保存用のlist
+    loss_save = []   # 元のモデル用
+    loss_save_ = []  # messageモデル用
+    
+    # 元のモデルの学習
+    if mode=="learn":
+        with tf.Session(graph=graph[0]) as sess:
+            sess.run(tf.global_variables_initializer())
+            saver = tf.train.Saver()
+                
+            for step in range(1, num_itr1+1):
+                # バッチ学習
+                if batch_size1==None:
+                    _, cur_loss = sess.run([train_step[0], loss[0]], feed_dict={x[0]: data[0], y[0]: data[1]})
+                    # 50ごとにloss保存
+                    if step % 50 == 0:
+                        loss_save.append([step,cur_loss])
+                        
+                # ミニバッチ学習
+                else:
+                    sff_idx = np.random.permutation(N)
+                    for idx in range(0, N, batch_size1):
+                        idx_ = sff_idx[idx: idx + batch_size1 if idx + batch_size1 < N else N]
+                        batch_x = data[0][idx_]
+                        batch_y = data[1][idx_]
+                        _, cur_loss = sess.run([train_step[0], loss[0]], feed_dict={x[0]: batch_x, y[0]: batch_y})
+                    # epochごとにloss保存
+                    loss_save.append([step,cur_loss])
+                
+            # モデルの保存
+            saver.save(sess, os.path.join(save_dir, "model.ckpt"))
+
+    # message学習
+    with tf.Session(graph=graph[1]) as sess:
+        sess.run(tf.global_variables_initializer())
+        # m(TRAINABLE_VARIABLES[0])以外の変数を復元するため引数を指定
+        saver = tf.train.Saver(var_list=tf.get_collection(tf.GraphKeys.TRAINABLE_VARIABLES)[1:])
+        
+        # モデルの読み込み(m以外のパラメータを復元)
+        saver.restore(sess, os.path.join(save_dir, "model.ckpt"))
+        for step in range(1, num_itr2+1):
+            # バッチ学習
+            if batch_size2==None:
+                _, cur_loss_ = sess.run([train_step[1], loss[1]], feed_dict={x[1]: data[0], y[1]: data[1]})
+                # 50ごとにloss保存
+                if step % 50 == 0:
+                    loss_save_.append([step,cur_loss_])
+            
+            # ミニバッチ学習
+            else:
+                sff_idx = np.random.permutation(N)
+                for idx in range(0, N, batch_size2):
+                    idx_ = sff_idx[idx: idx + batch_size2 if idx + batch_size2 < N else N]
+                    batch_x = data[0][idx_]
+                    batch_y = data[1][idx_]
+                    _, cur_loss_ = sess.run([train_step[1], loss[1]], feed_dict={x[1]: batch_x, y[1]: batch_y, index: idx_})
+                # epochごとにloss保存
+                loss_save_.append([step,cur_loss_])
+
+        # messageを出力
+        message = sess.run([m_])[0]
+                
+    # 結果を保存
+    save_result(message, loss_save, loss_save_, save_dir, mode) 
+    
+    return message
+
