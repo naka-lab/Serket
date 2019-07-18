@@ -48,7 +48,7 @@ class VAE(srk.Module, metaclass=ABCMeta):
     def build_model(self):
         class Prior(Normal):
             def __init__( self ):
-                super(Prior, self).__init__(cond_var=["mu", "sigma"], var=["x"], name="p_{prior}")
+                super(Prior, self).__init__(cond_var=["mu", "sigma"], var=["z"], name="p_{prior}")
                 
             def forward(self, mu, sigma):
                 return {"loc": mu, "scale": sigma}
@@ -133,6 +133,7 @@ class VAE(srk.Module, metaclass=ABCMeta):
         if back_msg is None:
             self.__mu = np.zeros( (self.__N, self.__latent_dim) )
             self.__sigma = np.ones( (self.__N, self.__latent_dim) )
+        # データ点のクラスに対応したmuとsigmaを格納[N, latent_dim]
         else:
             mus = [ back_msg[0][i].loc[0] for i in range(len(back_msg[0])) ]
             sigmas = [ back_msg[0][i].scale[0] for i in range(len(back_msg[0])) ]
