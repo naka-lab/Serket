@@ -18,7 +18,6 @@ class GMM(srk.Module):
         self.__itr = itr
         self.__category = category
         self.__mode = mode
-        self.__save_dir = self.get_name()
             
         if mode != "learn" and mode != "recog":
             raise ValueError("choose mode from \"learn\" or \"recog\"")
