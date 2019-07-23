@@ -110,7 +110,7 @@ class GMM(srk.Module):
     
         # モデルパラメータの保存
         if self.__mode == "learn":
-            # 確率と平均の保存
+            # 平均と分散の保存
             loc = []
             scale = []
             for k in range(self.__K):
@@ -119,6 +119,9 @@ class GMM(srk.Module):
             np.savetxt( os.path.join( self.__save_dir, "mu.txt" ), loc, fmt=str("%f") )
             np.savetxt( os.path.join( self.__save_dir, "sigma.txt" ), scale, fmt=str("%f") )
     
+        # 確率の保存
+        np.savetxt( os.path.join( self.__save_dir, "Pdz_{}.txt".format(self.__mode) ), self.__post_probs.cpu().detach().numpy(), fmt=str("%f") )
+        
         # 分類結果・精度の計算・保存
         if self.__category is not None:
             self.calc_acc()
