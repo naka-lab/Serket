@@ -18,6 +18,7 @@ class GMM(srk.Module):
         self.__itr = itr
         self.__category = category
         self.__mode = mode
+        self.__n = 0
             
         if mode != "learn" and mode != "recog":
             raise ValueError("choose mode from \"learn\" or \"recog\"")
@@ -105,7 +106,7 @@ class GMM(srk.Module):
     
     def save_model( self ):
         if not os.path.exists( self.__save_dir ):
-            os.mkdir( self.__save_dir )
+            os.makedirs( self.__save_dir )
     
         # モデルパラメータの保存
         if self.__mode == "learn":
@@ -151,7 +152,7 @@ class GMM(srk.Module):
 
         self.__data[0] = torch.Tensor( self.__data[0] ).to(self.__device)
         
-        self.__save_dir = self.get_name()+"_%d"%i
+        self.__save_dir = os.path.join( self.get_name(), "%03d" % self.__n )
         
         # VAEの構築
         self.build_model()
@@ -165,10 +166,15 @@ class GMM(srk.Module):
         
         # サンプリング
         self.sampling()
+        
+        # backward message(Normalのlist)
+        distributions = [ self.__distributions[c] for c in self.__classes ]
 
         # 結果を保存
         self.save_model()
+        
+        self.__n += 1
 
         # メッセージの送信
         self.set_forward_msg( self.__post )
-        self.send_backward_msgs( [[self.__distributions, self.__classes]] )
+        self.send_backward_msgs( [distributions] )

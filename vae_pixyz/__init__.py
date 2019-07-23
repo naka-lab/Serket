@@ -20,6 +20,7 @@ class VAE(srk.Module, metaclass=ABCMeta):
         self.__batch_size = batch_size
         self.__KL_param = KL_param
         self.__mode = mode
+        self.__n = 0
             
         if mode != "learn" and mode != "recog":
             raise ValueError("choose mode from \"learn\" or \"recog\"")
@@ -120,7 +121,7 @@ class VAE(srk.Module, metaclass=ABCMeta):
 
     def update( self, i ):
         self.__data = self.get_observations()
-        back_msg = self.get_backward_msg()              # [Nomals, calasses]
+        back_msg = self.get_backward_msg()              # Normalのlist
 
         self.__N = len(self.__data[0])                  # データ数
         
@@ -135,20 +136,18 @@ class VAE(srk.Module, metaclass=ABCMeta):
             self.__sigma = np.ones( (self.__N, self.__latent_dim) )
         # データ点のクラスに対応したmuとsigmaを格納[N, latent_dim]
         else:
-            mus = [ back_msg[0][i].loc[0] for i in range(len(back_msg[0])) ]
-            sigmas = [ back_msg[0][i].scale[0] for i in range(len(back_msg[0])) ]
-            self.__mu = [ mus[c].cpu().detach().numpy() for c in back_msg[1] ]
-            self.__sigma = [ sigmas[c].cpu().detach().numpy() for c in back_msg[1] ]
+            self.__mu = [ dist.loc[0].cpu().detach().numpy() for dist in back_msg ]
+            self.__sigma = [ dist.scale[0].cpu().detach().numpy() for dist in back_msg ]
         
         self.__data[0] = torch.Tensor( self.__data[0] ).to(self.__device)
         self.__mu = torch.Tensor( self.__mu ).to(self.__device)
         self.__sigma = torch.Tensor( self.__sigma ).to(self.__device)
 
-        self.__save_dir = self.get_name()+"_%d"%i
+        self.__save_dir = os.path.join( self.get_name(), "%03d" % self.__n )
         
         # 保存フォルダの作成
         if not os.path.exists( self.__save_dir ):
-            os.mkdir( self.__save_dir )
+            os.makedirs( self.__save_dir )
         
         # VAEの構築・学習
         self.build_model()
@@ -156,6 +155,8 @@ class VAE(srk.Module, metaclass=ABCMeta):
 
         # 結果を保存
         self.save_result()
+        
+        self.__n += 1
 
         # メッセージの送信
         self.set_forward_msg( self.__zz )
