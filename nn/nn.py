@@ -16,8 +16,10 @@ def save_result(message, loss_save, loss_save_, save_dir, mode):
         np.savetxt( os.path.join( save_dir, "loss.txt" ), loss_save )
     np.savetxt( os.path.join( save_dir, "loss_message.txt" ), loss_save_ )
 
-def train( data, x, y, m_, graph, loss, train_step, index, num_itr1=5000, num_itr2=5000, save_dir="model", batch_size1=None, batch_size2=None, mode="learn" ):
-    N = len(data[0])
+def train( data, x, y, m_, graph, loss, train_step, index, num_itr1=5000, num_itr2=5000, save_dir="model", batch_size1=None, batch_size2=None, seaquence_size=None, mode="learn" ):
+    N = len(data[0])        # データ数
+    D_x = len(data[0][0])   # 入力の次元数
+    D_y = len(data[1][0])   # 出力の次元数
     
     # loss保存用のlist
     loss_save = []   # 元のモデル用
@@ -39,12 +41,29 @@ def train( data, x, y, m_, graph, loss, train_step, index, num_itr1=5000, num_it
                         
                 # ミニバッチ学習
                 else:
-                    sff_idx = np.random.permutation(N)
-                    for idx in range(0, N, batch_size1):
-                        idx_ = sff_idx[idx: idx + batch_size1 if idx + batch_size1 < N else N]
-                        batch_x = data[0][idx_]
-                        batch_y = data[1][idx_]
-                        _, cur_loss = sess.run([train_step[0], loss[0]], feed_dict={x[0]: batch_x, y[0]: batch_y})
+                    if seaquence_size==None:
+                        # ランダムインデックスを作成
+                        sff_idx = np.random.permutation(N)
+                        for idx in range(0, N, batch_size1):
+                            # ランダムインデックスをバッチサイズに小分け
+                            idx_ = sff_idx[idx: idx + batch_size1 if idx + batch_size1 < N else N]
+                            # ミニバッチ作成
+                            batch_x = data[0][idx_]
+                            batch_y = data[1][idx_]
+                            _, cur_loss = sess.run([train_step[0], loss[0]], feed_dict={x[0]: batch_x, y[0]: batch_y})
+                    else:
+                        # シーケンスサイズのステップでランダムインデックスを作成
+                        sff_idx_ = np.arange(0, N, seaquence_size)
+                        np.random.shuffle(sff_idx_)
+                        sff_idx = np.array([np.arange(sff_idx_[i], sff_idx_[i]+seaquence_size) for i in range(len(sff_idx_))]).flatten()
+                        for idx in range(0, N, batch_size1):
+                            # ランダムインデックスをバッチサイズに小分け
+                            idx_ = sff_idx[idx: idx + batch_size1 if idx + batch_size1 < N else N]
+                            # ミニバッチ作成
+                            batch_x = data[0][idx_]
+                            batch_y = data[1][idx_]
+                            _, cur_loss = sess.run([train_step[0], loss[0]], feed_dict={x[0]: batch_x, y[0]: batch_y})
+                        
                     # epochごとにloss保存
                     loss_save.append([step,cur_loss])
                 
@@ -69,12 +88,29 @@ def train( data, x, y, m_, graph, loss, train_step, index, num_itr1=5000, num_it
             
             # ミニバッチ学習
             else:
-                sff_idx = np.random.permutation(N)
-                for idx in range(0, N, batch_size2):
-                    idx_ = sff_idx[idx: idx + batch_size2 if idx + batch_size2 < N else N]
-                    batch_x = data[0][idx_]
-                    batch_y = data[1][idx_]
-                    _, cur_loss_ = sess.run([train_step[1], loss[1]], feed_dict={x[1]: batch_x, y[1]: batch_y, index: idx_})
+                if seaquence_size==None:
+                    # ランダムインデックスを作成
+                    sff_idx = np.random.permutation(N)
+                    for idx in range(0, N, batch_size2):
+                        # ランダムインデックスをバッチサイズに小分け
+                        idx_ = sff_idx[idx: idx + batch_size2 if idx + batch_size2 < N else N]
+                        # ミニバッチ作成
+                        batch_x = data[0][idx_]
+                        batch_y = data[1][idx_]
+                        _, cur_loss_ = sess.run([train_step[1], loss[1]], feed_dict={x[1]: batch_x, y[1]: batch_y, index: idx_})
+                else:
+                    # シーケンスサイズのステップでランダムインデックスを作成
+                    sff_idx = np.arange(0, N, seaquence_size)
+                    np.random.shuffle(sff_idx)
+                    sff_idx = np.array([np.arange(sff_idx_[i], sff_idx_[i]+seaquence_size) for i in range(len(sff_idx_))]).flatten()
+                    for idx in range(0, N, batch_size2):
+                        # ランダムインデックスをバッチサイズに小分け
+                        idx_ = sff_idx[idx: idx + batch_size2 if idx + batch_size2 < N else N]
+                        # ミニバッチ作成
+                        batch_x = data[0][idx_]
+                        batch_y = data[1][idx_]
+                        _, cur_loss_ = sess.run([train_step[1], loss[1]], feed_dict={x[1]: batch_x, y[1]: batch_y, index: idx_})
+                        
                 # epochごとにloss保存
                 loss_save_.append([step,cur_loss_])
 

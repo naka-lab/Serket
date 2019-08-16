@@ -7,16 +7,19 @@ from . import nn
 import serket as srk
 import numpy as np
 import tensorflow as tf
+import os
 from abc import ABCMeta, abstractmethod
 
 class NN(srk.Module, metaclass=ABCMeta):
-    def __init__( self, itr1=5000, itr2=5000, name="nn", batch_size1=None, batch_size2=None, mode="learn" ):
+    def __init__( self, itr1=5000, itr2=5000, name="nn", batch_size1=None, batch_size2=None, seaquence_size=None, mode="learn" ):
         super(NN, self).__init__(name, True)
         self.__itr1 = itr1
         self.__itr2 = itr2
         self.__batch_size1 = batch_size1
         self.__batch_size2 = batch_size2
+        self.seaquence_size = seaquence_size
         self.__mode = mode
+        self.__n = 0
 
     def build_model( self, data ):
         N = len(data[0])                # データ数
@@ -63,16 +66,20 @@ class NN(srk.Module, metaclass=ABCMeta):
     def model( self, x, y, input_dim, output_dim ):
         pass
     
-    def update(self):
+    def update( self ):
         data = self.get_observations()
         
-        for i in range(2):
-            data[i] = np.array( data[i], dtype=np.float32 )
+        data[0] =  np.array( data[0], dtype=np.float32 ) + 0.01
+        data[1] =  np.array( data[1], dtype=np.float32 )
         
         x, y, m_, graph, loss, train_step, index = self.build_model(data)
         
+        save_dir = os.path.join( self.get_name(), "%03d" % self.__n )
+        
         # NN学習
-        message = nn.train( data, x, y, m_, graph, loss, train_step, index, self.__itr1, self.__itr2, self.get_name(), self.__batch_size1, self.__batch_size2, self.__mode )
+        message = nn.train( data, x, y, m_, graph, loss, train_step, index, self.__itr1, self.__itr2, save_dir, self.__batch_size1, self.__batch_size2, self.seaquence_size, self.__mode )
 
+        self.__n += 1
+        
         # メッセージの送信
         self.send_backward_msgs( [message, None] )
