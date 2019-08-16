@@ -18,7 +18,7 @@ class VAE(srk.Module, metaclass=ABCMeta):
         self.__KL_param = KL_param
         self.__RE = RE
         self.__mode = mode
-        self.__save_dir = self.get_name()
+        self.__n = 0
         
         if RE != "BCE" and RE != "MSE":
             raise ValueError("choose RE from \"BCE\" or \"MSE\"")
@@ -30,7 +30,7 @@ class VAE(srk.Module, metaclass=ABCMeta):
         tf.reset_default_graph()
     
         # 入力を入れるplaceholder
-        self.__x = tf.placeholder( "float", shape=[None, self.__input_dim] )
+        self.__x = tf.placeholder( "float" )
         self.__mu_pri = tf.placeholder( "float", shape=[None, self.__latent_dim] )
         
         # encoder
@@ -45,13 +45,13 @@ class VAE(srk.Module, metaclass=ABCMeta):
         self.__x_hat, optimizer = self.build_decoder( self.__z, self.__input_dim, self.__latent_dim )
         
         # KLダイバージェンスを定義
-        KLD = -0.5 * tf.reduce_sum( 1 + logvar_encoder - tf.pow(mu_encoder - self.__mu_pri, 2) - tf.exp(logvar_encoder), reduction_indices=1 )
+        KLD = -0.5 * tf.reduce_sum( 1 + logvar_encoder - tf.pow(mu_encoder - self.__mu_pri, 2) - tf.exp(logvar_encoder), axis=1 )
         
         # 復元誤差を定義
         if self.__RE=="BCE":
-            RE = tf.reduce_sum( tf.nn.sigmoid_cross_entropy_with_logits(logits=self.__x_hat, labels=self.__x), reduction_indices=1 )
+            RE = tf.reduce_sum( tf.nn.sigmoid_cross_entropy_with_logits(logits=self.__x_hat, labels=self.__x), axis=np.arange(len(self.__input_dim)+1)[1:] )
         if self.__RE=="MSE":
-            RE = tf.reduce_sum( tf.square(self.__x_hat - self.__x), reduction_indices=1 )
+            RE = tf.reduce_sum( tf.square(self.__x_hat - self.__x), axis=np.arange(len(self.__input_dim)+1)[1:] )
         
         # lossを定義
         self.__loss = tf.reduce_mean( RE + self.__KL_param * KLD )
@@ -97,24 +97,23 @@ class VAE(srk.Module, metaclass=ABCMeta):
                             _, cur_loss = sess.run( [self.__train_step, self.__loss], feed_dict=feed_dict )
                         # epochごとにloss保存
                         self.__loss_save.append( [step,cur_loss] )
-                   
+
+                # サンプリング
+                self.__zz, self.__xx = sess.run( [self.__z, self.__x_hat], feed_dict={self.__x: self.__data[0]} )
                 # モデルの保存
                 saver.save( sess, os.path.join(self.__save_dir, "model.ckpt") )
-                
-        # 認識モード時はモデルの読み込みとサンプリングのみ
-        with tf.Session() as sess:
-            # モデルの読み込み
-            saver.restore( sess, os.path.join(self.__save_dir, "model.ckpt") )
-            # サンプリング
-            self.__zz, self.__xx = sess.run( [self.__z, self.__x_hat], feed_dict={self.__x: self.__data[0]} )
+        else:
+            # 認識モード時はモデルの読み込みとサンプリングのみ
+            with tf.Session() as sess:
+                # モデルの読み込み
+                saver.restore( sess, os.path.join(self.__save_dir, "model.ckpt") )
+                # サンプリング
+                self.__zz, self.__xx = sess.run( [self.__z, self.__x_hat], feed_dict={self.__x: self.__data[0]} )
         
     def save_result( self ):
-        if not os.path.exists( self.__save_dir ):
-            os.mkdir( self.__save_dir )
-    
         # ｚ,x_hatを保存
         np.savetxt( os.path.join( self.__save_dir, "z_{}.txt".format(self.__mode) ), self.__zz )
-        np.savetxt( os.path.join( self.__save_dir, "x_hat_{}.txt".format(self.__mode) ), self.__xx )
+        np.savetxt( os.path.join( self.__save_dir, "x_hat_{}.txt".format(self.__mode) ), self.__xx.reshape([self.__N, -1]) )
         
         # 学習モード時はlossを保存
         if self.__mode == "learn":
@@ -124,8 +123,12 @@ class VAE(srk.Module, metaclass=ABCMeta):
         self.__data = self.get_observations()
         self.__mu_prior = self.get_backward_msg()
 
-        self.__N = len(self.__data[0])                  # データ数
-        self.__input_dim = len( self.__data[0][0] )     # 入力の次元数
+        self.__N = len(self.__data[0])                      # データ数
+        
+        if len(self.__data[0].shape)==2:
+            self.__input_dim = self.__data[0][0].shape      # 入力の次元数
+        else:
+            self.__input_dim = self.__data[0][0].shape      # 時系列データ(系列長*次元数)or画像の場合(高さ*幅*チャンネル)
         
         # backward messageがまだ計算されていないとき
         if self.__mu_prior is None:
@@ -133,12 +136,18 @@ class VAE(srk.Module, metaclass=ABCMeta):
 
         self.__data[0] = np.array( self.__data[0], dtype=np.float32 )
 
+        self.__save_dir = os.path.join( self.get_name(), "%03d" % self.__n )
+        if not os.path.exists( self.__save_dir ):
+            os.makedirs( self.__save_dir )
+
         # VAEの構築・学習
         self.build_model()
         self.train()
         
         # 結果を保存
         self.save_result()
+        
+        self.__n += 1
 
         # メッセージの送信
         self.set_forward_msg( self.__zz )
