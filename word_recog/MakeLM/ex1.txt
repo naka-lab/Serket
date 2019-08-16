@@ -1,0 +1,50 @@
+ silB やめます silE
+ silB 入れ替えて 下さい silE
+ silB シャツ と 上着 を 入れ替えて 下さい silE
+ silB 戻して 下さい silE
+ silB 終了します silE
+ silB 上着 を シャツ と 統一して 下さい silE
+ silB 記憶して 下さい silE
+ silB 交換して 下さい silE
+ silB この 服装 を 覚えておいて 下さい silE
+ silB シャツ を スーツ と 統一して 下さい silE
+ silB 覚えておいて 下さい silE
+ silB 一つ前 に 戻して 下さい silE
+ silB 前 に 戻して 下さい silE
+ silB 覚えて 下さい silE
+ silB ９ 番 の 服装 に 戻して 下さい silE
+ silB もう少し 暖か く して 下さい silE
+ silB ４ 番 の 服 に 戻して 下さい silE
+ silB 交換して 下さい silE
+ silB 戻って 下さい silE
+ silB 色 を 交換して 下さい silE
+ silB 上着 を カッター と 統一して 下さい silE
+ silB シャツ を 上着 と 統一して 下さい silE
+ silB やり直して 下さい silE
+ silB シャツ を スーツ と 統一して 下さい silE
+ silB もう少し 派手 に して 下さい silE
+ silB スーツ と シャツ を 地味 に して 下さい silE
+ silB 上着 を シャツ と 統一して 下さい silE
+ silB シャツ と スーツ を 入れ替えて 下さい silE
+ silB もう少し はっきり と して 下さい silE
+ silB シャツ を スーツ と 同じ 色 と 柄 に 統一して 下さい silE
+ silB スーツ を カッター と 統一して 下さい silE
+ silB この 状態 を 覚えて 下さい silE
+ silB 上着 を カッター と 統一して 下さい silE
+ silB ６ 番 の 服 に 戻して 下さい silE
+ silB 上着 を カッター と 同じ 色 と 柄 に 統一して 下さい silE
+ silB 上着 と カッター を 交換して 下さい silE
+ silB 今の 服装 を 記憶して 下さい silE
+ silB 上着 を シャツ と 同じ 色 と 柄 に 同じにして 下さい silE
+ silB もう少し 明る く して 下さい silE
+ silB 今の を 覚えておいて 下さい silE
+ silB 少し ぼんやり と して 下さい silE
+ silB 上着 を シャツ と 同じにして 下さい silE
+ silB これ を 記憶して 下さい silE
+ silB １ 番 の 服装 に 戻して 下さい silE
+ silB 上着 を カッター と 同じ 柄 に 統一して 下さい silE
+ silB ５ 番 の 服 に 戻って 下さい silE
+ silB 上着 を カッター と 同じにして 下さい silE
+ silB 今の 状態 を 記憶して 下さい silE
+ silB 上着 を シャツ と 同じ 柄 に 統一して 下さい silE
+ silB シャツ を スーツ と 同じ 柄 に 統一して 下さい silE

@@ -1,0 +1,1 @@
+set PATH=%~p0;%PATH%
