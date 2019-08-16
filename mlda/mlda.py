@@ -108,7 +108,7 @@ def calc_acc(results, correct):
 # モデルの保存
 def save_model( save_dir, n_dz, n_mzw, n_mz, M, dims, categories, mode ):
     if not os.path.exists( save_dir ):
-        os.mkdir( save_dir )
+        os.makedirs( save_dir )
 
     # 確率の計算と保存
     Pdz = n_dz + __alpha

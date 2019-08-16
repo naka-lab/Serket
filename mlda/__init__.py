@@ -6,7 +6,7 @@ sys.path.append( "../" )
 from . import mlda
 import serket as srk
 import numpy as np
-
+import os
 
 class MLDA(srk.Module):
     def __init__( self, K, weights=None, itr=100, name="mlda", category=None, mode="learn" ):
@@ -16,6 +16,7 @@ class MLDA(srk.Module):
         self.__itr = itr
         self.__category = category
         self.__mode = mode
+        self.__n = 0
         
         if mode != "learn" and mode != "recog":
             raise ValueError("choose mode from \"learn\" or \"recog\"")
@@ -30,7 +31,6 @@ class MLDA(srk.Module):
         # backward messageがまだ計算されていないときは一様分布にする
         if Pdz is None:
             Pdz = np.ones( (N, self.__K) ) / self.__K
-   
     
         # データの正規化処理
         for m in range(M):     
@@ -43,9 +43,12 @@ class MLDA(srk.Module):
         for m in range(M):
             data[m] = np.array( data[m], dtype=np.int32 )
         
+        save_dir = os.path.join( self.get_name(), "%03d" % self.__n )
         
         # MLDA学習
-        Pdz, Pdw = mlda.train( data, self.__K, self.__itr, self.get_name(), Pdz, self.__category, self.__mode )
+        Pdz, Pdw = mlda.train( data, self.__K, self.__itr, save_dir, Pdz, self.__category, self.__mode )
+        
+        self.__n += 1
         
         # メッセージの送信
         self.set_forward_msg( Pdz )
