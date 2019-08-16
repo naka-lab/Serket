@@ -6,7 +6,7 @@ sys.path.append( "../" )
 from . import gmm
 import serket as srk
 import numpy as np
-
+import os
 
 class GMM(srk.Module):
     def __init__( self, K, itr=100, name="gmm", category=None, mode="learn" ):
@@ -15,6 +15,7 @@ class GMM(srk.Module):
         self.__itr = itr
         self.__category = category
         self.__mode = mode
+        self.__n = 0
         
         if mode != "learn" and mode != "recog":
             raise ValueError("choose mode from \"learn\" or \"recog\"")
@@ -31,8 +32,11 @@ class GMM(srk.Module):
 
         data[0] = np.array( data[0], dtype=np.float32 )
 
+        save_dir = os.path.join( self.get_name(), "%03d" % self.__n )
         # GMM学習
-        Pdz, mu = gmm.train( data[0], self.__K, self.__itr, self.get_name(), Pdz, self.__category, self.__mode )
+        Pdz, mu = gmm.train( data[0], self.__K, self.__itr, save_dir, Pdz, self.__category, self.__mode )
+        
+        self.__n += 1
 
         # メッセージの送信
         self.set_forward_msg( Pdz )

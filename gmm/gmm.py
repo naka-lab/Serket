@@ -140,7 +140,7 @@ def calc_acc( results, correct ):
 # モデルの保存
 def save_model( Pdz, mu, classes, save_dir, categories, distributions, mode ):
     if not os.path.exists( save_dir ):
-        os.mkdir( save_dir )
+        os.makedirs( save_dir )
 
     # モデルパラメータの保存
     if mode == "learn":
