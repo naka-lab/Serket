@@ -7,5 +7,7 @@ Tomoaki Nakamura, Takayuki Nagai and Tadahiro Taniguchi, "SERKET: An Architectur
 [Project website](http://serket.naka-lab.org/)
 
 
+
 Precautions
+
 word_recog uses a batch file and depends on Windows. Furthermore, it currently only supports Japanese speech.
