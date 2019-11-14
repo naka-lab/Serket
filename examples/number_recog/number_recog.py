@@ -7,37 +7,34 @@ sys.path.append("../../")
 import serket as srk
 import word_recog
 import mlda
-import vae2
+import vae
 import gmm
 import TtoT
 import numpy as np
 import tensorflow as tf
 import glob
-import logging
 
-hidden_encoder_dim1 = 128
-hidden_decoder_dim1 = 128
+encoder_dim = 128
+decoder_dim= 128
 
-class vae_model(vae2.VAE):
-    def build_encoder(self, x, input_dim, latent_dim):
-        h_encoder1 = tf.keras.layers.Dense(hidden_encoder_dim1, activation=tf.nn.relu)(tf.reshape(x,(-1,input_dim[0])))
+class vae_model(vae.VAE):
+    def build_encoder(self, x, latent_dim):
+        h_encoder1 = tf.keras.layers.Dense(encoder_dim, activation=tf.nn.relu)(x)
 
-        mu_encoder = tf.keras.layers.Dense(latent_dim)(h_encoder1)
-        logvar_encoder = tf.keras.layers.Dense(latent_dim)(h_encoder1)
+        mu = tf.keras.layers.Dense(latent_dim)(h_encoder1)
+        logvar = tf.keras.layers.Dense(latent_dim)(h_encoder1)
         
-        return mu_encoder, logvar_encoder
+        return mu, logvar
     
-    def build_decoder(self, z, input_dim, latent_dim):
-        h_decoder1 = tf.keras.layers.Dense(hidden_decoder_dim1, activation=tf.nn.relu)(z)
-        x_hat = tf.keras.layers.Dense(input_dim[0])(h_decoder1)
+    def build_decoder(self, z,):
+        h_decoder1 = tf.keras.layers.Dense(decoder_dim, activation=tf.nn.relu)(z)
+        logits = tf.keras.layers.Dense(784)(h_decoder1)
 
-        optimizer = tf.train.AdamOptimizer(0.001)
+        optimizer = tf.train.AdamOptimizer()
         
-        return x_hat, optimizer
+        return logits, optimizer
 
 def main():
-    logging.basicConfig(level=logging.INFO)
-
     wavs0 = glob.glob( "speech/0/*.wav" ) # 音声0
     wavs1 = glob.glob( "speech/1/*.wav" ) # 音声1
     wavs2 = glob.glob( "speech/2/*.wav" ) # 音声2
@@ -68,10 +65,11 @@ def main():
     gmm1.connect( vae1 )
     tt.connect( lda1, gmm1 )
 
-    for it in range(40):
-        print(it)
+    for i in range(40):
+        print(i)
         speech.update()
         lda1.update()
+        tt.update()
         vae1.update()
         gmm1.update()
         tt.update()
