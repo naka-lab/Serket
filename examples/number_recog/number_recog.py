@@ -26,7 +26,7 @@ class vae_model(vae.VAE):
         
         return mu, logvar
     
-    def build_decoder(self, z,):
+    def build_decoder(self, z):
         h_decoder1 = tf.keras.layers.Dense(decoder_dim, activation=tf.nn.relu)(z)
         logits = tf.keras.layers.Dense(784)(h_decoder1)
 
