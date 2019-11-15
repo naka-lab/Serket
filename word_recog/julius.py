@@ -6,7 +6,7 @@ import os
 import re
 
 class Julius():
-    def __init__(self, wdir="."):
+    def __init__(self, wdir=".", lmp=[8.0, -2.0]):
         self.__wdir = wdir
         
         if not os.path.exists( self.__wdir ):
@@ -18,6 +18,7 @@ class Julius():
         self.__julius = os.path.join( file_path ,"julius.exe" )
         self.__jconf =  os.path.join( file_path ,"fast_file.jconf" )
         self.__kanadic = os.path.join( file_path ,"type" )
+        self.__lmp = lmp
     
     def make_wav_list(self, wavfile):
         fList = codecs.open( self.__wav_list_name , "w" , "sjis" )
@@ -44,7 +45,7 @@ class Julius():
         self.make_wav_list( wavfile )
     
         sentences = []
-        command  = self.__julius + " -C %s -filelist %s " % (self.__jconf, self.__wav_list_name)
+        command  = self.__julius + " -C %s -filelist %s -lmp %.1f %.1f -lmp2 %.1f %.1f" % (self.__jconf, self.__wav_list_name, self.__lmp[0], self.__lmp[1], self.__lmp[0], self.__lmp[1])
         command += " -d " + bingram
         command += " -v " + hdkdic
         command += " -n %d " % nbest

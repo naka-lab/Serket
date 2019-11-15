@@ -20,12 +20,14 @@ def mkdir( path ):
         os.mkdir( path )
 
 class WordRecog(srk.Module):
-    def __init__(self, wave_files , name="speech_recog"):
+    def __init__(self, wave_files, nbest=10, threshold=1, lmp=[8.0, -2.0], name="speech_recog"):
         super(WordRecog, self).__init__(name, True)
         mkdir( self.get_name() )
         self.__nit = 0
+        self.__nbest = nbest
+        self.__threshold = threshold
         self.__wave_files = wave_files
-        self.__julius = julius.Julius( os.path.join( self.get_name(), "julius" ) )
+        self.__julius = julius.Julius( os.path.join( self.get_name(), "julius" ), lmp )
 
 
     def initialize(self):
@@ -39,9 +41,9 @@ class WordRecog(srk.Module):
         select_sentences = []
         for d in range(len(self.__wave_files)):
             for n in range(len(self.__wave_files[d])):
-                recogres = self.__julius.recog_kana( self.__wave_files[d][n], 10 )
+                recogres = self.__julius.recog_kana( self.__wave_files[d][n], self.__nbest )
                 select_sentences.append( recogres[0].replace("ー", "") )
-                for i in range(10):
+                for i in range(self.__nbest):
                     self.__wave_id.append((d,n,i))
                     if i < len(recogres):
                         sentences.append( recogres[i].replace("ー", "") )
@@ -52,7 +54,7 @@ class WordRecog(srk.Module):
         utils.save_lines( select_sentences, fname_selected_sen )
 
         lang_model.makelm( fname_selected_sen, fname_lm )
-        self.__obj_hist, self.__sen_hist = histogram.make_histogram( self.__wave_id, fname_recogres, fname_wordhist )
+        self.__obj_hist, self.__sen_hist = histogram.make_histogram( self.__wave_id, fname_recogres, fname_wordhist, 1 )
 
         # send foward_message
         self.set_forward_msg( np.array(self.__obj_hist,dtype=np.float) )
@@ -78,20 +80,20 @@ class WordRecog(srk.Module):
 
         selected_sen = []
 
-        for i in range(0,len(sentences),10):
+        for i in range(0, len(sentences), self.__nbest):
             object_id = self.__wave_id[i][0]
-            logliks = np.sum( self.__sen_hist[i:i+10] * np.log(prob[object_id]), 1 )
+            logliks = np.sum( self.__sen_hist[i:i+self.__nbest] * np.log(prob[object_id]), 1 )
             liks = np.exp( logliks - np.max(logliks) )
             
             # ヒストグラムが空の時尤度が高くなってしまう場合があるので，その対処
-            liks = liks * ( np.sum(self.__sen_hist[i:i+10], 1)>0 )
+            liks = liks * ( np.sum(self.__sen_hist[i:i+self.__nbest], 1)>0 )
             idx = self.sample_index( liks )
             selected_sen.append( sentences[i+idx] )
 
         utils.save_lines( selected_sen, fname_selected_sen )
 
 
-    def learn(self, nit ):
+    def learn(self, nit):
         fname_selected_sen = os.path.join( self.get_name(), "%03d"%nit, "selected_sentences.txt" )
         fname_recog = os.path.join( self.get_name(), "%03d"%(nit-1), "recogres.txt" )
 #        fname_recog0 = os.path.join( self.get_name(), "000", "recogres.txt" )
@@ -107,6 +109,7 @@ class WordRecog(srk.Module):
         lang_model.makelm( fname_selected_sen, fname_lm )
 
         fname_recogres = os.path.join( self.get_name(), "%03d"%nit, "recogres.txt" )
+        fname_best = os.path.join( self.get_name(), "%03d"%nit, "best_sentences.txt" )
         fname_wordhist = os.path.join( self.get_name(), "%03d"%nit, "word" )
 
         htkdic = fname_lm + ".htkdic"
@@ -115,21 +118,24 @@ class WordRecog(srk.Module):
         # 更新した言語モデルで音声認識
         self.__wave_id = []
         sentences = []
+        best_sentences = []
         for d in range(len(self.__wave_files)):
             for n in range(len(self.__wave_files[d])):
-                recogres = self.__julius.recog( self.__wave_files[d][n], 10, bingram, htkdic )
-                for i in range(10):
+                recogres = self.__julius.recog( self.__wave_files[d][n], self.__nbest, bingram, htkdic )
+                best_sentences.append( recogres[0].replace("ー", "") )
+                for i in range(self.__nbest):
                     self.__wave_id.append((d,n,i))
                     if i < len(recogres):
                         sentences.append( recogres[i].replace("ー", "") )
                     else:
                         sentences.append("")
 
-        utils.save_lines(sentences, fname_recogres )
-        self.__obj_hist, self.__sen_hist = histogram.make_histogram( self.__wave_id, fname_recogres, fname_wordhist )
+        utils.save_lines( sentences, fname_recogres )
+        utils.save_lines( best_sentences, fname_best )
+        self.__obj_hist, self.__sen_hist = histogram.make_histogram( self.__wave_id, fname_recogres, fname_wordhist, self.__threshold )
 
         # ヒストグラムを送信
-        self.set_forward_msg( np.array(self.__obj_hist,dtype=np.float) )
+        self.set_forward_msg( np.array(self.__obj_hist, dtype=np.float) )
 
 
     def update(self):
@@ -141,3 +147,5 @@ class WordRecog(srk.Module):
             mkdir( os.path.join( self.get_name(), "%03d"%self.__nit ) )
             self.learn( self.__nit )
             self.__nit += 1
+#            if self.__threshold < 100:
+#                self.__threshold *= 2
