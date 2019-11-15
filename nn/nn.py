@@ -4,19 +4,16 @@ import os
 import numpy as np
 import tensorflow as tf
 
-def save_result(message, loss_save, loss_save_, save_dir, mode):
-    if not os.path.exists( save_dir ):
-        os.mkdir( save_dir )
-
+def save_result( message, loss_save, loss_save_, save_dir, load_dir ):
     # messageを保存
-    np.savetxt( os.path.join( save_dir, "message_{}.txt".format(mode) ), message, fmt="%f" )
+    np.savetxt( os.path.join( save_dir, "message.txt" ), message, fmt="%f" )
     
-    # lossを保存，学習モード時は元のモデルのlossも保存
-    if mode == "learn":
+    # lossを保存，学習時は元のモデルのlossも保存
+    if load_dir is None:
         np.savetxt( os.path.join( save_dir, "loss.txt" ), loss_save )
     np.savetxt( os.path.join( save_dir, "loss_message.txt" ), loss_save_ )
 
-def train( data, x, y, m_, graph, loss, train_step, index, num_itr1=5000, num_itr2=5000, save_dir="model", batch_size1=None, batch_size2=None, seaquence_size=None, mode="learn" ):
+def train( data, x, y, m_, graph, loss, train_step, index, num_itr1=5000, num_itr2=5000, save_dir="model", batch_size1=None, batch_size2=None, seaquence_size=None, load_dir=None ):
     N = len(data[0])        # データ数
     D_x = len(data[0][0])   # 入力の次元数
     D_y = len(data[1][0])   # 出力の次元数
@@ -26,7 +23,7 @@ def train( data, x, y, m_, graph, loss, train_step, index, num_itr1=5000, num_it
     loss_save_ = []  # messageモデル用
     
     # 元のモデルの学習
-    if mode=="learn":
+    if load_dir is None:
         with tf.Session(graph=graph[0]) as sess:
             sess.run(tf.global_variables_initializer())
             saver = tf.train.Saver()
@@ -77,7 +74,11 @@ def train( data, x, y, m_, graph, loss, train_step, index, num_itr1=5000, num_it
         saver = tf.train.Saver(var_list=tf.get_collection(tf.GraphKeys.TRAINABLE_VARIABLES)[1:])
         
         # モデルの読み込み(m以外のパラメータを復元)
-        saver.restore(sess, os.path.join(save_dir, "model.ckpt"))
+        if load_dir is None:
+            saver.restore(sess, os.path.join(save_dir, "model.ckpt"))
+        else:
+            saver.restore(sess, os.path.join(load_dir, "model.ckpt"))
+        
         for step in range(1, num_itr2+1):
             # バッチ学習
             if batch_size2==None:
@@ -116,9 +117,8 @@ def train( data, x, y, m_, graph, loss, train_step, index, num_itr1=5000, num_it
 
         # messageを出力
         message = sess.run([m_])[0]
-                
+        
     # 結果を保存
-    save_result(message, loss_save, loss_save_, save_dir, mode) 
+    save_result( message, loss_save, loss_save_, save_dir, load_dir ) 
     
     return message
-

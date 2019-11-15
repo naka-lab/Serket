@@ -11,23 +11,40 @@ import serket as srk
 import numpy as np
 import tensorflow as tf
 
-class NNmodel(nn.NN):
+encoder_dim = 128
+decoder_dim = 128
+
+class vae_model(vae.VAE):
+    encoder_dim = 128
+    decoder_dim = 128
+    def build_encoder(self, x, latent_dim):
+        h_encoder = tf.keras.layers.Dense(encoder_dim, activation="relu")(x)
+
+        mu = tf.keras.layers.Dense(latent_dim)(h_encoder)
+        logvar = tf.keras.layers.Dense(latent_dim)(h_encoder)
+        
+        return mu, logvar
+    
+    def build_decoder(self, z):
+        h_decoder = tf.keras.layers.Dense(decoder_dim, activation="relu")(z)
+        logits = tf.keras.layers.Dense(784)(h_decoder)
+
+        optimizer = tf.train.AdamOptimizer()
+        
+        return logits, optimizer
+
+class NN_model(nn.NN):
     def model( self, x, y, input_dim, output_dim ):
-        hidden_dim = 64
-        weight_stddev = 0.1
+        h_dim = 64
         
-        # layer1
-        w1 = tf.Variable(tf.truncated_normal([input_dim, hidden_dim], stddev=weight_stddev), name="w1")
-        b1 = tf.Variable(tf.constant(0., shape=[hidden_dim]), name="b1")
-        y1 = tf.nn.relu(tf.matmul(x, w1) + b1)
+        # hidden layer
+        h = tf.keras.layers.Dense(h_dim, activation="relu")(x)
         
-        # layer2
-        w2 = tf.Variable(tf.truncated_normal([hidden_dim, output_dim], stddev=weight_stddev), name="w2")
-        b2 = tf.Variable(tf.constant(0., shape=[output_dim]), name="b2")
-        y2 = tf.matmul(y1, w2) + b2
+        # output layer
+        yy = tf.keras.layers.Dense(output_dim)(h)
         
         #loss, 最適化手法の定義
-        loss = tf.reduce_sum(tf.square(y2 - y))
+        loss = tf.reduce_mean( tf.reduce_sum(tf.square(yy - y), axis=1) )
         train_step = tf.train.AdamOptimizer()
         
         return loss, train_step
@@ -37,9 +54,9 @@ def main():
     obs2 = srk.Observation( np.loadtxt("data2.txt") )
     category = np.loadtxt("category.txt")
     
-    vae1 = vae.VAE(18, itr=200, batch_size=500)
+    vae1 = vae_model(10, itr=200, batch_size=500)
     gmm1 = gmm.GMM(10, category=category)
-    nn1 = NNmodel(itr1=150, itr2=1500, batch_size1=500, batch_size2=500)
+    nn1 = NN_model(itr1=500, itr2=2000, batch_size1=500, batch_size2=500)
     
     vae1.connect( obs1 )
     gmm1.connect( vae1 )
@@ -53,5 +70,4 @@ def main():
 
 if __name__=="__main__":
     main()
-    
     
