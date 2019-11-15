@@ -9,17 +9,14 @@ import numpy as np
 import os
 
 class MLDA(srk.Module):
-    def __init__( self, K, weights=None, itr=100, name="mlda", category=None, mode="learn" ):
+    def __init__( self, K, weights=None, itr=100, name="mlda", category=None, load_dir=None ):
         super(MLDA, self).__init__(name, True)
         self.__K = K
         self.__weights = weights
         self.__itr = itr
         self.__category = category
-        self.__mode = mode
+        self.__load_dir = load_dir
         self.__n = 0
-        
-        if mode != "learn" and mode != "recog":
-            raise ValueError("choose mode from \"learn\" or \"recog\"")
         
     def update(self):
         data = self.get_observations()
@@ -36,17 +33,20 @@ class MLDA(srk.Module):
         for m in range(M):     
             data[m][ data[m]<0 ] = 0
             
-        if self.__weights!=None:
+        if self.__weights is not None:
             for m in range(M):
                 data[m] = (data[m].T / data[m].sum(1)).T * self.__weights[m]
         
         for m in range(M):
             data[m] = np.array( data[m], dtype=np.int32 )
         
-        save_dir = os.path.join( self.get_name(), "%03d" % self.__n )
+        if self.__load_dir is None:
+            save_dir = os.path.join( self.get_name(), "%03d" % self.__n )
+        else:
+            save_dir = os.path.join( self.get_name(), "recog" )
         
         # MLDA学習
-        Pdz, Pdw = mlda.train( data, self.__K, self.__itr, save_dir, Pdz, self.__category, self.__mode )
+        Pdz, Pdw = mlda.train( data, self.__K, self.__itr, save_dir, Pdz, self.__category, self.__load_dir )
         
         self.__n += 1
         
