@@ -11,14 +11,14 @@ import os
 from abc import ABCMeta, abstractmethod
 
 class NN(srk.Module, metaclass=ABCMeta):
-    def __init__( self, itr1=5000, itr2=5000, name="nn", batch_size1=None, batch_size2=None, seaquence_size=None, mode="learn" ):
+    def __init__( self, itr1=5000, itr2=5000, name="nn", batch_size1=None, batch_size2=None, seaquence_size=None, load_dir=None ):
         super(NN, self).__init__(name, True)
         self.__itr1 = itr1
         self.__itr2 = itr2
         self.__batch_size1 = batch_size1
         self.__batch_size2 = batch_size2
         self.seaquence_size = seaquence_size
-        self.__mode = mode
+        self.__load_dir = load_dir
         self.__n = 0
 
     def build_model( self, data ):
@@ -61,7 +61,7 @@ class NN(srk.Module, metaclass=ABCMeta):
         
         return x, y, m_, graph, loss_list, train_step_list, index
     
-    # クラス継承先でmodelを定義しない時にエラーをはく
+    # クラス継承先でmodelを定義
     @abstractmethod
     def model( self, x, y, input_dim, output_dim ):
         pass
@@ -74,10 +74,15 @@ class NN(srk.Module, metaclass=ABCMeta):
         
         x, y, m_, graph, loss, train_step, index = self.build_model(data)
         
-        save_dir = os.path.join( self.get_name(), "%03d" % self.__n )
+        if self.__load_dir is None:
+            save_dir = os.path.join( self.get_name(), "%03d" % self.__n )
+        else:
+            save_dir = os.path.join( self.get_name(), "recog" )
+        if not os.path.exists( save_dir ):
+            os.makedirs( save_dir )
         
         # NN学習
-        message = nn.train( data, x, y, m_, graph, loss, train_step, index, self.__itr1, self.__itr2, save_dir, self.__batch_size1, self.__batch_size2, self.seaquence_size, self.__mode )
+        message = nn.train( data, x, y, m_, graph, loss, train_step, index, self.__itr1, self.__itr2, save_dir, self.__batch_size1, self.__batch_size2, self.seaquence_size, self.__load_dir )
 
         self.__n += 1
         
