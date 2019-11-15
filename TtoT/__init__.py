@@ -17,8 +17,13 @@ class TtoT(srk.Module):
         
         K = len( data[0][0] )   # 潜在変数の次元数
         N = len( data[0] )      # データ数
-        M = len( data  )        # モジュール数
+        M = len( data )         # モジュール数
         changed = True          # 変化したかどうか
+        
+        # 確率が送られてきてないモジュールは一様分布を代入
+        for m in range(M):
+            if np.all(data[m]==None):
+                data[m] = np.ones([N, K]) / K
         
         # 各モジュールの確率をワンホット化(インデックスをそろえる計算を楽にするため)
         onehot_data = []
