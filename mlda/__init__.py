@@ -23,22 +23,30 @@ class MLDA(srk.Module):
         Pdz = self.get_backward_msg() # P(z|d)
 
         M = len( data )     # モダリティ数
-        N = len( data[0] )  # データ数
+        
+        for m in range(M):
+            if data[m].all() is not None:
+                N = len( data[m] )     # データ数
+                break
         
         # backward messageがまだ計算されていないときは一様分布にする
         if Pdz is None:
             Pdz = np.ones( (N, self.__K) ) / self.__K
     
         # データの正規化処理
-        for m in range(M):     
-            data[m][ data[m]<0 ] = 0
+        for m in range(M):
+            if data[m].all() is not None:
+                data[m][ data[m]<0 ] = 0
             
         if self.__weights is not None:
             for m in range(M):
-                data[m] = (data[m].T / data[m].sum(1)).T * self.__weights[m]
+                if data[m].all() is not None:
+                    divider = np.where( data[m].sum(1)==0, 1, data[m].sum(1) )
+                    data[m] = ( data[m].T / divider ).T * self.__weights[m]
         
         for m in range(M):
-            data[m] = np.array( data[m], dtype=np.int32 )
+            if data[m].all() is not None:
+                data[m] = np.array( data[m], dtype=np.int32 )
         
         if self.__load_dir is None:
             save_dir = os.path.join( self.get_name(), "%03d" % self.__n )

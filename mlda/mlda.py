@@ -77,10 +77,10 @@ def calc_liklihood( data, n_dz, n_zw, n_z, K, V ):
     return lik
 
 def calc_acc(results, correct):
-    K = np.max(results)+1  # カテゴリ数
-    N = len(results)          # データ数
-    max_acc = 0               # 精度の最大値
-    changed = True            # 変化したかどうか
+    K = int(np.max(correct)+1)  # カテゴリ数
+    N = len(results)            # データ数
+    max_acc = 0                 # 精度の最大値
+    changed = True              # 変化したかどうか
 
     while changed:
         changed = False
@@ -109,15 +109,14 @@ def calc_acc(results, correct):
 def save_model( save_dir, n_dz, n_mzw, n_mz, M, dims, categories, liks, load_dir ):
     if not os.path.exists( save_dir ):
         os.makedirs( save_dir )
-        
-    # 尤度の保存
-    np.savetxt( os.path.join( save_dir, "liklihood.txt" ), liks, fmt="%f" )
     
     # 確率の計算と保存
     Pdz = n_dz + __alpha
     Pdz = (Pdz.T / Pdz.sum(1)).T
-    
     np.savetxt( os.path.join( save_dir, "Pdz.txt" ), Pdz, fmt="%f" )
+    
+    # 尤度の保存
+    np.savetxt( os.path.join( save_dir, "liklihood.txt" ), liks, fmt="%f" )
     
     Pmdw = []
     for m in range(M):
@@ -130,13 +129,10 @@ def save_model( save_dir, n_dz, n_mzw, n_mz, M, dims, categories, liks, load_dir
         # モデルパラメータの保存
         with open( os.path.join( save_dir, "model.pickle" ), "wb" ) as f:
             pickle.dump( [n_mzw, n_mz], f )
-        # 尤度の保存
-        np.savetxt( os.path.join( save_dir, "liklihood.txt" ), liks, fmt="%f" )
     
     # 分類結果・精度の計算と保存
     results = np.argmax( Pdz, -1 )
     if categories is not None:
-        results = np.argmax( Pdz, -1 )
         acc, results = calc_acc( results, categories )
         np.savetxt( os.path.join( save_dir, "categories.txt" ), results, fmt="%d" )
         np.savetxt( os.path.join( save_dir, "acc.txt" ), [acc], fmt="%f" )
@@ -164,7 +160,7 @@ def train( data, K, num_itr=100, save_dir="model", bias_dz=None, categories=None
 
     dims = []
     for m in range(M):
-        if data[m] is not None:
+        if data[m].all() is not None:
             dims.append( len(data[m][0]) )
             D = len(data[m])    # 物体数
         else:
@@ -175,7 +171,7 @@ def train( data, K, num_itr=100, save_dir="model", bias_dz=None, categories=None
     topics_mdn = [[ None for i in range(D) ] for m in range(M)]
     for d in range(D):
          for m in range(M):
-            if data[m] is not None:
+            if data[m].all() is not None:
                 docs_mdn[m][d] = conv_to_word_list( data[m][d] )
                 topics_mdn[m][d] = np.random.randint( 0, K, len(docs_mdn[m][d]) ) # 各単語にランダムでトピックを割り当てる
 
@@ -190,7 +186,7 @@ def train( data, K, num_itr=100, save_dir="model", bias_dz=None, categories=None
         # メインの処理
         for d in range(D):
             for m in range(M):
-                if data[m] is None:
+                if data[m].all() is None:
                     continue
 
                 N = len(docs_mdn[m][d]) # 物体dのモダリティmに含まれる特徴数
@@ -218,12 +214,11 @@ def train( data, K, num_itr=100, save_dir="model", bias_dz=None, categories=None
                         n_mz[m][z] += 1
 
         # 尤度計算
-        if load_dir is None:
-            lik = 0
-            for m in range(M):
-                if data[m] is not None:
-                    lik += calc_liklihood( data[m], n_dz, n_mzw[m], n_mz[m], K, dims[m] )
-            liks.append( lik )
+        lik = 0
+        for m in range(M):
+            if data[m].all() is not None:
+                lik += calc_liklihood( data[m], n_dz, n_mzw[m], n_mz[m], K, dims[m] )
+        liks.append( lik )
         
     params = save_model( save_dir, n_dz, n_mzw, n_mz, M, dims, categories, liks, load_dir )
     
