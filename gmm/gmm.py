@@ -119,10 +119,10 @@ def sample_class( d, distributions, i, bias_dz ):
 
 
 def calc_acc( results, correct ):
-    K = np.max(results)+1     # カテゴリ数
-    N = len(results)          # データ数
-    max_acc = 0               # 精度の最大値
-    changed = True            # 変化したかどうか
+    K = int(np.max(correct)+1) # カテゴリ数
+    N = len(results)           # データ数
+    max_acc = 0                # 精度の最大値
+    changed = True             # 変化したかどうか
 
     while changed:
         changed = False
@@ -148,7 +148,7 @@ def calc_acc( results, correct ):
     return max_acc, results
 
 # モデルの保存
-def save_model( Pdz, mu, classes, save_dir, categories, distributions, liks, load_dir ):
+def save_model( Pdz, mu, save_dir, categories, distributions, liks, load_dir ):
     if not os.path.exists( save_dir ):
         os.makedirs( save_dir )
     
@@ -168,6 +168,7 @@ def save_model( Pdz, mu, classes, save_dir, categories, distributions, liks, loa
     np.savetxt( os.path.join( save_dir, "Pdz.txt" ), Pdz, fmt="%f" )
     
     # 分類結果・精度の計算と保存
+    classes = np.argmax(Pdz, -1)
     if categories is not None:
         acc, results = calc_acc( classes, categories )
         np.savetxt( os.path.join( save_dir, "class.txt" ), results, fmt="%d" )
@@ -254,12 +255,12 @@ def train( data, K, num_itr=100, save_dir="model", bias_dz=None, categories=None
         for n in range(N):
             for k in range(K):
                 Pdz[n][k] = calc_probability( distributions[k], data[n] )
-        classes = np.argmax(Pdz, axis=1)
+        classes = np.argmax(Pdz, -1)
 
     # 正規化
     Pdz = (Pdz.T / np.sum(Pdz,1)).T
     
-    save_model( Pdz, mu, classes, save_dir, categories, distributions, liks, load_dir )
+    save_model( Pdz, mu, save_dir, categories, distributions, liks, load_dir )
 
     return Pdz, mu
 
