@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Serket</title>
+    <!-- Include Sidr bundled CSS theme -->
+    <link rel="stylesheet" href="http://serket.naka-lab.org/dist/stylesheets/jquery.sidr.dark.css">
+    <!-- Your CSS -->
+    <link rel="stylesheet" href="http://serket.naka-lab.org/style.css">
+    <script type="text/javascript" async src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+  </head>
+  <body>
+
+    <div id="sidr">
+      <ul>
+          <li><a href="http://serket.naka-lab.org/index.html">Top page</a></li>
+          <li><a href="http://serket.naka-lab.org/getting_started.html">Getting Started</a></li>
+          <li><a href="http://serket.naka-lab.org/modules/modules.html">Modules</a></li>
+          <li><a href="http://serket.naka-lab.org/tutorials/tutorials.html">Tutorials</a></li>
+      </ul>
+
+      <!-- google翻訳 -->
+      <div id="google_translate_element"></div><script type="text/javascript">
+      function googleTranslateElementInit() {
+          new google.translate.TranslateElement({pageLanguage: 'en', includedLanguages: 'de,ja,fr,zh-CN'}, 'google_translate_element');
+      }
+      </script><script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+
+    </div>
+
+   <div align="center">
+    <a href="http://serket.naka-lab.org/index.html"><img src="http://serket.naka-lab.org/logo.jpg" /></a></div>
+    <a id="simple-menu" class="menu-button fixed" href="#sidr">Toggle menu</a>
+
+    <div class="wrapper">
+    {{ content }}
+    </div>
+
+    <!-- Include jQuery -->
+    <!-- <script src="../bower_components/jquery/dist/jquery.js"></script> -->
+    <!-- Try it also with jQuery 1.x or other version from the CDN -->
+    <script src="https://code.jquery.com/jquery-1.12.0.min.js"></script>
+    <!-- Include the Sidr JS -->
+    <script src="http://serket.naka-lab.org/dist/jquery.sidr.js"></script>
+
+    <!-- Your code -->
+    <script>
+
+    $(document).ready(function () {
+      $('#simple-menu').sidr({
+        timing: 'ease-in-out',
+        speed: 500
+      });
+    });
+
+    $( window ).resize(function () {
+      $.sidr('close', 'sidr');
+    });
+
+    </script>
+
+  </body>
+</html>
