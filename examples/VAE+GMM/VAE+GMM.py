@@ -4,9 +4,9 @@ from __future__ import print_function,unicode_literals, absolute_import
 import sys
 sys.path.append("../../")
 
+import serket as srk
 import vae
 import gmm
-import serket as srk
 import numpy as np
 import tensorflow as tf
 
@@ -31,13 +31,13 @@ class vae_model(vae.VAE):
         return logits, optimizer
 
 def main():
-    obs1 = srk.Observation( np.loadtxt("mnist.txt") )
-    category = np.loadtxt("mnistlabel.txt")
-    
-    vae1 = vae_model(10, itr=200, batch_size=500)
-    gmm1 = gmm.GMM(10, category=category)
-    
-    vae1.connect( obs1 )
+    obs = srk.Observation( np.loadtxt("data.txt") )
+    data_category = np.loadtxt( "category.txt" )
+
+    vae1 = vae.VAE( 18, itr=200, batch_size=500 )
+    gmm1 = gmm.GMM( 10, category=data_category )
+
+    vae1.connect( obs )
     gmm1.connect( vae1 )
     
     for i in range(5):
