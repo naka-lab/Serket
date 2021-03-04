@@ -4,11 +4,11 @@ from __future__ import print_function,unicode_literals, absolute_import
 import sys
 sys.path.append("../../")
 
+import serket as srk
 import vae
 import gmm
 import mlda
 import mm
-import serket as srk
 import numpy as np
 import tensorflow as tf
 
@@ -33,16 +33,15 @@ class vae_model(vae.VAE):
         return logits, optimizer
 
 def main():
-    obs1 = srk.Observation( np.loadtxt("mnistdata.txt") )
-    obs2 = srk.Observation( np.loadtxt("hac.txt") )
-    
-    category = np.loadtxt("label.txt")
-    
-    vae1 = vae_model(10, itr=200, batch_size=500)
-    gmm1 = gmm.GMM(10, category=category)
-    mlda1 = mlda.MLDA(10, [500,500], category=category)
+    obs1 = srk.Observation( np.loadtxt("data1.txt") )
+    obs2 = srk.Observation( np.loadtxt("data2.txt") )
+    data_category = np.loadtxt( "category.txt" )
+
+    vae1 = vae.VAE( 18, itr=200, batch_size=500 )
+    gmm1 = gmm.GMM( 10, category=data_category )
+    mlda1 = mlda.MLDA( 10, [200,200], category=data_category )
     mm1 = mm.MarkovModel()
-    
+
     vae1.connect( obs1 )
     gmm1.connect( vae1 )
     mlda1.connect( obs2, gmm1 )
