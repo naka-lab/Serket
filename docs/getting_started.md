@@ -6,7 +6,7 @@ layout: default
 Clone the repository from GitHub:
 
 ```
-git clone https://github.com/naka-tomo/serket.git
+git clone https://github.com/naka-lab/Serket.git
 ```
 
 Install dependency packages (you can skip this step if you have already installed these packages):

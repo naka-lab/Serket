@@ -10,13 +10,11 @@ import random
 import pickle
 
 class MarkovModel(srk.Module):
-    def __init__( self, num_samp=100, name="mm", mode="learn" ):
+    def __init__( self, num_samp=100, name="mm", load_dir=None ):
         super(MarkovModel, self).__init__(name, True)
         self.__num_samp=num_samp
-        self.__mode = mode
-        
-        if mode != "learn" and mode != "recog":
-            raise ValueError("choose mode from \"learn\" or \"recog\"")
+        self.__load_dir = load_dir
+        self.__n = 0
         
     def sample_idx( self, P ):
         K = len(P)
@@ -48,11 +46,10 @@ class MarkovModel(srk.Module):
 
         data[0] = np.array( data[0], dtype=np.float32 )
         
-        
         # 遷移確率を計算
         trans_prob = np.zeros( (K, K) ) + 0.1
-        # 学習モード時
-        if self.__mode == "learn":
+        # 学習
+        if self.__load_dir is None:
             for _ in range(self.__num_samp):
                 for n in range(N-1):
                     k =  self.sample_idx( data[0][n] )
@@ -61,9 +58,9 @@ class MarkovModel(srk.Module):
             # 正規化
             trans_prob = (trans_prob.T / trans_prob.sum(1)).T
         
-        # 認識モード時は学習したパラメータを読み込み
-        if self.__mode == "recog":
-            model_path = os.path.join( self.get_name(), "model.pickle" )
+        # 認識時は学習したパラメータを読み込み
+        else:
+            model_path = os.path.join( self.__load_dir, "model.pickle" )
             with open( model_path, "rb" ) as f:
                 trans_prob = pickle.load( f )
         
@@ -78,19 +75,24 @@ class MarkovModel(srk.Module):
             # 正規化
             msg[n] = msg[n] / msg[n].sum()
 
+        if self.__load_dir is None:
+            save_dir = os.path.join( self.get_name(), "%03d" % self.__n )
+        else:
+            save_dir = os.path.join( self.get_name(), "recog" )
+        if not os.path.exists( save_dir ):
+            os.makedirs( save_dir )
 
+        np.savetxt( os.path.join( save_dir, "msg.txt" ), msg, fmt="%f" )
+
+        # モデルパラメータの保存
+        if self.__load_dir is None:
+            with open( os.path.join( save_dir, "model.pickle" ), "wb" ) as f:
+                pickle.dump( trans_prob, f )
+            np.savetxt( os.path.join( save_dir, "trans_prob.txt" ), trans_prob, fmt="%f" )
+        
+        self.__n += 1
+        
         # メッセージの送信
         self.set_forward_msg( msg )
         self.send_backward_msgs( [msg] )
         
-        # データの保存
-        if not os.path.exists( self.get_name() ):
-            os.mkdir( self.get_name() )
-            
-        np.savetxt( os.path.join( self.get_name(), "msg_{}.txt".format(self.__mode) ), msg, fmt=str("%f") )
-
-        # モデルパラメータの保存
-        if self.__mode == "learn":
-            with open( os.path.join( self.get_name(), "model.pickle" ), "wb" ) as f:
-                pickle.dump( trans_prob, f )
-            np.savetxt( os.path.join( self.get_name(), "trans_prob_{}.txt".format(self.__mode) ), trans_prob, fmt=str("%f") )

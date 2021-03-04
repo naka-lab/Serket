@@ -1,5 +1,5 @@
 # encoding: utf-8
-import numpy
+import numpy as np
 import random
 import math
 import os
@@ -13,10 +13,10 @@ class GaussWishart():
         self.__r0 = 1
         self.__nu0 = dim + 2
         self.__m0 = mean.reshape((dim,1))
-        self.__S0 = numpy.eye(dim, dim ) * var
+        self.__S0 = np.eye(dim, dim ) * var
 
-        self.__X = numpy.zeros( (dim,1) )
-        self.__C = numpy.zeros( (dim, dim) )
+        self.__X = np.zeros( (dim,1) )
+        self.__C = np.zeros( (dim, dim) )
         self.__r = self.__r0
         self.__nu = self.__nu0
         self.__N = 0
@@ -27,7 +27,7 @@ class GaussWishart():
         self.__m = (self.__X + self.__r0 * self.__m0)/(self.__r0 + self.__N )
         self.__S = - self.__r * self.__m * self.__m.T + self.__C + self.__S0 + self.__r0 * self.__m0 * self.__m0.T;
 
-    def add_data(self, x ):
+    def add_data(self, x):
         x = x.reshape((self.__dim,1))  # 縦ベクトルにする
         self.__X += x
         self.__C += x.dot( x.T )
@@ -36,7 +36,7 @@ class GaussWishart():
         self.__N += 1
         self.__update_param()
 
-    def delete_data(self, x ):
+    def delete_data(self, x):
         x = x.reshape((self.__dim,1))  # 縦ベクトルにする
         self.__X -= x
         self.__C -= x.dot( x.T )
@@ -49,7 +49,7 @@ class GaussWishart():
         def _calc_loglik(self):
             p = - self.__N * self.__dim * 0.5 * math.log( math.pi )
             p+= - self.__dim * 0.5 * math.log( self.__r )
-            p+= - self.__nu * 0.5 * math.log( numpy.linalg.det( self.__S ) );
+            p+= - self.__nu * 0.5 * math.log( np.linalg.det( self.__S ) );
 
             for d in range(1,self.__dim+1):
                 p += math.lgamma( 0.5*(self.__nu+1-d) )
@@ -67,6 +67,16 @@ class GaussWishart():
         # log(P(x|X)) = log(P(x,X)) - log(P(X))
         return p2 - p1
 
+    def get_loglik(self):
+         p = - self.__N * self.__dim * 0.5 * math.log( math.pi )
+         p+= - self.__dim * 0.5 * math.log( self.__r )
+         p+= - self.__nu * 0.5 * math.log( np.linalg.det( self.__S ) );
+
+         for d in range(1,self.__dim+1):
+             p += math.lgamma( 0.5*(self.__nu+1-d) )
+
+         return p
+    
     def get_mean(self):
         return self.__m
 
@@ -109,16 +119,16 @@ def sample_class( d, distributions, i, bias_dz ):
 
 
 def calc_acc( results, correct ):
-    K = numpy.max(results)+1  # カテゴリ数
-    N = len(results)          # データ数
-    max_acc = 0               # 精度の最大値
-    changed = True            # 変化したかどうか
+    K = int(np.max(correct)+1) # カテゴリ数
+    N = len(results)           # データ数
+    max_acc = 0                # 精度の最大値
+    changed = True             # 変化したかどうか
 
     while changed:
         changed = False
         for i in range(K):
             for j in range(K):
-                tmp_result = numpy.zeros( N )
+                tmp_result = np.zeros( N )
 
                 # iとjを入れ替える
                 for n in range(N):
@@ -138,31 +148,34 @@ def calc_acc( results, correct ):
     return max_acc, results
 
 # モデルの保存
-def save_model( Pdz, mu, classes, save_dir, categories, distributions, mode ):
+def save_model( Pdz, mu, save_dir, categories, distributions, liks, load_dir ):
     if not os.path.exists( save_dir ):
-        os.mkdir( save_dir )
-
-    # モデルパラメータの保存
-    if mode == "learn":
+        os.makedirs( save_dir )
+    
+    if load_dir is None:
+        # モデルパラメータの保存
         K = len(Pdz[0])
         params = []
         for k in range(K):
             params.append(distributions[k].get_param())
         with open( os.path.join( save_dir, "model.pickle" ), "wb" ) as f:
             pickle.dump( params, f )
+        # muと尤度の保存
+        np.savetxt( os.path.join( save_dir, "mu.txt" ), mu )
+        np.savetxt( os.path.join( save_dir, "liklihood.txt" ), liks, fmt="%f" )
 
-    # 確率と平均の保存
-    numpy.savetxt( os.path.join( save_dir, "Pdz_{}.txt".format(mode) ), Pdz, fmt=str("%f") )
-    numpy.savetxt( os.path.join( save_dir, "mu_{}.txt".format(mode) ), mu )
-
+    # 確率の保存
+    np.savetxt( os.path.join( save_dir, "Pdz.txt" ), Pdz, fmt="%f" )
+    
     # 分類結果・精度の計算と保存
+    classes = np.argmax(Pdz, -1)
     if categories is not None:
         acc, results = calc_acc( classes, categories )
-        numpy.savetxt( os.path.join( save_dir, "class_{}.txt".format(mode) ), results, fmt=str("%d") )
-        numpy.savetxt( os.path.join( save_dir, "acc_{}.txt".format(mode) ), [acc], fmt=str("%f") )
+        np.savetxt( os.path.join( save_dir, "class.txt" ), results, fmt="%d" )
+        np.savetxt( os.path.join( save_dir, "acc.txt" ), [acc], fmt="%f" )
         
     else:
-        numpy.savetxt( os.path.join( save_dir, "class{}.txt".format(mode) ), classes, fmt=str("%d") )
+        np.savetxt( os.path.join( save_dir, "class.txt" ), classes, fmt="%d" )
 
 # モデルパラメータの読み込み
 def load_model( load_dir, distributions ):
@@ -175,63 +188,79 @@ def load_model( load_dir, distributions ):
         distributions[k].load_params(a[k])
 
 # gmmメイン
-def train( data, K, num_itr=100, save_dir="model", bias_dz=None, categories=None, mode="learn" ):
+def train( data, K, num_itr=100, save_dir="model", bias_dz=None, categories=None, load_dir=None ):
+    # データ数
+    N = len(data)
     # データの次元
     dim = len(data[0])
+    
+    # 尤度のリスト
+    liks = []
 
-    Pdz = numpy.zeros((len(data),K))
-    mu = numpy.zeros((len(data),dim))
+    Pdz = np.zeros((N,K))
+    mu = np.zeros((N,dim))
 
     # データをランダムに分類
-    classes = numpy.random.randint( K , size=len(data) )
+    classes = np.random.randint( K , size=N )
 
     # ガウス-ウィシャート分布の生成
-    mean = numpy.mean( data, axis=0 )
+    mean = np.mean( data, axis=0 )
     distributions = [ GaussWishart(dim, mean , 0.1) for _ in range(K) ]
-    
-    # 認識モード時は学習したモデルパラメータを読み込む
-    if mode == "recog":
-        load_model(save_dir, distributions)
-    
+        
     # 学習モード時はガウス-ウィシャート分布のパラメータを計算
-    if mode == "learn":    
-        for i in range(len(data)):
+    if load_dir is None:    
+        for i in range(N):
             c = classes[i]
             x = data[i]
             distributions[c].add_data(x)
+    # 認識モード時は学習したモデルパラメータを読み込む
+    else:
+        load_model(load_dir, distributions)
 
-
-    for it in range(num_itr):
-        # メインの処理
-        for i in range(len(data)):
-            d = data[i]
-            k_old = classes[i]  # 現在のクラス
-
-            if mode == "learn":
-                # 学習モード時はデータをクラスから除きパラメータを更新
+    # 学習
+    if load_dir is None:
+        for it in range(num_itr):
+            # メインの処理
+            for i in range(N):
+                d = data[i]
+                k_old = classes[i]  # 現在のクラス
+    
+                # データをクラスから除きパラメータを更新
                 distributions[k_old].delete_data( d )
                 classes[i] = -1
-
-            # 新たなクラスをサンプリング
-            k_new = sample_class( d , distributions, i, bias_dz )
-
-            # サンプリングされたクラスに更新
-            classes[i] = k_new
-            
-            if mode == "learn":
-                # 学習モード時はサンプリングされたクラスのパラメータを更新
+    
+                # 新たなクラスをサンプリング
+                k_new = sample_class( d, distributions, i, bias_dz )
+    
+                # サンプリングされたクラスに更新
+                classes[i] = k_new
+                
+                # サンプリングされたクラスのパラメータを更新
                 distributions[k_new].add_data( d )
+            
+            # 尤度の計算
+            lik = 0
+            for k in range(K):
+                lik += distributions[k].get_loglik()
+            liks.append( lik )
 
-    for m in range(len(data)):
-        for n in range(K):
-            Pdz[m][n] = calc_probability(distributions[n], data[m])
-            if classes[m] == n:
-                mu[m] = distributions[n].get_mean().reshape((1,dim))[0]                
-                     
+        for n in range(N):
+            for k in range(K):
+                Pdz[n][k] = calc_probability( distributions[k], data[n] )
+                if classes[n] == k:
+                    mu[n] = distributions[k].get_mean().reshape((1,dim))[0]
+    
+    # 認識
+    if load_dir is not None:
+        for n in range(N):
+            for k in range(K):
+                Pdz[n][k] = calc_probability( distributions[k], data[n] )
+        classes = np.argmax(Pdz, -1)
 
-    Pdz = (Pdz.T / numpy.sum(Pdz,1)).T
-
-    save_model(Pdz, mu, classes, save_dir, categories, distributions, mode)
+    # 正規化
+    Pdz = (Pdz.T / np.sum(Pdz,1)).T
+    
+    save_model( Pdz, mu, save_dir, categories, distributions, liks, load_dir )
 
     return Pdz, mu
 
