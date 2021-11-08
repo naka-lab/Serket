@@ -11,9 +11,9 @@ import numpy as np
 import cv2
 import rospy
 
-class ObservationIMG(srk.Module):
-    def __init__( self, topic_name, name="ObservationIMG", timeout=-1 ):
-        super(ObservationIMG,self).__init__( name=name, learnable=False )
+class ObservationImg(srk.Module):
+    def __init__( self, topic_name, name="ObservationImg", timeout=-1 ):
+        super(ObservationImg,self).__init__( name=name, learnable=False )
         self.msg_que = queue.Queue()
         self.foward_msg = []
         self.timeout = timeout

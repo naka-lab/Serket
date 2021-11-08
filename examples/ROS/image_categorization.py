@@ -13,7 +13,7 @@ import rospy
 def main():
     rospy.init_node( "iamage_categorization" )
 
-    obs = srkros.ObservationIMG( "image" )
+    obs = srkros.ObservationImg( "image" )
     cnn = CNN.CNNFeatureExtractor( fileames=None )
     mlda1 = mlda.MLDA( 3, [1000] )
 
