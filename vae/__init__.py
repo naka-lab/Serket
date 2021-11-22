@@ -138,6 +138,7 @@ class VAE(srk.Module, metaclass=ABCMeta):
 
         if self.__load_dir is None:
             self.__save_dir = os.path.join( self.get_name(), "%03d" % self.__n )
+            self.__save_dir_ = os.path.join( self.get_name(), "%03d" % (self.__n - 1) )
         else:
             self.__save_dir = os.path.join( self.get_name(), "recog" )
         if not os.path.exists( self.__save_dir ):
