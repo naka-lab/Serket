@@ -36,7 +36,7 @@ def main():
     obs2 = srk.Observation( np.loadtxt("data2.txt") )
     data_category = np.loadtxt( "category.txt" )
 
-    vae1 = vae_model( 18, itr=200, batch_size=500 )
+    vae1 = vae_model( 18, epoch=200, batch_size=500 )
     gmm1 = gmm.GMM( 10, category=data_category )
     mlda1 = mlda.MLDA( 10, [200,200], category=data_category )
 
