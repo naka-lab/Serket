@@ -5,7 +5,7 @@ sys.path.append( "../" )
 
 import os
 import serket as srk
-import queue
+import Queue as queue
 from sensor_msgs.msg import Image
 import numpy as np
 import cv2
@@ -40,4 +40,3 @@ class ObservationImg(srk.Module):
         # メッセージ送信
         self.foward_msg.append( img )
         self.set_forward_msg( self.foward_msg )
-
