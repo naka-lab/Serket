@@ -8,7 +8,7 @@ import os
 import serket as srk
 try:
     import Queue as queue
-except:
+except ModuleNotFoundError:
     import queue
 from sensor_msgs.msg import Image
 import numpy as np

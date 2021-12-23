@@ -107,7 +107,6 @@ def sample_class( d, distributions, i, bias_dz ):
 
     # 累積確率を計算
     P[0] = calc_probability( distributions[0], d ) * (bias_dz[i][0] if i<len(bias_dz) else 1)
-    print( (bias_dz[i][0] if i<len(bias_dz) else 1) , end=" ")
     for k in range(1,K):
         P[k] = P[k-1] + calc_probability( distributions[k], d ) * (bias_dz[i][k] if i<len(bias_dz) else 1)
 

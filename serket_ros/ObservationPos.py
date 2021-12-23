@@ -8,7 +8,7 @@ import os
 import serket as srk
 try:
     import Queue as queue
-except:
+except ModuleNotFoundError:
     import queue
 from nav_msgs.msg import Odometry
 import numpy as np
