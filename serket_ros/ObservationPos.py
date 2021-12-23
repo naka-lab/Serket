@@ -6,7 +6,10 @@ sys.path.append( "../" )
 
 import os
 import serket as srk
-import Queue as queue
+try:
+    import Queue as queue
+except:
+    import queue
 from nav_msgs.msg import Odometry
 import numpy as np
 import rospy

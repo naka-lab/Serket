@@ -6,7 +6,10 @@ sys.path.append( "../" )
 
 import os
 import serket as srk
-import Queue as queue
+try:
+    import Queue as queue
+except:
+    import queue
 from sensor_msgs.msg import Image
 import numpy as np
 import cv2
