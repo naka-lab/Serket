@@ -29,7 +29,7 @@ class CNNFeatureExtractor(srk.Module):
                 # 認識処理
                 blob = cv2.dnn.blobFromImage(image, 1, (224, 224), (104, 117, 123))
                 self.net.setInput(blob)
-                preds = net.forward("pool5/7x7_s1")
+                preds = self.net.forward("pool5/7x7_s1")
                 
                 f = preds[0, :, 0, 0]
                 self.features.append(f)
