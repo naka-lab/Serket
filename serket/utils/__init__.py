@@ -38,14 +38,35 @@ class TextSaver(srk.Module):
         self.__filename = filename
 
     def update(self):
-        # グループごとに和をとってまとめる
         data = self.get_observations()
         self.set_forward_msg( data[0] )
-
         np.savetxt( self.__filename, data[0] )
 
-        # グループごとに計算された確率をデータ点ごとに複製
         prob = self.get_backward_msg() 
-
         if not prob is None:
             self.send_backward_msgs( prob )
+
+
+class Buffer(srk.Module):
+    def __init__( self, size=-1, name="Buffer" ):
+        super(Buffer, self).__init__( name, True)
+        self.__size = size
+        self.__data = []
+
+    def update(self):
+        new_data = self.get_observations()
+        N = len(new_data[0])
+
+        for n in range(N):
+            self.__data.append( new_data[0][n] )
+
+            if self.__size>0 and len(self.__data)>self.__size:
+                self.__data.pop(0)
+
+        # 0パディング
+        dim = np.max([ len(d) for d in self.__data] )
+        self.__data  = [ list(d)+[0]*(dim-len(d)) for d in self.__data ]
+
+        self.set_forward_msg( np.array( self.__data ) )
+
+

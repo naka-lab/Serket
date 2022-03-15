@@ -41,10 +41,9 @@ class CNNFeatureExtractor(srk.Module):
         data = self.get_observations()[0]
 
         # 新たなデータがあれば特徴抽出
-        n_feat = len(self.features)
-        n_data = len(data)
-        if n_data>n_feat:
-            for i in range( n_feat, n_data ):
+        if len(data)>0:
+            self.features = []
+            for i in range( len(data) ):
                 blob = cv2.dnn.blobFromImage(data[i], 1, (224, 224), (104, 117, 123))
                 self.net.setInput(blob)
                 preds = self.net.forward("pool5/7x7_s1")
