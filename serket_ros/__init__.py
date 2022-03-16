@@ -3,3 +3,4 @@
 
 from .ObservationImg import *
 from .ObservationPos import *
+from .ObservationString import *

@@ -5,34 +5,16 @@ import sys
 sys.path.append( "../" )
 
 import os
-import serket as srk
-try:
-    import Queue as queue
-except ModuleNotFoundError:
-    import queue
 from sensor_msgs.msg import Image
 import numpy as np
 import cv2
-import rospy
+from .ObservationBase import SimpeObservationBase
 
-class ObservationImg(srk.Module):
+class ObservationImg(SimpeObservationBase):
     def __init__( self, topic_name, name="ObservationImg", timeout=-1 ):
-        super(ObservationImg,self).__init__( name=name, learnable=False )
-        self.msg_que = queue.Queue()
-        self.foward_msg = []
-        self.timeout = timeout
+        super(ObservationImg,self).__init__( topic_name=topic_name, topic_type=Image, name=name, timeout=timeout )
 
-        rospy.Subscriber( topic_name, Image, self.msg_callback )
-
-    def msg_callback(self, msg ):
-        self.msg_que.put( msg )
-
-    def update(self):
-        try:
-            msg = self.msg_que.get()
-        except queue.Empty:
-            return False
-
+    def proc_msg(self, msg):
         img = np.frombuffer(msg.data, dtype=np.uint8).reshape(msg.height, msg.width, -1)
 
         # Save received image.
@@ -42,5 +24,4 @@ class ObservationImg(srk.Module):
         cv2.imwrite( os.path.join( save_dir, "%03d.png"%len(self.foward_msg) ), img )
 
         # Send message.
-        self.foward_msg.append( img )
-        self.set_forward_msg( self.foward_msg )
+        return img

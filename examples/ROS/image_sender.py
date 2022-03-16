@@ -5,6 +5,11 @@ from sensor_msgs.msg import Image
 import cv2
 from cv_bridge import CvBridge
 
+try:
+    raw_input = input
+except NameError:
+    pass
+
 def main():
     rospy.init_node('image_sender', anonymous=True)
 
