@@ -98,7 +98,7 @@ class GaussWishart():
 
 
 def calc_probability( dist, d ):
-    return dist.get_num_data() * math.exp( dist.calc_loglik( d ) )
+    return (dist.get_num_data()+10.0) * math.exp( dist.calc_loglik( d ) )
 
 
 def sample_class( d, distributions, i, bias_dz ):

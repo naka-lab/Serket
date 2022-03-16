@@ -21,8 +21,8 @@ class ObservationPos(SimpeObservationBase):
         save_dir = self.get_name()
         if not os.path.exists( save_dir ):
             os.mkdir( save_dir )
-        with open( os.path.join( save_dir, "%03d.txt"%len(self.foward_msg) ), 'w' ) as f:
-            f.write( str(pos) )
+        with open( os.path.join( save_dir, "%03d.txt"%len(self.foward_msg) ), 'a' ) as f:
+            f.write( "%lf %lf\n"%(msg.pose.pose.position.x, msg.pose.pose.position.y) )
 
         # Send message.
         return pos
