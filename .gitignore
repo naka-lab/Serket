@@ -1,4 +1,8 @@
+# macOS auto-generated files:
+*.DS_Store
 
+# Python auto-generated files:
 *.pyc
 
-\.DS_Store
+# Serket module outputs:
+module*/

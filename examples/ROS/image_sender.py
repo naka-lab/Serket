@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python2
 from __future__ import print_function, unicode_literals
 import rospy
 from sensor_msgs.msg import Image
@@ -14,10 +14,10 @@ def main():
 
     for i in range(6):
         img = cv2.imread( "images/%03d.png" % i )
-        msg = bridge.cv2_to_imgmsg(img, encoding="bgr8")
+        msg = bridge.cv2_to_imgmsg(img, encoding=str("bgr8"))
 
 
-        input( "Hit enter to publish. " )
+        raw_input( "Hit enter to publish. " )
         pub.publish( msg )
         print( "published." )
 

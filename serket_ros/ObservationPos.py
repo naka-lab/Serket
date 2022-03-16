@@ -10,19 +10,18 @@ try:
     import Queue as queue
 except ModuleNotFoundError:
     import queue
-from sensor_msgs.msg import Image
+from nav_msgs.msg import Odometry
 import numpy as np
-import cv2
 import rospy
 
-class ObservationImg(srk.Module):
-    def __init__( self, topic_name, name="ObservationImg", timeout=-1 ):
-        super(ObservationImg,self).__init__( name=name, learnable=False )
+class ObservationPos(srk.Module):
+    def __init__( self, topic_name, name="ObservationPos", timeout=-1 ):
+        super(ObservationPos,self).__init__( name=name, learnable=False )
         self.msg_que = queue.Queue()
         self.foward_msg = []
         self.timeout = timeout
 
-        rospy.Subscriber( topic_name, Image, self.msg_callback )
+        rospy.Subscriber( topic_name, Odometry, self.msg_callback )
 
     def msg_callback(self, msg ):
         self.msg_que.put( msg )
@@ -33,14 +32,15 @@ class ObservationImg(srk.Module):
         except queue.Empty:
             return False
 
-        img = np.frombuffer(msg.data, dtype=np.uint8).reshape(msg.height, msg.width, -1)
+        pos = np.array([msg.pose.pose.position.x, msg.pose.pose.position.y])
 
-        # Save received image.
+        # Save received position.
         save_dir = self.get_name()
         if not os.path.exists( save_dir ):
             os.mkdir( save_dir )
-        cv2.imwrite( os.path.join( save_dir, "%03d.png"%len(self.foward_msg) ), img )
+        with open( os.path.join( save_dir, "%03d.txt"%len(self.foward_msg) ), 'w' ) as f:
+            f.write( str(pos) )
 
         # Send message.
-        self.foward_msg.append( img )
+        self.foward_msg.append( pos )
         self.set_forward_msg( self.foward_msg )

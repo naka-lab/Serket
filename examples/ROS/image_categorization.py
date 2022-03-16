@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python2
 # -*- coding: utf-8 -*-
 from __future__ import print_function,unicode_literals, absolute_import
 import sys
@@ -11,7 +11,7 @@ import CNN
 import rospy
 
 def main():
-    rospy.init_node( "iamage_categorization" )
+    rospy.init_node( "image_categorization" )
 
     obs = srkros.ObservationImg( "image" )
     cnn = CNN.CNNFeatureExtractor( fileames=None )
