@@ -15,7 +15,8 @@ import numpy as np
 import cv2
 import rospy
 
-class SimpeObservationBase(srk.Module, metaclass=ABCMeta):
+class SimpeObservationBase(srk.Module):
+    __metaclass__ = ABCMeta
     def __init__( self, topic_name, topic_type, name, timeout, qsize=1 ):
         super(SimpeObservationBase,self).__init__( name=name, learnable=False )
         self.msg_que = queue.Queue()

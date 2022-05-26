@@ -1,5 +1,6 @@
 #!/usr/bin/env python2
 # -*- coding: utf-8 -*-
+from __future__ import unicode_literals
 import sys
 sys.path.append( "../" )
 
@@ -27,6 +28,10 @@ class BoW(srk.Module):
         histograms = []
         for s in sentences:
             hist = [ 0 for _ in range(len(self.__word_dict)) ]
+
+            if sys.version_info.major==2:
+                s = s.decode("utf8")
+
             words = self.__tokenizer.tokenize( s, wakati=True )
 
             for w in words:
@@ -48,16 +53,19 @@ class BoW(srk.Module):
         if not os.path.exists( self.get_name() ):
             os.mkdir( self.get_name() )
 
-        save_dir = os.path.join( self.get_name(), f"{self.__itr:03}" )
+        save_dir = os.path.join( self.get_name(), "%03d" % self.__itr )
         if not os.path.exists( save_dir ):
             os.mkdir( save_dir )
 
         path = os.path.join( save_dir, "histograms.txt" )
-        np.savetxt( path, self.__histograms, fmt="%d" )
+        np.savetxt( str(path), self.__histograms, fmt=str("%d") )
 
         path = os.path.join( save_dir, "dict.txt" )
         with open(path, "w") as f:
-            f.write( "\n".join(self.__word_dict) )
+            if sys.version_info.major==2:
+                f.write( "\n".join(self.__word_dict).encode("utf8") )           
+            else:
+                f.write( "\n".join(self.__word_dict) )
 
         self.__itr += 1
 
