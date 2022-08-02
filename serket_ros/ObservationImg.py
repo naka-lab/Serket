@@ -22,7 +22,8 @@ class ObservationImg(SimpeObservationBase):
         save_dir = self.get_name()
         if not os.path.exists( save_dir ):
             os.mkdir( save_dir )
-        cv2.imwrite( os.path.join( save_dir, "%03d.png"%self.__counter ), img )
+        # Note: OpenCV's default color space is BGR.
+        cv2.imwrite( os.path.join( save_dir, "%03d.png"%self.__counter ), cv2.cvtColor(img, cv2.COLOR_RGB2BGR) )
 
         self.__counter += 1
 
