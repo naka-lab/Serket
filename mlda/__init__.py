@@ -3,10 +3,14 @@
 import sys
 sys.path.append( "../" )
 
-from . import mlda
+
 import serket as srk
 import numpy as np
 import os
+
+import pyximport
+pyximport.install(setup_args={'include_dirs':[np.get_include()]}, inplace=True)
+from . import mlda
 
 class MLDA(srk.Module):
     def __init__( self, K, weights=None, itr=100, name="mlda", category=None, load_dir=None ):
@@ -18,7 +22,7 @@ class MLDA(srk.Module):
         self.__load_dir = load_dir
         self.__n = 0
         
-    def update(self):
+    def update(self, load_trained_model=None):
         data = self.get_observations()
         Pdz = self.get_backward_msg() # P(z|d)
 
@@ -48,13 +52,13 @@ class MLDA(srk.Module):
             if data[m].all() is not None:
                 data[m] = np.array( data[m], dtype=np.int32 )
         
-        if self.__load_dir is None:
+        if load_trained_model is None:
             save_dir = os.path.join( self.get_name(), "%03d" % self.__n )
         else:
-            save_dir = os.path.join( self.get_name(), "recog" )
+            save_dir = os.path.join( self.get_name(), "%03drecog" % self.__n )
         
         # MLDA学習
-        Pdz, Pdw = mlda.train( data, self.__K, self.__itr, save_dir, Pdz, self.__category, self.__load_dir )
+        Pdz, Pdw = mlda.train( data, self.__K, self.__itr, save_dir, Pdz, self.__category, load_trained_model )
         
         self.__n += 1
         

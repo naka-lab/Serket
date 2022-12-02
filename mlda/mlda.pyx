@@ -4,25 +4,29 @@ import numpy as np
 import random
 import pickle
 import os
-from numba import jit
+import cython
+from libc.stdlib cimport rand, RAND_MAX
+import math
 
 # ハイパーパラメータ
-__alpha = 1.0
-__beta = 1.0
+cdef double __alpha = 1.0
+cdef double __beta = 1.0
 
-
-def calc_lda_param( docs_mdn, topics_mdn, K, dims ):
-    M = len(docs_mdn)
-    D = len(docs_mdn[0])
+@cython.boundscheck(False)
+@cython.wraparound(False)
+cdef calc_lda_param( docs_mdn, topics_mdn, K, dims ):
+    cdef int M = len(docs_mdn)
+    cdef int D = len(docs_mdn[0])
+    cdef int d, z, m, n, w, N
 
     # 各物体dにおいてトピックzが発生した回数
-    n_dz = np.zeros((D,K))
+    cdef int [:,:] n_dz = np.zeros((D,K), dtype=np.int32 )
 
-    # 各トピックzにおいて特徴wが発生した回数
-    n_mzw = [ np.zeros((K,dims[m])) for m in range(M)]
+    # 各トピックzにぴおいて特徴wが発生した回数
+    cdef int [:,:,:] n_mzw = np.zeros((M,K,np.max(dims)), dtype=np.int32)
 
     # 各トピックが発生した回数
-    n_mz = [ np.zeros(K) for m in range(M) ]
+    cdef int [:,:] n_mz = np.zeros((M,K), dtype=np.int32)
 
     # 数え上げる
     for d in range(D):
@@ -38,18 +42,29 @@ def calc_lda_param( docs_mdn, topics_mdn, K, dims ):
                 n_mz[m][z] += 1
 
     return n_dz, n_mzw, n_mz
+    
 
-@jit
-def sample_topic( d, w, n_dz, n_zw, n_z, K, V, bias_dz ):
+cdef double[:] __P = np.zeros( 100 )
+
+@cython.boundscheck(False)
+@cython.wraparound(False)
+@cython.cdivision(True)
+def sample_topic( int d, int w, int[:,:] n_dz, int[:,:] n_zw, int[:] n_z, int K, int V, double[:,:] bias_dz ):
+    cdef int z
+
     # 累積確率を計算
-    P = (n_dz[d,:] + __alpha )*(n_zw[:,w] + __beta) / (n_z[:] + V *__beta) * bias_dz[d]
+    #P = (n_dz[d,:] + __alpha )*(n_zw[:,w] + __beta) / (n_z[:] + V *__beta) * bias_dz[d]
+
+    for z in range(0,K):
+        __P[z] = (n_dz[d,z] + __alpha )*(n_zw[z,w] + __beta) / (n_z[z] + V *__beta) * bias_dz[d,z]
+
     for z in range(1,K):
-        P[z] = P[z] + P[z-1]
-        
+        __P[z] = __P[z] + __P[z-1]
+
     # サンプリング
-    rnd = P[K-1] * random.random()
+    cdef double rnd = __P[K-1] * rand()/float(RAND_MAX)
     for z in range(K):
-        if P[z] >= rnd:
+        if __P[z] >= rnd:
             return z
 
     return -1
@@ -64,16 +79,24 @@ def conv_to_word_list( data ):
     return doc
 
 # 尤度計算
-def calc_liklihood( data, n_dz, n_zw, n_z, K, V ):
-    lik = 0
-
-    P_wz = (n_zw.T + __beta) / (n_z + V *__beta)
-    for d in range(len(data)):
-        Pz = (n_dz[d] + __alpha )/( np.sum(n_dz[d]) + K *__alpha )
-        Pwz = Pz * P_wz
-        Pw = np.sum( Pwz , 1 ) + 0.000001
-        lik += np.sum( data[d] * np.log(Pw) )
-
+@cython.boundscheck(False)
+@cython.wraparound(False)
+cdef calc_liklihood( int[:,:] data, int[:,:] n_dz, int[:,:] n_zw, int[:] n_z, int D, int K, int V  ):
+    cdef double lik = 0.0
+    cdef double s = 0.0
+    cdef double cons
+    cdef int d, w, z
+    
+    for d in range(D):
+        cons = 1/(np.sum(n_dz[d]) + K*__alpha)
+        
+        for w in range(V):
+            s = 0.0
+            
+            for z in range(K):
+                s += (n_zw[z][w] + __beta) / (n_z[z] + V *__beta) * (n_dz[d][z] + __alpha) * cons
+            
+            lik += data[d][w] * math.log(s)
     return lik
 
 def calc_acc(results, correct):
@@ -110,6 +133,10 @@ def save_model( save_dir, n_dz, n_mzw, n_mz, M, dims, categories, liks, load_dir
     if not os.path.exists( save_dir ):
         os.makedirs( save_dir )
     
+    n_dz = np.array(n_dz)
+    n_mz = np.array(n_mz)
+    n_mzw = np.array(n_mzw)
+
     # 確率の計算と保存
     Pdz = n_dz + __alpha
     Pdz = (Pdz.T / Pdz.sum(1)).T
@@ -151,12 +178,20 @@ def load_model( load_dir ):
     return a,b
 
 # ldaメイン
+@cython.boundscheck(False)
+@cython.wraparound(False)
 def train( data, K, num_itr=100, save_dir="model", bias_dz=None, categories=None, load_dir=None ):
-    
+    cdef int M, it, d, m, N, n, w, z
+    cdef int[:,:] n_dz, n_mz
+    cdef int[:,:,:] n_mzw
+    cdef list docs_mdn, topics_mdn
+
     # 尤度のリスト
     liks = []
-
     M = len(data)       # モダリティ数
+
+    if bias_dz is not None:
+        bias_dz = np.array(bias_dz)
 
     dims = []
     for m in range(M):
@@ -217,7 +252,7 @@ def train( data, K, num_itr=100, save_dir="model", bias_dz=None, categories=None
         lik = 0
         for m in range(M):
             if data[m].all() is not None:
-                lik += calc_liklihood( data[m], n_dz, n_mzw[m], n_mz[m], K, dims[m] )
+                lik += calc_liklihood( data[m], n_dz, n_mzw[m], n_mz[m], D, K, dims[m] )
         liks.append( lik )
         
     params = save_model( save_dir, n_dz, n_mzw, n_mz, M, dims, categories, liks, load_dir )
